@@ -6,6 +6,9 @@ import Button from 'primevue/button'
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
+import FileUpload from 'primevue/fileupload';
+import ToastService from 'primevue/toastservice';
+import Toast from 'primevue/toast';   
 
 
 const app = createApp(App)
@@ -37,6 +40,8 @@ app.use(PrimeVue, {
     }
   }
 });
-
-app.mount('#app')
+app.use(ToastService);
+app.component('Toast', Toast);
 app.component('Button', Button);
+app.component('FileUpload', FileUpload);
+app.mount('#app');
