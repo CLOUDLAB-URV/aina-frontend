@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useLayout } from '@/layout/composables/layout';
 import { computed, ref, watch } from 'vue';
-// import AppSidebar from './AppSidebar.vue';
-import AppTopbar from './AppTopbar.vue';
+import AppSidebar from '@/layout/AppSidebar.vue';
+import AppTopbar from '@/layout/AppTopbar.vue';
 
 const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout();
 
@@ -17,6 +17,7 @@ watch(isSidebarActive, (newVal) => {
 });
 
 const containerClass = computed(() => {
+    console.log('layoutConfig.menuMode', layoutState);
     return {
         'layout-overlay': layoutConfig.menuMode === 'overlay',
         'layout-static': layoutConfig.menuMode === 'static',
@@ -55,7 +56,7 @@ function isOutsideClicked(event: any) {
 <template>
     <div class="layout-wrapper" :class="containerClass">
         <app-topbar></app-topbar>
-        <!-- <app-sidebar></app-sidebar> -->
+        <app-sidebar></app-sidebar>
         <!-- <div class="layout-main-container">
             <div class="layout-main">
                 <router-view></router-view>
