@@ -11,35 +11,19 @@ const model = ref([
         ]
     },
     {
-        label: 'Public resources',
+        label: 'Intelligent Apps',
         items: [
-            { label: 'Pipelines', icon: 'pi pi-fw pi-box', to: '/pipelines' },
-            { label: 'AI Tools', icon: 'pi pi-microchip-ai', to: '/aitools' },
-            { label: 'DataCockpit', icon: 'pi pi-fw pi-database', to: '/datacockpit' }
-        ]
-    },
-    {
-        label: 'My resources',
-        items: [
-            { label: 'Workspaces', icon: 'pi pi-fw pi-server', to: '/spaces' },
-            { label: 'Monitoring', icon: 'pi pi-fw pi-chart-line', to: '/monitoring' }
+            { label: 'Chat', icon: 'pi pi-comments', to: '/chat' },
+            { label: 'Agent', icon: 'pi pi-microchip-ai', to: '/agent' },
+            { label: 'Files', icon: 'pi pi-folder-open', to: '/files' },
         ]
     },
     {
         label: 'Settings',
         items: [
-            { label: 'Cloud account', icon: 'pi pi-fw pi-cloud', to: '/cloudaccount' },
-            { label: 'My account', icon: 'pi pi-fw pi-user', to: '/account' }
+            { label: 'General', icon: 'pi pi-fw pi-cog', to: '/general' },
         ]
     },
-    {
-        label: 'Community & Support',
-        isFooter: true,
-        items: [
-            { label: 'Documentation', icon: 'pi pi-fw pi-book', url: 'https://docs.pyrun.cloud/', target: '_blank' },
-            { label: 'Discord', icon: 'pi pi-fw pi-discord', url: 'https://discord.gg/AF9XBqbxRS', target: '_blank' }
-        ]
-    }
 ]);
 </script>
 
