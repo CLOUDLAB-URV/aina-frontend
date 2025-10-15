@@ -487,15 +487,19 @@ a {
 }
 
 .layout-main-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    justify-content: space-between;
+    /* display: flex;
+    flex-direction: column; */
+    height: 100%;
+    /* justify-content: space-between; */
     padding: 6rem 2rem 0 2rem;
-    transition: margin-left var(--layout-section-transition-duration);
+    /* transition: margin-left var(--layout-section-transition-duration); */
 }
 
 .layout-main {
     flex: 1 1 auto;
     padding-bottom: 2rem;
+    height: 100%;
+    /* display: flex;
+    flex-direction: column;
+    justify-content: center; */
 }
