@@ -2,21 +2,21 @@
 // import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'vue-router';
 import { useLayout } from '@/layout/composables/layout';
-// import { useAuthStore } from '@/stores/auth';
 import logo from '@/assets/vue.svg';
+import { useAuthStore } from '@/stores/auth';
 
 const { onMenuToggle } = useLayout();
 const router = useRouter();
-const authStore = {
-    username:'iulian',
-    signedIn:true
-}
+const authStore = useAuthStore()
 
 function logIn() {
     router.push('/login');
 }
 
 async function logOut() {
+    authStore.username = "";
+    authStore.signedIn = false;
+    localStorage.removeItem('accessToken');
     // await signOut();
     router.push('/login');
 }

@@ -10,8 +10,10 @@ import FileUpload from "primevue/fileupload";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import InputText from "primevue/inputtext";
+import { createPinia } from "pinia";
 
 const app = createApp(App);
+const pinia = createPinia();
 app.use(router);
 
 const MyPreset = definePreset(Aura, {
@@ -45,4 +47,5 @@ app.component("Toast", Toast);
 app.component("Button", Button);
 app.component("FileUpload", FileUpload);
 app.component("InputText", InputText);
+app.use(pinia);
 app.mount("#app");

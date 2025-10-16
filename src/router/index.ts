@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AppLayout from "@/layout/AppLayout.vue";
 import HomeView from "@/views/HomeView.vue";
-import { getCurrentUser } from "@/api/getCurrentUser";
+import { getCurrentUser } from "@/apis/getCurrentUser";
 import AgentView from "@/views/AgentView.vue";
 import ChatVIew from "@/views/ChatVIew.vue";
 import LoginView from "@/views/LoginView.vue";
