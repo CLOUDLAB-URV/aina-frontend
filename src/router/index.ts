@@ -4,6 +4,7 @@ import HomeView from "@/views/HomeView.vue";
 import { getCurrentUser } from "@/api/getCurrentUser";
 import AgentView from "@/views/AgentView.vue";
 import ChatVIew from "@/views/ChatVIew.vue";
+import LoginView from "@/views/LoginView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,11 @@ const router = createRouter({
               return "/login";
             }
           },
+        },
+        {
+          path: "/login",
+          name: "login",
+          component: LoginView,
         },
       ],
     },
