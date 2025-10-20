@@ -3,6 +3,7 @@ import { type LlmCreate } from "@/models";
 import type {
   AddLlmApiV1LlmsLlmPostRequest,
   DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest,
+  UpdateLlmApiV1LlmsLlmLlmNamePatchRequest,
 } from "@/apis/LlmsApi.ts";
 import router from "@/router";
 
@@ -38,8 +39,23 @@ export function sendCreate(llm_model: any) {
 }
 
 export function deleteLLm(llm_model: any) {
+  console.log("delete");
   let name_llm: DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest = {
     llmName: llm_model.name,
   };
   LlmApi.deleteLlmApiV1LlmsLlmLlmNameDelete(name_llm);
+  console.log("deleted " + llm_model.name);
+  router.push("/general");
+}
+
+export function updateLlm(llm_model: any) {
+  console.log("update");
+  let name_llm: UpdateLlmApiV1LlmsLlmLlmNamePatchRequest = {
+    llmName: llm_model.name,
+    _default: llm_model.default,
+    body: JSON.parse(llm_model.spec),
+  };
+  LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm);
+  console.log("updated " + llm_model.name);
+  router.push("/general");
 }

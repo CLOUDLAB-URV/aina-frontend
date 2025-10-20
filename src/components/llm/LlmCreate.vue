@@ -25,7 +25,7 @@
 
         <Button v-if="create" label="Submit" icon="pi pi-send" @click.prevent="sendCreate(llm_model)"></Button>
         <div v-if="!create" class="flex gap-2 w-full">
-            <Button label="Save" class="grow" icon="pi pi-save" @click.prevent=""></Button>
+            <Button label="Save" class="grow" icon="pi pi-save" @click.prevent="updateLlm(llm_model)"></Button>
             <Button label="Delete" severity="danger" class="grow" icon="pi pi-trash"
                 @click.prevent="deleteLLm(llm_model)"></Button>
         </div>
@@ -36,7 +36,7 @@
 import { onMounted, ref, watch } from "vue";
 import { LlmApi } from "@/apis/api.ts";
 import type { LlmInfo } from "@/models";
-import { deleteLLm, sendCreate, change_model } from "@/apis/crudLlmEmb";
+import { deleteLLm, sendCreate, change_model, updateLlm } from "@/apis/crudLlmEmb";
 
 const props = defineProps<{
     create: boolean;
@@ -59,13 +59,5 @@ onMounted(async () => {
 watch(() => props.data, () => {
     llm_model.value = change_model(props.data);
 });
-
-// function updateLlm() {
-//     let name_llm: UpdateLlmApiV1LlmsLlmLlmNamePatchRequest = {
-//         llmName: llm_model.value.name,
-//         _default: llm_model.value.default
-//     }
-//     LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch()
-// }
 
 </script>

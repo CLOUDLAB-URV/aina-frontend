@@ -28,6 +28,6 @@ import { ref } from 'vue';
 
 const tabs = ref([
     { title: 'LLM', list: LlmList, create: LlmCreate, value: '0' },
-    { title: 'Embeddings', list: Llm, create: Llm, value: '1' },
+    { title: 'Embeddings', list: LlmList, create: LlmCreate, value: '1' },
 ]);
 </script>

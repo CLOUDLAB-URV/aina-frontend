@@ -9,7 +9,6 @@
     <section v-if="data_selected">
         <LlmCreate :create="false" class="mt-4" :data="data_selected" />
     </section>
-    {{ llms }}
 </template>
 
 <script setup lang="ts">
@@ -26,7 +25,6 @@ onMounted(async () => {
 })
 
 function madeClick(value: any) {
-    // console.log(value.data)
     data_selected.value = value.data;
 }
 
