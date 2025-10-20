@@ -1,7 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './Agent';
-export * from './AgentInfo';
+export * from './AgentCreate';
+export * from './AgentResponse';
+export * from './AgentUpdate';
+export * from './ChatRequest';
 export * from './ConversationCreate';
 export * from './ConversationInfo';
 export * from './ConversationUpdate';
@@ -9,6 +11,7 @@ export * from './EmbeddingCreate';
 export * from './EmbeddingInfo';
 export * from './GenericException';
 export * from './HTTPValidationError';
+export * from './IndexInfo';
 export * from './LlmCreate';
 export * from './LlmInfo';
 export * from './RerankingCreate';

@@ -15,16 +15,19 @@
 
 import * as runtime from '../runtime';
 import type {
-  Agent,
-  AgentInfo,
+  AgentCreate,
+  AgentResponse,
+  AgentUpdate,
   GenericException,
   HTTPValidationError,
 } from '../models/index';
 import {
-    AgentFromJSON,
-    AgentToJSON,
-    AgentInfoFromJSON,
-    AgentInfoToJSON,
+    AgentCreateFromJSON,
+    AgentCreateToJSON,
+    AgentResponseFromJSON,
+    AgentResponseToJSON,
+    AgentUpdateFromJSON,
+    AgentUpdateToJSON,
     GenericExceptionFromJSON,
     GenericExceptionToJSON,
     HTTPValidationErrorFromJSON,
@@ -32,16 +35,25 @@ import {
 } from '../models/index';
 
 export interface AddAgentApiV1AgentsPostRequest {
-    agentInfo: AgentInfo;
+    agentCreate: AgentCreate;
 }
 
 export interface DeleteAgentApiV1AgentsAgentIdDeleteRequest {
     agentId: string;
 }
 
+export interface GetAgentSettingsApiV1AgentsSettingsAgentIdGetRequest {
+    agentId: string;
+}
+
 export interface UpdateAgentApiV1AgentsAgentIdPatchRequest {
     agentId: string;
-    agentInfo: AgentInfo;
+    agentUpdate: AgentUpdate;
+}
+
+export interface UpdateAgentSettingsApiV1AgentsSettingsAgentIdPatchRequest {
+    agentId: string;
+    body: object;
 }
 
 /**
@@ -53,11 +65,11 @@ export class AgentsApi extends runtime.BaseAPI {
      * Create a new agent.
      * Add Agent
      */
-    async addAgentApiV1AgentsPostRaw(requestParameters: AddAgentApiV1AgentsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Agent>> {
-        if (requestParameters['agentInfo'] == null) {
+    async addAgentApiV1AgentsPostRaw(requestParameters: AddAgentApiV1AgentsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AgentResponse>> {
+        if (requestParameters['agentCreate'] == null) {
             throw new runtime.RequiredError(
-                'agentInfo',
-                'Required parameter "agentInfo" was null or undefined when calling addAgentApiV1AgentsPost().'
+                'agentCreate',
+                'Required parameter "agentCreate" was null or undefined when calling addAgentApiV1AgentsPost().'
             );
         }
 
@@ -80,17 +92,17 @@ export class AgentsApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: AgentInfoToJSON(requestParameters['agentInfo']),
+            body: AgentCreateToJSON(requestParameters['agentCreate']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => AgentFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => AgentResponseFromJSON(jsonValue));
     }
 
     /**
      * Create a new agent.
      * Add Agent
      */
-    async addAgentApiV1AgentsPost(requestParameters: AddAgentApiV1AgentsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Agent> {
+    async addAgentApiV1AgentsPost(requestParameters: AddAgentApiV1AgentsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AgentResponse> {
         const response = await this.addAgentApiV1AgentsPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -144,10 +156,54 @@ export class AgentsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get settings for an agent by ID.
+     * Get Agent Settings
+     */
+    async getAgentSettingsApiV1AgentsSettingsAgentIdGetRaw(requestParameters: GetAgentSettingsApiV1AgentsSettingsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters['agentId'] == null) {
+            throw new runtime.RequiredError(
+                'agentId',
+                'Required parameter "agentId" was null or undefined when calling getAgentSettingsApiV1AgentsSettingsAgentIdGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/agents/settings/{agent_id}`;
+        urlPath = urlPath.replace(`{${"agent_id"}}`, encodeURIComponent(String(requestParameters['agentId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Get settings for an agent by ID.
+     * Get Agent Settings
+     */
+    async getAgentSettingsApiV1AgentsSettingsAgentIdGet(requestParameters: GetAgentSettingsApiV1AgentsSettingsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.getAgentSettingsApiV1AgentsSettingsAgentIdGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * List agents accessible to the current user.
      * List Agents Accessible
      */
-    async listAgentsAccessibleApiV1AgentsAccessibleGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Agent>>> {
+    async listAgentsAccessibleApiV1AgentsAccessibleGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AgentResponse>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -167,14 +223,14 @@ export class AgentsApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AgentFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AgentResponseFromJSON));
     }
 
     /**
      * List agents accessible to the current user.
      * List Agents Accessible
      */
-    async listAgentsAccessibleApiV1AgentsAccessibleGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Agent>> {
+    async listAgentsAccessibleApiV1AgentsAccessibleGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AgentResponse>> {
         const response = await this.listAgentsAccessibleApiV1AgentsAccessibleGetRaw(initOverrides);
         return await response.value();
     }
@@ -183,7 +239,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * List agents created by the current user.
      * List Agents Created
      */
-    async listAgentsCreatedApiV1AgentsCreatedGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Agent>>> {
+    async listAgentsCreatedApiV1AgentsCreatedGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AgentResponse>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -203,14 +259,14 @@ export class AgentsApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AgentFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AgentResponseFromJSON));
     }
 
     /**
      * List agents created by the current user.
      * List Agents Created
      */
-    async listAgentsCreatedApiV1AgentsCreatedGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Agent>> {
+    async listAgentsCreatedApiV1AgentsCreatedGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AgentResponse>> {
         const response = await this.listAgentsCreatedApiV1AgentsCreatedGetRaw(initOverrides);
         return await response.value();
     }
@@ -219,7 +275,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * Update an agent by ID.
      * Update Agent
      */
-    async updateAgentApiV1AgentsAgentIdPatchRaw(requestParameters: UpdateAgentApiV1AgentsAgentIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Agent>> {
+    async updateAgentApiV1AgentsAgentIdPatchRaw(requestParameters: UpdateAgentApiV1AgentsAgentIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AgentResponse>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
@@ -227,10 +283,10 @@ export class AgentsApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['agentInfo'] == null) {
+        if (requestParameters['agentUpdate'] == null) {
             throw new runtime.RequiredError(
-                'agentInfo',
-                'Required parameter "agentInfo" was null or undefined when calling updateAgentApiV1AgentsAgentIdPatch().'
+                'agentUpdate',
+                'Required parameter "agentUpdate" was null or undefined when calling updateAgentApiV1AgentsAgentIdPatch().'
             );
         }
 
@@ -254,18 +310,76 @@ export class AgentsApi extends runtime.BaseAPI {
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: AgentInfoToJSON(requestParameters['agentInfo']),
+            body: AgentUpdateToJSON(requestParameters['agentUpdate']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => AgentFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => AgentResponseFromJSON(jsonValue));
     }
 
     /**
      * Update an agent by ID.
      * Update Agent
      */
-    async updateAgentApiV1AgentsAgentIdPatch(requestParameters: UpdateAgentApiV1AgentsAgentIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Agent> {
+    async updateAgentApiV1AgentsAgentIdPatch(requestParameters: UpdateAgentApiV1AgentsAgentIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AgentResponse> {
         const response = await this.updateAgentApiV1AgentsAgentIdPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Update settings for an agent by ID.
+     * Update Agent Settings
+     */
+    async updateAgentSettingsApiV1AgentsSettingsAgentIdPatchRaw(requestParameters: UpdateAgentSettingsApiV1AgentsSettingsAgentIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters['agentId'] == null) {
+            throw new runtime.RequiredError(
+                'agentId',
+                'Required parameter "agentId" was null or undefined when calling updateAgentSettingsApiV1AgentsSettingsAgentIdPatch().'
+            );
+        }
+
+        if (requestParameters['body'] == null) {
+            throw new runtime.RequiredError(
+                'body',
+                'Required parameter "body" was null or undefined when calling updateAgentSettingsApiV1AgentsSettingsAgentIdPatch().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/agents/settings/{agent_id}`;
+        urlPath = urlPath.replace(`{${"agent_id"}}`, encodeURIComponent(String(requestParameters['agentId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['body'] as any,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Update settings for an agent by ID.
+     * Update Agent Settings
+     */
+    async updateAgentSettingsApiV1AgentsSettingsAgentIdPatch(requestParameters: UpdateAgentSettingsApiV1AgentsSettingsAgentIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.updateAgentSettingsApiV1AgentsSettingsAgentIdPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

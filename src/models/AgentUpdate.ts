@@ -16,74 +16,74 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface AgentInfo
+ * @interface AgentUpdate
  */
-export interface AgentInfo {
+export interface AgentUpdate {
     /**
      * 
      * @type {string}
-     * @memberof AgentInfo
-     */
-    name?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof AgentInfo
+     * @memberof AgentUpdate
      */
     description?: string | null;
     /**
      * 
      * @type {number}
-     * @memberof AgentInfo
+     * @memberof AgentUpdate
      */
     indexId?: number | null;
     /**
      * 
      * @type {string}
-     * @memberof AgentInfo
+     * @memberof AgentUpdate
      */
     modelName?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AgentUpdate
+     */
+    name?: string | null;
 }
 
 /**
- * Check if a given object implements the AgentInfo interface.
+ * Check if a given object implements the AgentUpdate interface.
  */
-export function instanceOfAgentInfo(value: object): value is AgentInfo {
+export function instanceOfAgentUpdate(value: object): value is AgentUpdate {
     return true;
 }
 
-export function AgentInfoFromJSON(json: any): AgentInfo {
-    return AgentInfoFromJSONTyped(json, false);
+export function AgentUpdateFromJSON(json: any): AgentUpdate {
+    return AgentUpdateFromJSONTyped(json, false);
 }
 
-export function AgentInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): AgentInfo {
+export function AgentUpdateFromJSONTyped(json: any, ignoreDiscriminator: boolean): AgentUpdate {
     if (json == null) {
         return json;
     }
     return {
         
-        'name': json['name'] == null ? undefined : json['name'],
         'description': json['description'] == null ? undefined : json['description'],
         'indexId': json['index_id'] == null ? undefined : json['index_id'],
         'modelName': json['model_name'] == null ? undefined : json['model_name'],
+        'name': json['name'] == null ? undefined : json['name'],
     };
 }
 
-export function AgentInfoToJSON(json: any): AgentInfo {
-    return AgentInfoToJSONTyped(json, false);
+export function AgentUpdateToJSON(json: any): AgentUpdate {
+    return AgentUpdateToJSONTyped(json, false);
 }
 
-export function AgentInfoToJSONTyped(value?: AgentInfo | null, ignoreDiscriminator: boolean = false): any {
+export function AgentUpdateToJSONTyped(value?: AgentUpdate | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
 
     return {
         
-        'name': value['name'],
         'description': value['description'],
         'index_id': value['indexId'],
         'model_name': value['modelName'],
+        'name': value['name'],
     };
 }
 
