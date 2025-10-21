@@ -38,23 +38,38 @@ export interface DeleteIndexApiV1IndexIndexIndexIdDeleteRequest {
     indexId: number;
 }
 
+export interface GetAdminSettingsApiV1IndexAdminSettingsGetRequest {
+    indexType: string;
+}
+
 export interface GetIndexApiV1IndexIndexIndexIdGetRequest {
+    indexId: number;
+}
+
+export interface GetIndexSettingsApiV1IndexIndexIndexIdSettingsGetRequest {
     indexId: number;
 }
 
 export interface IndexFilesApiV1IndexIndexIndexIdIndexFilesPostRequest {
     indexId: number;
+    agentId: string;
     files: Array<Blob>;
     reindex?: boolean;
 }
 
-export interface ListFilesApiV1IndexIndexIndexIdGetRequest {
+export interface ListFilesApiV1IndexIndexIndexIdFilesGetRequest {
     indexId: number;
     namePattern?: string;
 }
 
 export interface ListGroupsApiV1IndexIndexIndexIdGroupsGetRequest {
     indexId: number;
+}
+
+export interface UpdateIndexApiV1IndexIndexIndexIdPatchRequest {
+    indexId: number;
+    name?: string | null;
+    body?: object | null;
 }
 
 /**
@@ -175,6 +190,51 @@ export class IndexApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get Admin Settings
+     */
+    async getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters['indexType'] == null) {
+            throw new runtime.RequiredError(
+                'indexType',
+                'Required parameter "indexType" was null or undefined when calling getAdminSettingsApiV1IndexAdminSettingsGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['indexType'] != null) {
+            queryParameters['index_type'] = requestParameters['indexType'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/index/admin_settings`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Get Admin Settings
+     */
+    async getAdminSettingsApiV1IndexAdminSettingsGet(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get Index
      */
     async getIndexApiV1IndexIndexIndexIdGetRaw(requestParameters: GetIndexApiV1IndexIndexIndexIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IndexInfo>> {
@@ -217,6 +277,48 @@ export class IndexApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get Index Settings
+     */
+    async getIndexSettingsApiV1IndexIndexIndexIdSettingsGetRaw(requestParameters: GetIndexSettingsApiV1IndexIndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters['indexId'] == null) {
+            throw new runtime.RequiredError(
+                'indexId',
+                'Required parameter "indexId" was null or undefined when calling getIndexSettingsApiV1IndexIndexIndexIdSettingsGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/index/index/{index_id}/settings`;
+        urlPath = urlPath.replace(`{${"index_id"}}`, encodeURIComponent(String(requestParameters['indexId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Get Index Settings
+     */
+    async getIndexSettingsApiV1IndexIndexIndexIdSettingsGet(requestParameters: GetIndexSettingsApiV1IndexIndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.getIndexSettingsApiV1IndexIndexIndexIdSettingsGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Index Files
      */
     async indexFilesApiV1IndexIndexIndexIdIndexFilesPostRaw(requestParameters: IndexFilesApiV1IndexIndexIndexIdIndexFilesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -224,6 +326,13 @@ export class IndexApi extends runtime.BaseAPI {
             throw new runtime.RequiredError(
                 'indexId',
                 'Required parameter "indexId" was null or undefined when calling indexFilesApiV1IndexIndexIndexIdIndexFilesPost().'
+            );
+        }
+
+        if (requestParameters['agentId'] == null) {
+            throw new runtime.RequiredError(
+                'agentId',
+                'Required parameter "agentId" was null or undefined when calling indexFilesApiV1IndexIndexIndexIdIndexFilesPost().'
             );
         }
 
@@ -235,6 +344,10 @@ export class IndexApi extends runtime.BaseAPI {
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['agentId'] != null) {
+            queryParameters['agent_id'] = requestParameters['agentId'];
+        }
 
         if (requestParameters['reindex'] != null) {
             queryParameters['reindex'] = requestParameters['reindex'];
@@ -294,11 +407,11 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * List Files
      */
-    async listFilesApiV1IndexIndexIndexIdGetRaw(requestParameters: ListFilesApiV1IndexIndexIndexIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async listFilesApiV1IndexIndexIndexIdFilesGetRaw(requestParameters: ListFilesApiV1IndexIndexIndexIdFilesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         if (requestParameters['indexId'] == null) {
             throw new runtime.RequiredError(
                 'indexId',
-                'Required parameter "indexId" was null or undefined when calling listFilesApiV1IndexIndexIndexIdGet().'
+                'Required parameter "indexId" was null or undefined when calling listFilesApiV1IndexIndexIndexIdFilesGet().'
             );
         }
 
@@ -316,7 +429,7 @@ export class IndexApi extends runtime.BaseAPI {
         }
 
 
-        let urlPath = `/api/v1/index/index/{index_id}/`;
+        let urlPath = `/api/v1/index/index/{index_id}/files`;
         urlPath = urlPath.replace(`{${"index_id"}}`, encodeURIComponent(String(requestParameters['indexId'])));
 
         const response = await this.request({
@@ -336,8 +449,8 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * List Files
      */
-    async listFilesApiV1IndexIndexIndexIdGet(requestParameters: ListFilesApiV1IndexIndexIndexIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.listFilesApiV1IndexIndexIndexIdGetRaw(requestParameters, initOverrides);
+    async listFilesApiV1IndexIndexIndexIdFilesGet(requestParameters: ListFilesApiV1IndexIndexIndexIdFilesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.listFilesApiV1IndexIndexIndexIdFilesGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -456,6 +569,59 @@ export class IndexApi extends runtime.BaseAPI {
      */
     async listIndicesApiV1IndexGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<IndexInfo>> {
         const response = await this.listIndicesApiV1IndexGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Update Index
+     */
+    async updateIndexApiV1IndexIndexIndexIdPatchRaw(requestParameters: UpdateIndexApiV1IndexIndexIndexIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters['indexId'] == null) {
+            throw new runtime.RequiredError(
+                'indexId',
+                'Required parameter "indexId" was null or undefined when calling updateIndexApiV1IndexIndexIndexIdPatch().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['name'] != null) {
+            queryParameters['name'] = requestParameters['name'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/index/index/{index_id}`;
+        urlPath = urlPath.replace(`{${"index_id"}}`, encodeURIComponent(String(requestParameters['indexId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['body'] as any,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Update Index
+     */
+    async updateIndexApiV1IndexIndexIndexIdPatch(requestParameters: UpdateIndexApiV1IndexIndexIndexIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.updateIndexApiV1IndexIndexIndexIdPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

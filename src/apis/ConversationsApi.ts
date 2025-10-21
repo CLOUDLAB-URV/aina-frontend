@@ -18,6 +18,7 @@ import type {
   ConversationCreate,
   ConversationInfo,
   ConversationUpdate,
+  GenericException,
   HTTPValidationError,
 } from '../models/index';
 import {
@@ -27,6 +28,8 @@ import {
     ConversationInfoToJSON,
     ConversationUpdateFromJSON,
     ConversationUpdateToJSON,
+    GenericExceptionFromJSON,
+    GenericExceptionToJSON,
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
 } from '../models/index';

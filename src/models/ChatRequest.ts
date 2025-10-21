@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime';
+import type { SelectMode } from './SelectMode';
+import {
+    SelectModeFromJSON,
+    SelectModeFromJSONTyped,
+    SelectModeToJSON,
+    SelectModeToJSONTyped,
+} from './SelectMode';
+
 /**
  * 
  * @export
@@ -55,7 +63,21 @@ export interface ChatRequest {
      * @memberof ChatRequest
      */
     language?: string | null;
+    /**
+     * Mode for selecting index files
+     * @type {SelectMode}
+     * @memberof ChatRequest
+     */
+    selectMode?: SelectMode;
+    /**
+     * List of selected files for indexing
+     * @type {Array<string>}
+     * @memberof ChatRequest
+     */
+    selectedFiles?: Array<string>;
 }
+
+
 
 /**
  * Check if a given object implements the ChatRequest interface.
@@ -81,6 +103,8 @@ export function ChatRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'useMindMap': json['use_mind_map'] == null ? undefined : json['use_mind_map'],
         'useCitation': json['use_citation'] == null ? undefined : json['use_citation'],
         'language': json['language'] == null ? undefined : json['language'],
+        'selectMode': json['select_mode'] == null ? undefined : SelectModeFromJSON(json['select_mode']),
+        'selectedFiles': json['selected_files'] == null ? undefined : json['selected_files'],
     };
 }
 
@@ -101,6 +125,8 @@ export function ChatRequestToJSONTyped(value?: ChatRequest | null, ignoreDiscrim
         'use_mind_map': value['useMindMap'],
         'use_citation': value['useCitation'],
         'language': value['language'],
+        'select_mode': SelectModeToJSON(value['selectMode']),
+        'selected_files': value['selectedFiles'],
     };
 }
 

@@ -17,6 +17,7 @@ export * from './LlmInfo';
 export * from './RerankingCreate';
 export * from './RerankingInfo';
 export * from './Role';
+export * from './SelectMode';
 export * from './Token';
 export * from './UserInfo';
 export * from './ValidationError';

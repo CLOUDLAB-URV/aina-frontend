@@ -281,7 +281,7 @@ export class RerankingsApi extends runtime.BaseAPI {
     /**
      * List Rerankings
      */
-    async listRerankingsApiV1RerankingsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async listRerankingsApiV1RerankingsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: RerankingInfo; }>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -301,17 +301,13 @@ export class RerankingsApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        if (this.isJsonMime(response.headers.get('content-type'))) {
-            return new runtime.JSONApiResponse<any>(response);
-        } else {
-            return new runtime.TextApiResponse(response) as any;
-        }
+        return new runtime.JSONApiResponse(response, (jsonValue) => runtime.mapValues(jsonValue, RerankingInfoFromJSON));
     }
 
     /**
      * List Rerankings
      */
-    async listRerankingsApiV1RerankingsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+    async listRerankingsApiV1RerankingsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: RerankingInfo; }> {
         const response = await this.listRerankingsApiV1RerankingsGetRaw(initOverrides);
         return await response.value();
     }
