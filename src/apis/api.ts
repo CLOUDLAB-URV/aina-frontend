@@ -1,6 +1,7 @@
 import { type Middleware } from "@/runtime.ts"; // Or where Middleware is defined
 import { AuthenticationApi } from "@/apis/AuthenticationApi";
 import { LlmsApi } from "@/apis/LlmsApi";
+import { EmbeddingsApi } from "@/apis/EmbeddingsApi";
 
 const authMiddleware: Middleware = {
   pre: async (context) => {
@@ -17,3 +18,4 @@ const authMiddleware: Middleware = {
 
 export const AuthApi = new AuthenticationApi().withMiddleware(authMiddleware);
 export const LlmApi = new LlmsApi().withMiddleware(authMiddleware);
+export const EmbApi = new EmbeddingsApi().withMiddleware(authMiddleware);

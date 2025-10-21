@@ -22,12 +22,14 @@
 
 <script setup>
 import Crud from '@/components/Crud.vue';
+import EmbCreate from '@/components/emb/embCreate.vue';
+import EmbList from '@/components/emb/embList.vue';
 import LlmCreate from '@/components/llm/LlmCreate.vue';
 import LlmList from '@/components/llm/LlmList.vue';
 import { ref } from 'vue';
 
 const tabs = ref([
     { title: 'LLM', list: LlmList, create: LlmCreate, value: '0' },
-    { title: 'Embeddings', list: LlmList, create: LlmCreate, value: '1' },
+    { title: 'Embeddings', list: EmbList, create: EmbCreate, value: '1' },
 ]);
 </script>
