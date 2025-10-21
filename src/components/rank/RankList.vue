@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="llmStore.llms" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem"
+    <DataTable :value="rankStore.ranks" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem"
         @row-click="madeClick">
         <Column field="name" header="Name" style="width: 10%"></Column>
         <Column field="spec" header="Specifications" style="width: 65%"></Column>
@@ -7,24 +7,24 @@
         <Column field="vendorName" header="Vendor Name" style="width: 15%"></Column>
     </DataTable>
     <section v-if="data_selected">
-        <LlmCreate :create="false" class="mt-4" :data="data_selected" @deselect="data_selected = null" />
+        <RankCreate :create="false" class="mt-4" :data="data_selected" @deselect="data_selected = null" />
     </section>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { LlmApi } from '@/apis/api';
-import LlmCreate from '@/components/llm/LlmCreate.vue';
-import { useLlmStore } from '@/stores/llm';
+import { RankApi } from '@/apis/api';
+import { useRankStore } from '@/stores/rank';
+import RankCreate from '@/components/rank/RankCreate.vue';
 
-const llmStore = useLlmStore();
-
+const rankStore = useRankStore();
+    
 let data_selected = ref();
 
 onMounted(async () => {
-    let data = await LlmApi.listLlmsApiV1LlmsGet();
+    let data = await RankApi.listRerankingsApiV1RerankingsGet();
     console.log(data);
-    llmStore.llms = Object.values(data);
+    rankStore.ranks = Object.values(data);
 })
 
 function madeClick(value: any) {
