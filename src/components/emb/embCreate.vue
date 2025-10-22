@@ -1,38 +1,49 @@
 <template>
-    <form class="flex flex-col gap-4">
-        <div class="flex flex-col gap-2">
-            <label for="name">Name</label>
-            <InputText id="name" placeholder="Name" v-model="model.name" />
-        </div>
+  <form class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
+      <label for="name">Name</label>
+      <InputText id="name" placeholder="Name" v-model="model.name" />
+    </div>
 
-        <div class="flex gap-2">
-            <label for="default">Default</label>
-            <Checkbox id="default" binary v-model="model.default" />
-        </div>
+    <div class="flex gap-2">
+      <label for="default">Default</label>
+      <Checkbox id="default" binary v-model="model.default" />
+    </div>
 
-        <div class="flex flex-col gap-2">
-            <label for="spec">Specifications</label>
-            <textarea v-model="model.spec" id="spec" placeholder="Specifications" class="border p-2" />
-        </div>
+    <div class="flex flex-col gap-2">
+      <label for="spec">Specifications</label>
+      <textarea v-model="model.spec" id="spec" placeholder="Specifications" class="border p-2" />
+    </div>
 
-        <div class="flex flex-col gap-2">
-            <label for="vendorName">VendorName</label>
-            <select v-model="model.vendor" class="border p-2 rounded-xl border-[var(--surface-border)]">
-                <option disabled value="">Please select one</option>
-                <option v-for="vendor in vendors" :value="vendor">{{ vendor }}</option>
-            </select>
-        </div>
-        <ButtonsCrud :create="create" @createElement="sendCreate" @updateElement="update" @deleteElement="delete_element" />
-    </form>
+    <div class="flex flex-col gap-2">
+      <label for="vendorName">VendorName</label>
+      <select v-model="model.vendor" @click.prevent="getInfo(model.vendor)"
+        class="border p-2 rounded-xl border-[var(--surface-border)]">
+        <option disabled value="">Please select one</option>
+        <option v-for="vendor in vendors" :value="vendor">{{ vendor }}</option>
+      </select>
+    </div>
+    <ButtonsCrud :create="create" @createElement="sendCreate" @updateElement="update" @deleteElement="delete_element" />
+  </form>
+  <section class="mt-8">
+    <h3 class="text-xl mb-4 text-[var(--text-color)]">Spec Params definitions</h3>
+    <DataTable :value="vendor_info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
+      tableStyle="min-width: 50rem">
+      <Column field="name" header="Name" style="width: 10%"></Column>
+      <Column field="help" header="Help" style="width: 65%"></Column>
+      <Column field="type" header="Type" style="width: 10%"></Column>
+    </DataTable>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { useEmbStore } from "@/stores/emb";
 import { EmbApi } from "@/apis/api.ts";
-import type { EmbeddingInfo,EmbeddingCreate } from "@/models";
-import type { AddEmbeddingApiV1EmbeddingsEmbeddingPostRequest, DeleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDeleteRequest, UpdateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatchRequest } from "@/apis/EmbeddingsApi.ts";
+import type { EmbeddingInfo, EmbeddingCreate } from "@/models";
+import type { AddEmbeddingApiV1EmbeddingsEmbeddingPostRequest, DeleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDeleteRequest, UpdateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatchRequest, GetEmbeddingVendorDescApiV1EmbeddingsVendorVendorNameGetRequest } from "@/apis/EmbeddingsApi.ts";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
+import { transformParams } from "@/apis/DescSpec.ts";
 
 let embStore = useEmbStore();
 
@@ -44,6 +55,7 @@ const props = defineProps<{
 
 const emits = defineEmits(['deselect']);
 
+let vendor_info = ref();
 let vendors = ref<any[]>([]);
 let model = ref({
   name: "",
@@ -110,6 +122,13 @@ function update() {
     console.log("updated " + model.value.name);
     embStore.updateEmb(model.value);
   });
+}
+
+async function getInfo(value: string) {
+  let name: GetEmbeddingVendorDescApiV1EmbeddingsVendorVendorNameGetRequest = {
+    vendorName: value
+  }
+  vendor_info.value = transformParams(Object.values(await EmbApi.getEmbeddingVendorDescApiV1EmbeddingsVendorVendorNameGet(name))[1]);
 }
 
 </script>

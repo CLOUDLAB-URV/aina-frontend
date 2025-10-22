@@ -1,42 +1,54 @@
 <template>
-    <form class="flex flex-col gap-4">
-        <div class="flex flex-col gap-2">
-            <label for="name">Name</label>
-            <InputText id="name" placeholder="Name" v-model="llm_model.name" />
-        </div>
+  <form class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
+      <label for="name">Name</label>
+      <InputText id="name" placeholder="Name" v-model="llm_model.name" />
+    </div>
 
-        <div class="flex gap-2">
-            <label for="default">Default</label>
-            <Checkbox id="default" binary v-model="llm_model.default" />
-        </div>
+    <div class="flex gap-2">
+      <label for="default">Default</label>
+      <Checkbox id="default" binary v-model="llm_model.default" />
+    </div>
 
-        <div class="flex flex-col gap-2">
-            <label for="spec">Specifications</label>
-            <textarea v-model="llm_model.spec" id="spec" placeholder="Specifications" class="border p-2" />
-        </div>
+    <div class="flex flex-col gap-2">
+      <label for="spec">Specifications</label>
+      <textarea v-model="llm_model.spec" id="spec" placeholder="Specifications" class="border p-2" />
+    </div>
 
-        <div class="flex flex-col gap-2">
-            <label for="vendorName">VendorName</label>
-            <select v-model="llm_model.vendor" class="border p-2 rounded-xl border-[var(--surface-border)]">
-                <option disabled value="">Please select one</option>
-                <option v-for="vendor in vendors" :value="vendor">{{ vendor }}</option>
-            </select>
-        </div>
+    <div class="flex flex-col gap-2">
+      <label for="vendorName">VendorName</label>
+      <select v-model="llm_model.vendor" @click.prevent="getInfo(llm_model.vendor)"
+        class="border p-2 rounded-xl border-[var(--surface-border)]">
+        <option disabled value="">Please select one</option>
+        <option v-for="vendor in vendors" :value="vendor">{{ vendor }}</option>
+      </select>
+    </div>
 
-        <ButtonsCrud :create="create" @createElement="sendCreate" @updateElement="update" @deleteElement="delete_element" />
-    </form>
+    <ButtonsCrud :create="create" @createElement="sendCreate" @updateElement="update" @deleteElement="delete_element" />
+  </form>
+  <section class="mt-8">
+    <h3 class="text-xl mb-4 text-[var(--text-color)]">Spec Params definitions</h3>
+    <DataTable :value="vendor_info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
+      tableStyle="min-width: 50rem">
+      <Column field="name" header="Name" style="width: 10%"></Column>
+      <Column field="help" header="Help" style="width: 65%"></Column>
+      <Column field="type" header="Type" style="width: 10%"></Column>
+    </DataTable>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { useLlmStore } from "@/stores/llm";
-import type { AddLlmApiV1LlmsLlmPostRequest, DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest, UpdateLlmApiV1LlmsLlmLlmNamePatchRequest } from "@/apis/LlmsApi.ts";
+import type { AddLlmApiV1LlmsLlmPostRequest, DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest, GetVendorDescApiV1LlmsVendorVendorNameGetRequest, UpdateLlmApiV1LlmsLlmLlmNamePatchRequest } from "@/apis/LlmsApi.ts";
 import type { LlmCreate } from "@/models/index.ts";
+import { transformParams } from "@/apis/DescSpec.ts";
 import { LlmApi } from "@/apis/api.ts";
 import type { LlmInfo } from "@/models";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
 
 let llmStore = useLlmStore();
+let vendor_info = ref();
 
 const props = defineProps<{
   create: boolean;
@@ -56,7 +68,7 @@ let llm_model = ref({
 
 onMounted(async () => {
   vendors.value = await LlmApi.listVendorsApiV1LlmsVendorsGet();
-  change_model()
+  change_model();
 });
 
 watch(() => props.data, () => {
@@ -114,6 +126,13 @@ function update() {
     console.log("updated " + llm_model.value.name);
     llmStore.updateLlm(llm_model.value);
   });
+}
+
+async function getInfo(value: string) {
+  let name: GetVendorDescApiV1LlmsVendorVendorNameGetRequest = {
+    vendorName: value
+  }
+  vendor_info.value = transformParams(Object.values(await LlmApi.getVendorDescApiV1LlmsVendorVendorNameGet(name))[1]);
 }
 
 </script>
