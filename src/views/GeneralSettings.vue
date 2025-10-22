@@ -24,6 +24,8 @@
 import Crud from '@/components/Crud.vue';
 import EmbCreate from '@/components/emb/embCreate.vue';
 import EmbList from '@/components/emb/embList.vue';
+import IndCreate from '@/components/index/IndCreate.vue';
+import IndkList from '@/components/index/IndkList.vue';
 import LlmCreate from '@/components/llm/LlmCreate.vue';
 import LlmList from '@/components/llm/LlmList.vue';
 import RankCreate from '@/components/rank/RankCreate.vue';
@@ -34,5 +36,6 @@ const tabs = ref([
     { title: 'LLM', list: LlmList, create: LlmCreate, value: '0' },
     { title: 'Embeddings', list: EmbList, create: EmbCreate, value: '1' },
     { title: 'Reranking', list: RankList, create: RankCreate, value: '2' },
+    { title: 'Index', list: IndkList, create: IndCreate, value: '3' },
 ]);
 </script>
