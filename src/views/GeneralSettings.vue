@@ -20,7 +20,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Crud from '@/components/Crud.vue';
 import EmbCreate from '@/components/emb/embCreate.vue';
 import EmbList from '@/components/emb/embList.vue';
