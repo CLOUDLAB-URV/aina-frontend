@@ -95,8 +95,8 @@ function sendCreate() {
     llmCreate: create,
   };
   LlmApi.addLlmApiV1LlmsLlmPost(createParam).then(() => {
-    console.log("created " + llm_model.value.name);
-    llmStore.addLlm(llm_model.value);
+    // console.log(create);
+    llmStore.addLlm(create);
   });
 }
 
@@ -124,7 +124,13 @@ function update() {
   };
   LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm).then(() => {
     console.log("updated " + llm_model.value.name);
-    llmStore.updateLlm(llm_model.value);
+    let change = {
+      name: llm_model.value.name,
+      _default: llm_model.value.default,
+      vendorName: llm_model.value.vendor,
+      spec: JSON.parse(llm_model.value.spec),
+    }
+    llmStore.updateLlm(change);
   });
 }
 

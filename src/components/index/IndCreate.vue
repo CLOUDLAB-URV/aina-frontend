@@ -35,7 +35,7 @@
 import { onMounted, ref, watch } from "vue";
 import { useIndStore } from "@/stores/ind";
 import { IndApi } from "@/apis/api.ts";
-import type { IndexInfo } from "@/models";
+import type { IndexInfo, IndexInfoToJSONTyped } from "@/models";
 import type { CreateIndexApiV1IndexPostRequest, DeleteIndexApiV1IndexIndexIndexIdDeleteRequest, UpdateIndexApiV1IndexIndexIndexIdPatchRequest } from "@/apis/IndexApi.ts";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
 // import type { Config } from "primevue";
@@ -87,7 +87,13 @@ function sendCreate() {
   };
   IndApi.createIndexApiV1IndexPost(createParam).then(() => {
     console.log("created " + model.value.name);
-    indStore.addInd(model.value);
+    let create = {
+      name: model.value.name,
+      id: model.value.id,
+      indexType: model.value.indexType,
+      config: JSON.parse(model.value.config),
+    }
+    indStore.addInd(create);
   });
 }
 
@@ -113,7 +119,13 @@ function update() {
   };
   IndApi.updateIndexApiV1IndexIndexIndexIdPatch(index).then(() => {
     console.log("updated " + model.value.name);
-    indStore.updateInd(model.value);
+    let change = {
+      name: model.value.name,
+      id: model.value.id,
+      indexType: model.value.indexType,
+      config: JSON.parse(model.value.config),
+    }
+    indStore.updateInd(change);
   });
 }
 

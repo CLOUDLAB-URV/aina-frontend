@@ -95,7 +95,7 @@ function sendCreate() {
   };
   RankApi.addRerankingApiV1RerankingsRerankingPost(createParam).then(() => {
     console.log("created " + model.value.name);
-    rankStore.addRank(model.value);
+    rankStore.addRank(create);
   });
 }
 
@@ -120,8 +120,13 @@ function update() {
     body: JSON.parse(model.value.spec),
   };
   RankApi.updateRerankingApiV1RerankingsRerankingRerankingNamePatch(name_llm).then(() => {
-    console.log("updated " + model.value.name);
-    rankStore.updateRank(model.value);
+    let change = {
+      name: model.value.name,
+      _default: model.value.default,
+      vendorName: model.value.vendor,
+      spec: JSON.parse(model.value.spec),
+    }
+    rankStore.updateRank(change);
   });
 }
 

@@ -92,9 +92,10 @@ function sendCreate() {
   let createParam: AddEmbeddingApiV1EmbeddingsEmbeddingPostRequest = {
     embeddingCreate: create,
   };
-  EmbApi.addEmbeddingApiV1EmbeddingsEmbeddingPost(createParam).then(() => {
+  EmbApi.addEmbeddingApiV1EmbeddingsEmbeddingPost(createParam).then((data) => {
     console.log("created " + model.value.name);
-    embStore.addEmb(model.value);
+    console.log(data)
+    embStore.addEmb(create);
   });
 }
 
@@ -120,7 +121,13 @@ function update() {
   };
   EmbApi.updateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatch(name_llm).then(() => {
     console.log("updated " + model.value.name);
-    embStore.updateEmb(model.value);
+    let change = {
+      name: model.value.name,
+      _default: model.value.default,
+      vendorName: model.value.vendor,
+      spec: JSON.parse(model.value.spec),
+    }
+    embStore.updateEmb(change);
   });
 }
 
