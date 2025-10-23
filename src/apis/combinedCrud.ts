@@ -119,48 +119,42 @@ export async function createElement(type: String, model: any) {
   }
 }
 
-export function deleteElement(type: String, model: any) {
+export async function deleteElement(type: String, model: any) {
   if (type == "llm") {
     console.log("delete");
     let llmStore = useLlmStore();
     let name_llm: DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest = {
       llmName: model.name,
     };
-    LlmApi.deleteLlmApiV1LlmsLlmLlmNameDelete(name_llm).then(() => {
-      console.log("deleted " + model.name);
-      llmStore.removeLlm(model);
-      //   emits("deselect");
-    });
-    console.log("deleted " + model.name);
+    await LlmApi.deleteLlmApiV1LlmsLlmLlmNameDelete(name_llm);
+    llmStore.removeLlm(model);
+    return "deselect";
   } else if (type == "emb") {
     const embStore = useEmbStore();
     let name_llm: DeleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDeleteRequest =
       {
         embeddingName: model.name,
       };
-    EmbApi.deleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDelete(
+    await EmbApi.deleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDelete(
       name_llm
-    ).then(() => {
-      console.log("deleted " + model.name);
-      embStore.removeEmb(model);
-      //   emits("deselect");
-    });
+    );
     console.log("deleted " + model.name);
+    embStore.removeEmb(model);
+    return "deselect";
   } else if (type == "rank") {
     const rankStore = useRankStore();
     let name_llm: DeleteRerankingApiV1RerankingsRerankingRerankingNameDeleteRequest =
       {
         rerankingName: model.name,
       };
-    RankApi.deleteRerankingApiV1RerankingsRerankingRerankingNameDelete(
+    await RankApi.deleteRerankingApiV1RerankingsRerankingRerankingNameDelete(
       name_llm
-    ).then(() => {
-      console.log("deleted " + model.name);
-      rankStore.removeRank(model);
-      //   emits("deselect");
-    });
+    );
     console.log("deleted " + model.name);
+    rankStore.removeRank(model);
+    return "deselect";
   }
+  return "wrong";
 }
 
 export function updateElement(type: String, model: any) {
