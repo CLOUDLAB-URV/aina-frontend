@@ -6,12 +6,12 @@
             </TabList>
             <TabPanels>
                 <TabPanel v-for="tab in tabs" :key="tab.title" :value="tab.value">
-                    <Crud :title="tab.title">
+                    <Crud :title="tab.title" :type="tab.type">
                         <template #list>
-                            <component :is="tab.list" />
+                            <component :is="tab.list" :create="false" :type="tab.type" :store="tab.store" />
                         </template>
                         <template #create>
-                            <component :is="tab.create" :create="true" />
+                            <component :is="tab.create" :create="true" :type="tab.type" />
                         </template>
                     </Crud>
                 </TabPanel>
@@ -22,20 +22,19 @@
 
 <script setup lang="ts">
 import Crud from '@/components/Crud.vue';
-import EmbCreate from '@/components/emb/embCreate.vue';
-import EmbList from '@/components/emb/embList.vue';
 import IndCreate from '@/components/index/IndCreate.vue';
 import IndkList from '@/components/index/IndkList.vue';
 import LlmCreate from '@/components/llm/LlmCreate.vue';
 import LlmList from '@/components/llm/LlmList.vue';
-import RankCreate from '@/components/rank/RankCreate.vue';
-import RankList from '@/components/rank/RankList.vue';
+import { useEmbStore } from '@/stores/emb';
+import { useLlmStore } from '@/stores/llm';
+import { useRankStore } from '@/stores/rank';
 import { ref } from 'vue';
 
 const tabs = ref([
-    { title: 'LLM', list: LlmList, create: LlmCreate, value: '0' },
-    { title: 'Embeddings', list: EmbList, create: EmbCreate, value: '1' },
-    { title: 'Reranking', list: RankList, create: RankCreate, value: '2' },
-    { title: 'Index', list: IndkList, create: IndCreate, value: '3' },
+    { title: 'LLM', list: LlmList, create: LlmCreate, value: '0', type: 'llm', store: useLlmStore() },
+    { title: 'Embeddings', list: LlmList, create: LlmCreate, value: '1', type: 'emb', store: useEmbStore() },
+    { title: 'Reranking', list: LlmList, create: LlmCreate, value: '2', type: 'rank', store: useRankStore() },
+    { title: 'Index', list: IndkList, create: IndCreate, value: '3', type: 'none' },
 ]);
 </script>

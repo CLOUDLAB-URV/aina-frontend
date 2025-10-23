@@ -35,7 +35,7 @@
 import { onMounted, ref, watch } from "vue";
 import { useIndStore } from "@/stores/ind";
 import { IndApi } from "@/apis/api.ts";
-import type { IndexInfo, IndexInfoToJSONTyped } from "@/models";
+import type { IndexInfo } from "@/models";
 import type { CreateIndexApiV1IndexPostRequest, DeleteIndexApiV1IndexIndexIndexIdDeleteRequest, UpdateIndexApiV1IndexIndexIndexIdPatchRequest } from "@/apis/IndexApi.ts";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
 // import type { Config } from "primevue";

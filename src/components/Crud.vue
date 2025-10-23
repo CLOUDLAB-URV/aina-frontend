@@ -20,5 +20,6 @@
 <script setup lang="ts">
 defineProps({
     title: String,
+    type: { type: String, required: true },
 })
 </script>

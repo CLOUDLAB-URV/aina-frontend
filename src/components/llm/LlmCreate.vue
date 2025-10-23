@@ -7,7 +7,7 @@
 
     <div class="flex gap-2">
       <label for="default">Default</label>
-      <Checkbox id="default" binary v-model="llm_model.default" />
+      <Checkbox id="default" binary v-model="llm_model._default" />
     </div>
 
     <div class="flex flex-col gap-2">
@@ -17,13 +17,12 @@
 
     <div class="flex flex-col gap-2">
       <label for="vendorName">VendorName</label>
-      <select v-model="llm_model.vendor" @click.prevent="getInfo(llm_model.vendor)"
+      <select v-model="llm_model.vendorName" @click.prevent="getInfo(llm_model.vendorName)"
         class="border p-2 rounded-xl border-[var(--surface-border)]">
         <option disabled value="">Please select one</option>
         <option v-for="vendor in vendors" :value="vendor">{{ vendor }}</option>
       </select>
     </div>
-
     <ButtonsCrud :create="create" @createElement="sendCreate" @updateElement="update" @deleteElement="delete_element" />
   </form>
   <section class="mt-8">
@@ -38,22 +37,18 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
-import { useLlmStore } from "@/stores/llm";
-import type { AddLlmApiV1LlmsLlmPostRequest, DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest, GetVendorDescApiV1LlmsVendorVendorNameGetRequest, UpdateLlmApiV1LlmsLlmLlmNamePatchRequest } from "@/apis/LlmsApi.ts";
-import type { LlmCreate } from "@/models/index.ts";
-import { transformParams } from "@/apis/DescSpec.ts";
-import { LlmApi } from "@/apis/api.ts";
-import type { LlmInfo } from "@/models";
+import { mountVendors, createElement, updateElement, deleteElement, getInformation } from '@/apis/combinedCrud';
+import { onMounted, ref, watch, type PropType } from "vue";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
+import type { LlmInfo } from "@/models";
 
-let llmStore = useLlmStore();
 let vendor_info = ref();
 
-const props = defineProps<{
-  create: boolean;
-  data?: LlmInfo;
-}>();
+const props = defineProps({
+  create: { type: Boolean, required: true },
+  data: Object as PropType<LlmInfo>,
+  type: { type: String, required: true }
+});
 
 
 const emits = defineEmits(['deselect']);
@@ -61,84 +56,44 @@ const emits = defineEmits(['deselect']);
 let vendors = ref<any[]>([]);
 let llm_model = ref({
   name: "",
-  default: false,
+  _default: false,
   spec: "",
-  vendor: "",
+  vendorName: "",
 })
 
 onMounted(async () => {
-  vendors.value = await LlmApi.listVendorsApiV1LlmsVendorsGet();
+  vendors.value = await mountVendors(props.type);
   change_model();
 });
 
-watch(() => props.data, () => {
+watch(() => props.data, async () => {
+  vendors.value = await mountVendors(props.type);
   change_model();
 });
 
 
 function change_model() {
   llm_model.value.name = props.data?.name ?? "";
-  llm_model.value.default = props.data?._default ?? false;
+  llm_model.value._default = props.data?._default ?? false;
   llm_model.value.spec = JSON.stringify(props.data?.spec) ?? "";
-  llm_model.value.vendor = props.data?.vendorName ?? "";
+  llm_model.value.vendorName = props.data?.vendorName ?? "";
   return llm_model;
 }
 
 function sendCreate() {
-  let create: LlmCreate = {
-    name: llm_model.value.name,
-    _default: llm_model.value.default,
-    vendorName: llm_model.value.vendor,
-    spec: JSON.parse(llm_model.value.spec),
-  };
-  let createParam: AddLlmApiV1LlmsLlmPostRequest = {
-    llmCreate: create,
-  };
-  LlmApi.addLlmApiV1LlmsLlmPost(createParam).then(() => {
-    // console.log(create);
-    llmStore.addLlm(create);
-  });
+  createElement(props.type, llm_model.value);
 }
 
 function delete_element() {
-  console.log("delete");
-  let llmStore = useLlmStore();
-  let name_llm: DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest = {
-    llmName: llm_model.value.name,
-  };
-  LlmApi.deleteLlmApiV1LlmsLlmLlmNameDelete(name_llm).then(() => {
-    console.log("deleted " + llm_model.value.name);
-    llmStore.removeLlm(llm_model.value);
-    emits('deselect');
-  });
-  console.log("deleted " + llm_model.value.name);
+  deleteElement(props.type, llm_model.value);
 }
 
 function update() {
-  console.log("update");
-  let llmStore = useLlmStore();
-  let name_llm: UpdateLlmApiV1LlmsLlmLlmNamePatchRequest = {
-    llmName: llm_model.value.name,
-    _default: llm_model.value.default,
-    body: JSON.parse(llm_model.value.spec),
-  };
-  LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm).then(() => {
-    console.log("updated " + llm_model.value.name);
-    let change = {
-      name: llm_model.value.name,
-      _default: llm_model.value.default,
-      vendorName: llm_model.value.vendor,
-      spec: JSON.parse(llm_model.value.spec),
-    }
-    llmStore.updateLlm(change);
-  });
+  updateElement(props.type, llm_model.value);
 }
 
 async function getInfo(value: string) {
-  let name: GetVendorDescApiV1LlmsVendorVendorNameGetRequest = {
-    vendorName: value
-  }
-  vendor_info.value = transformParams(Object.values(await LlmApi.getVendorDescApiV1LlmsVendorVendorNameGet(name))[1]);
+  vendor_info.value = await getInformation(props.type, value);
 }
 
 </script>

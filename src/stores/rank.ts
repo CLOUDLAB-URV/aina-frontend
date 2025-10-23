@@ -2,24 +2,26 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 
 export const useRankStore = defineStore("rank", () => {
-  const ranks = ref<any[]>([]);
+  const data = ref<any[]>([]);
 
   const addRank = (rank: any) => {
-    ranks.value.find((item: any) => item.name === rank.name);
-    ranks.value.push(rank);
-  }
+    data.value.find((item: any) => item.name === rank.name);
+    data.value.push(rank);
+  };
 
   const removeRank = (rank: any) => {
-    let filtered = ranks.value.filter((element: any) => element.name !== rank.name);
-    ranks.value = filtered;
-  }
+    let filtered = data.value.filter(
+      (element: any) => element.name !== rank.name
+    );
+    data.value = filtered;
+  };
 
   const updateRank = (rank: any) => {
-    let index = ranks.value.findIndex((item: any) => item.name === rank.name);
+    let index = data.value.findIndex((item: any) => item.name === rank.name);
     if (index !== -1) {
-      ranks.value[index] = rank;
+      data.value[index] = rank;
     }
-  }
+  };
 
-  return { ranks, addRank, removeRank, updateRank };
+  return { data, addRank, removeRank, updateRank };
 });

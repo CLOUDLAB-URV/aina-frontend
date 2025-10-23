@@ -1,31 +1,38 @@
 <template>
-    <DataTable :value="llmStore.llms" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem"
-        @row-click="madeClick">
+    <DataTable :value="store?.data" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
+        tableStyle="min-width: 50rem" @row-click="madeClick">
         <Column field="name" header="Name" style="width: 10%"></Column>
         <Column field="spec" header="Specifications" style="width: 65%"></Column>
         <Column field="_default" header="Default" style="width: 10%"></Column>
         <Column field="vendorName" header="Vendor Name" style="width: 15%"></Column>
     </DataTable>
     <section v-if="data_selected">
-        <LlmCreate :create="false" class="mt-4" :data="data_selected" @deselect="data_selected = null" />
+        <LlmCreate :create="false" class="mt-4" :data="data_selected" @deselect="data_selected = null"
+            :type="props.type" />
     </section>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { LlmApi } from '@/apis/api';
 import LlmCreate from '@/components/llm/LlmCreate.vue';
-import { useLlmStore } from '@/stores/llm';
+import { mount } from '@/apis/combinedCrud';
 
-const llmStore = useLlmStore();
+const props = defineProps(
+    {
+        type: { type: String, required: true },
+        store: {
+            type: Object,
+        }
+    }
+)
+
+onMounted(async () => {
+    console.log(props.type);
+    await mount(props.type);
+})
 
 let data_selected = ref();
 
-onMounted(async () => {
-    let data = await LlmApi.listLlmsApiV1LlmsGet();
-    console.log(data);
-    llmStore.llms = Object.values(data);
-})
 
 function madeClick(value: any) {
     data_selected.value = value.data;
