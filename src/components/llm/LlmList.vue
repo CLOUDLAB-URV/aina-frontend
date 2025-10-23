@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="store?.data" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
+    <DataTable :value="store?.data" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
         tableStyle="min-width: 50rem" @row-click="madeClick">
         <Column field="name" header="Name" style="width: 10%"></Column>
         <Column field="spec" header="Specifications" style="width: 65%"></Column>
@@ -27,7 +27,6 @@ const props = defineProps(
 )
 
 onMounted(async () => {
-    console.log(props.type);
     await mount(props.type);
 })
 

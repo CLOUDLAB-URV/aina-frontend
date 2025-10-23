@@ -5,7 +5,6 @@ export const useLlmStore = defineStore("llm", () => {
   const data = ref<any[]>([]);
 
   const addLlm = (llm: any) => {
-    data.value.find((item: any) => item.name === llm.name);
     data.value.push(llm);
   };
 

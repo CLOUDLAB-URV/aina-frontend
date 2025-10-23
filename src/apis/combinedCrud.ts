@@ -2,11 +2,11 @@ import { LlmApi, EmbApi, RankApi } from "@/apis/api";
 import { useLlmStore } from "@/stores/llm";
 import { useEmbStore } from "@/stores/emb";
 import { useRankStore } from "@/stores/rank";
-import type {
-  AddLlmApiV1LlmsLlmPostRequest,
-  DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest,
-  UpdateLlmApiV1LlmsLlmLlmNamePatchRequest,
-  GetVendorDescApiV1LlmsVendorVendorNameGetRequest,
+import {
+  type AddLlmApiV1LlmsLlmPostRequest,
+  type DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest,
+  type UpdateLlmApiV1LlmsLlmLlmNamePatchRequest,
+  type GetVendorDescApiV1LlmsVendorVendorNameGetRequest,
 } from "@/apis/LlmsApi.ts";
 import type {
   GetEmbeddingVendorDescApiV1EmbeddingsVendorVendorNameGetRequest,
@@ -26,6 +26,7 @@ import type {
   RerankingCreate,
   EmbeddingCreate,
 } from "@/models/index.ts";
+import yaml from "js-yaml";
 
 export async function mount(type: String) {
   const llmStore = useLlmStore();
@@ -34,14 +35,27 @@ export async function mount(type: String) {
   let data;
   if (type == "llm") {
     data = await LlmApi.listLlmsApiV1LlmsGet();
-    llmStore.data = Object.values(data);
+    llmStore.data = parse_data(data);
   } else if (type == "emb") {
     data = await EmbApi.listEmbeddingsApiV1EmbeddingsGet();
-    embStore.data = Object.values(data);
+    embStore.data = parse_data(data);
   } else if (type == "rank") {
     data = await RankApi.listRerankingsApiV1RerankingsGet();
-    rankStore.data = Object.values(data);
+    rankStore.data = parse_data(data);
   }
+}
+
+function parse_data(data: any) {
+  return Object.values(data).map((llm: any) => {
+    let aux = {
+      name: llm.name,
+      _default: llm._default,
+      vendorName: llm.vendorName,
+      spec: "",
+    };
+    aux.spec = yaml.dump(llm.spec);
+    return aux;
+  });
 }
 
 export async function mountVendors(type: String) {
@@ -61,14 +75,14 @@ export async function createElement(type: String, model: any) {
       name: model.name,
       _default: model._default,
       vendorName: model.vendorName,
-      spec: JSON.parse(model.spec),
+      spec: yaml.load(model.spec) as object,
     };
     let createParam: AddLlmApiV1LlmsLlmPostRequest = {
       llmCreate: create,
     };
     await LlmApi.addLlmApiV1LlmsLlmPost(createParam).then(() => {
-      model.spec = JSON.stringify(model.spec);
-      llmStore.addLlm(create);
+      llmStore.addLlm(model);
+      console.log(llmStore.data);
     });
   } else if (type == "emb") {
     const embStore = useEmbStore();
@@ -76,15 +90,13 @@ export async function createElement(type: String, model: any) {
       name: model.name,
       _default: model._default,
       vendorName: model.vendorName,
-      spec: JSON.parse(model.spec),
+      spec: yaml.load(model.spec) as object,
     };
     let createParam: AddEmbeddingApiV1EmbeddingsEmbeddingPostRequest = {
       embeddingCreate: create,
     };
     await EmbApi.addEmbeddingApiV1EmbeddingsEmbeddingPost(createParam).then(
       () => {
-        console.log(model);
-        model.spec = JSON.stringify(model.spec);
         embStore.addEmb(model);
       }
     );
@@ -94,15 +106,13 @@ export async function createElement(type: String, model: any) {
       name: model.name,
       _default: model._default,
       vendorName: model.vendorName,
-      spec: JSON.parse(model.spec),
+      spec: yaml.load(model.spec) as any,
     };
     let createParam: AddRerankingApiV1RerankingsRerankingPostRequest = {
       rerankingCreate: create,
     };
     await RankApi.addRerankingApiV1RerankingsRerankingPost(createParam).then(
       () => {
-        console.log("created " + model.name);
-        model.spec = JSON.stringify(model.spec);
         rankStore.addRank(model);
       }
     );
@@ -159,17 +169,15 @@ export function updateElement(type: String, model: any) {
     let name_llm: UpdateLlmApiV1LlmsLlmLlmNamePatchRequest = {
       llmName: model.name,
       _default: model._default,
-      body: JSON.parse(model.spec),
+      body: yaml.load(model.spec) as Object,
     };
     LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm).then(() => {
-      console.log("updated " + model.name);
-      let change = {
+      llmStore.updateLlm({
         name: model.name,
         _default: model._default,
         vendorName: model.vendorName,
-        spec: JSON.parse(model.spec),
-      };
-      llmStore.updateLlm(change);
+        spec: model.spec,
+      });
     });
   } else if (type == "emb") {
     const embStore = useEmbStore();
@@ -177,7 +185,7 @@ export function updateElement(type: String, model: any) {
       {
         embeddingName: model.name,
         _default: model._default,
-        body: JSON.parse(model.spec),
+        body: yaml.load(model.spec) as Object,
       };
     EmbApi.updateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatch(
       name_llm
@@ -191,7 +199,7 @@ export function updateElement(type: String, model: any) {
       {
         rerankingName: model.name,
         _default: model._default,
-        body: JSON.parse(model.spec),
+        body: yaml.load(model.spec) as any,
       };
     RankApi.updateRerankingApiV1RerankingsRerankingRerankingNamePatch(
       name_llm

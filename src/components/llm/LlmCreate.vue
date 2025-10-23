@@ -38,15 +38,14 @@
 
 <script setup lang="ts">
 import { mountVendors, createElement, updateElement, deleteElement, getInformation } from '@/apis/combinedCrud';
-import { onMounted, ref, watch, type PropType } from "vue";
+import { onMounted, ref, watch } from "vue";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
-import type { LlmInfo } from "@/models";
 
 let vendor_info = ref();
 
 const props = defineProps({
   create: { type: Boolean, required: true },
-  data: Object as PropType<LlmInfo>,
+  data: Object,
   type: { type: String, required: true }
 });
 
@@ -75,7 +74,7 @@ watch(() => props.data, async () => {
 function change_model() {
   llm_model.value.name = props.data?.name ?? "";
   llm_model.value._default = props.data?._default ?? false;
-  llm_model.value.spec = JSON.stringify(props.data?.spec) ?? "";
+  llm_model.value.spec = props.data?.spec ?? "";
   llm_model.value.vendorName = props.data?.vendorName ?? "";
   return llm_model;
 }
