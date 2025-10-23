@@ -5,7 +5,6 @@ export const useIndStore = defineStore("Ind", () => {
   const ind = ref<any[]>([]);
 
   const addInd = (Ind: any) => {
-    ind.value.find((item: any) => item.name === Ind.name);
     ind.value.push(Ind);
   };
 

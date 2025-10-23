@@ -14,8 +14,8 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="spec">Specifications</label>
-      <textarea v-model="model.config" id="spec" placeholder="Specifications" class="border p-2" />
+      <label for="spec">Configuration</label>
+      <textarea v-model="model.config" id="spec" placeholder="Configuration" class="border p-2" rows="10" />
     </div>
 
     <ButtonsCrud :create="create" @createElement="sendCreate" @updateElement="update" @deleteElement="delete_element" />
@@ -35,17 +35,20 @@
 import { onMounted, ref, watch } from "vue";
 import { useIndStore } from "@/stores/ind";
 import { IndApi } from "@/apis/api.ts";
-import type { IndexInfo } from "@/models";
 import type { CreateIndexApiV1IndexPostRequest, DeleteIndexApiV1IndexIndexIndexIdDeleteRequest, UpdateIndexApiV1IndexIndexIndexIdPatchRequest } from "@/apis/IndexApi.ts";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
-// import type { Config } from "primevue";
-// import { transformParams } from "@/apis/DescSpec.ts";
+import yaml from 'js-yaml';
 
 let indStore = useIndStore();
 
 const props = defineProps<{
   create: boolean;
-  data?: IndexInfo
+  data?: {
+    name: string
+    id: number,
+    config: any,
+    indexType: string
+  }
 }>();
 
 
@@ -74,7 +77,7 @@ function change_model() {
   console.log(props.data);
   model.value.name = props.data?.name ?? "";
   model.value.id = props.data?.id ?? -1;
-  model.value.config = JSON.stringify(props.data?.config) ?? "";
+  model.value.config = props.data?.config ?? "";
   model.value.indexType = props.data?.indexType ?? "";
   return model;
 }
@@ -83,17 +86,18 @@ function sendCreate() {
   let createParam: CreateIndexApiV1IndexPostRequest = {
     name: model.value.name,
     indexType: model.value.indexType,
-    body: JSON.parse(model.value.config),
+    body: yaml.load(model.value.config) as Object,
   };
-  IndApi.createIndexApiV1IndexPost(createParam).then(() => {
+  IndApi.createIndexApiV1IndexPost(createParam).then((res) => {
     console.log("created " + model.value.name);
-    let create = {
-      name: model.value.name,
-      id: model.value.id,
-      indexType: model.value.indexType,
-      config: JSON.parse(model.value.config),
-    }
-    indStore.addInd(create);
+    // let create = {
+    //   name: model.value.name,
+    //   id: model.value.id,
+    //   indexType: model.value.indexType,
+    //   config: model.value.config,
+    // }
+    model.value.id = res.id;
+    indStore.addInd(model.value);
   });
 }
 
@@ -115,17 +119,19 @@ function update() {
   let index: UpdateIndexApiV1IndexIndexIndexIdPatchRequest = {
     indexId: model.value.id,
     name: model.value.name,
-    body: JSON.parse(model.value.config),
+    body: yaml.load(model.value.config) as Object,
   };
   IndApi.updateIndexApiV1IndexIndexIndexIdPatch(index).then(() => {
     console.log("updated " + model.value.name);
-    let change = {
-      name: model.value.name,
-      id: model.value.id,
-      indexType: model.value.indexType,
-      config: JSON.parse(model.value.config),
-    }
-    indStore.updateInd(change);
+    // let change = {
+    //   name: model.value.name,
+    //   id: model.value.id,
+    //   indexType: model.value.indexType,
+    //   config: model.value.config,
+    // }\
+    // console.log(res)
+    // model.value.id = res.id;
+    indStore.updateInd(model.value);
   });
 }
 
@@ -137,3 +143,13 @@ function update() {
 // }
 
 </script>
+
+<style scoped>
+textarea {
+  padding: 1rem;
+  background-color: var(--p-inputtext-backgroundcolor);
+  border-radius: var(--p-inputtext-border-radius);
+  border-color: var(--p-inputtext-border-color);
+  -webkit-scrollbar: none;
+}
+</style>

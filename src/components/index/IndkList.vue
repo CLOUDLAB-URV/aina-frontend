@@ -16,16 +16,30 @@ import { onMounted, ref } from 'vue';
 import { IndApi } from '@/apis/api';
 import { useIndStore } from '@/stores/ind';
 import IndCreate from '@/components/index/IndCreate.vue';
+import yaml from 'js-yaml';
 
 const IndStore = useIndStore();
 
 let data_selected = ref();
 
 onMounted(async () => {
-    let data = await IndApi.listIndicesApiV1IndexGet();
+    let data = parse_data(await IndApi.listIndicesApiV1IndexGet());
     console.log(data);
     IndStore.ind = Object.values(data);
 })
+
+function parse_data(data: any) {
+    return Object.values(data).map((ind: any) => {
+        let aux = {
+            name: ind.name,
+            id: ind.id,
+            indexType: ind.indexType,
+            config: "",
+        };
+        aux.config = yaml.dump(ind.config);
+        return aux;
+    });
+}
 
 function madeClick(value: any) {
     data_selected.value = value.data;
