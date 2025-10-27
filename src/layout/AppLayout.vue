@@ -17,7 +17,7 @@ watch(isSidebarActive, (newVal) => {
 });
 
 const containerClass = computed(() => {
-    console.log('layoutConfig.menuMode', layoutState);
+    // console.log('layoutConfig.menuMode', layoutState);
     return {
         'layout-overlay': layoutConfig.menuMode === 'overlay',
         'layout-static': layoutConfig.menuMode === 'static',

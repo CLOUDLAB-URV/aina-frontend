@@ -1,6 +1,6 @@
 <template>
-    <div class="grid grid-cols-4 container gap-5">
-        <section class="file-list-container">
+    <div class="flex gap-2">
+        <section class="file-list-container flex flex-col w-1/4">
             <h3 class="mb-3 text-2xl">File Upload</h3>
             <UploadFiles />
             <p class="mb-4 mt-4">
@@ -9,7 +9,7 @@
             </p>
             <p>Maximum file size: 1000 MB</p>
         </section>
-        <section class="col-start-2 col-span-3 file-list-container">
+        <section class="col-start-2 col-span-3 file-list-container w-3/4">
             <h3 class="mb-3 text-2xl">File List</h3>
             <div>
                 <header>

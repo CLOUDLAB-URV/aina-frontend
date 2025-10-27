@@ -17,8 +17,9 @@ import Tab from "primevue/tab";
 import TabPanels from "primevue/tabpanels";
 import TabPanel from "primevue/tabpanel";
 import DataTable from "primevue/datatable";
-import Column from "primevue/column";
 import Checkbox from "primevue/checkbox";
+import Column from "primevue/column";
+import Dialog from 'primevue/dialog';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -63,5 +64,6 @@ app.component("TabPanels", TabPanels);
 app.component("DataTable", DataTable);
 app.component("Column", Column);
 app.component("Checkbox", Checkbox);
+app.component("Dialog", Dialog);
 app.use(pinia);
 app.mount("#app");

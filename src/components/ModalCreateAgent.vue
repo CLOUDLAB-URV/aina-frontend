@@ -1,0 +1,135 @@
+
+<template>
+    <div class="card flex justify-center">
+        <button v-if="create == 'create'" @click="visible = true" class="bg-green-200 hover:bg-green-400 p-2 flex flex-col justify-center rounded-lg">
+            <i class="pi pi-file-plus"></i>
+        </button>
+        <button v-if="create == 'trash'" @click="visible = true" class="bg-red-200 hover:bg-red-400 p-2 flex flex-col justify-center rounded-lg">
+            <i class="pi pi-trash"></i>
+        </button>
+        <button v-if="create == 'edit'" @click="visible = true" class="bg-blue-200 hover:bg-blue-400 p-2 flex flex-col justify-center rounded-lg">
+            <i class="pi pi-pencil"></i>
+        </button>
+        <Dialog v-model:visible="visible" modal header="Create an Agent" :style="{ width: '40rem' }">
+            <div class="flex items-center gap-4 mb-4">
+                <label for="name" class="font-semibold w-24">Name</label>
+                <InputText v-model="agent.name" id="name" class="flex-auto" autocomplete="off" />
+            </div>
+            <div class="flex items-center gap-4 mb-2">
+                <label for="desc" class="font-semibold w-24">Description</label>
+                <textarea v-model="agent.description" id="desc" class="flex-auto border border-gray-200 p-2" autocomplete="off"  />
+            </div>
+            <div class="flex items-center gap-4 mb-2">
+                <label for="modelName" class="font-semibold w-24">ModelName</label>
+                <InputText v-model="agent.modelName" id="modelName" class="flex-auto" autocomplete="off" />
+            </div>            
+            <div class="flex items-center gap-4 mb-2">
+                <label for="indexId" class="font-semibold w-24">IndexId</label>
+                <input type="number" v-model="agent.indexId" id="indexId" class="flex-auto" autocomplete="off" />
+            </div>            
+            <template #footer>
+                <Button label="Cancel" text severity="secondary" @click="visible = false" autofocus />
+                <Button v-if="create == 'create'" label="Create" variant="outlined" severity="secondary" @click="createAgent" autofocus />
+                <Button v-if="create == 'trash'" label="Delete" variant="outlined" severity="secondary" @click="deleteAgent" autofocus />
+                <Button v-if="create == 'edit'" label="Edit" variant="outlined" severity="secondary" @click="updateAgent" autofocus />
+            </template>
+        </Dialog>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch ,onMounted} from 'vue';
+// import type { AgentCreate } from '@/models/AgentCreate.ts';
+import type { AgentUpdate } from '@/models/AgentUpdate.ts';
+import { AgApi } from "@/apis/api";
+import type { AddAgentApiV1AgentsPostRequest,UpdateAgentApiV1AgentsAgentIdPatchRequest,DeleteAgentApiV1AgentsAgentIdDeleteRequest } from "@/apis";
+import type { AgentCreate } from '@/models';
+import { useAgentStore } from '@/stores/agent';
+
+const store = useAgentStore();
+const props = defineProps({
+  create: { type: String, required: true },
+  data: Object,
+});
+
+const visible = ref(false);
+
+let agent = ref({
+  name: "",
+  description: "",
+  indexId: 0,
+  modelName: "",
+  id: ""
+})
+
+onMounted(async () => {
+    console.log(props.data)
+  change_model();
+});
+
+watch(() => props.data, async () => {
+    console.log(props.data)
+  change_model();
+});
+
+
+function change_model() {
+  agent.value.name = props.data?.name ?? "";
+  agent.value.description = props.data?.description ?? "";
+  agent.value.indexId = props.data?.indexId ?? 0;
+  agent.value.modelName = props.data?.modelName ?? "";
+  agent.value.id = props.data?.id ?? "";
+}
+
+async function createAgent() {
+    console.log(agent.value);
+    let agentCreate : AgentCreate = {
+        name : agent.value.name,
+        description :  agent.value.description,
+        indexId : agent.value.indexId,
+        modelName : agent.value.modelName,
+    }
+    let info: AddAgentApiV1AgentsPostRequest = { agentCreate: agentCreate};
+    await AgApi.addAgentApiV1AgentsPost(info).then(
+        async (res) => {
+            let updateData : AgentUpdate = {
+                indexId : agent.value.indexId,
+                modelName : agent.value.modelName
+            }
+            let update : UpdateAgentApiV1AgentsAgentIdPatchRequest = {
+                agentId : res.id,
+                agentUpdate : updateData
+            }
+            await AgApi.updateAgentApiV1AgentsAgentIdPatch(update).then((res)=>{
+                visible.value = false;
+                store.data.push(res)
+            })
+        }
+    );
+}
+async function updateAgent(){
+    let updateData : AgentUpdate = {
+        indexId : agent.value.indexId,
+        modelName : agent.value.modelName,
+        name:agent.value.name,
+        description:agent.value.description
+    }
+    let update : UpdateAgentApiV1AgentsAgentIdPatchRequest = {
+        agentId : agent.value.id,
+        agentUpdate : updateData
+    }
+    await AgApi.updateAgentApiV1AgentsAgentIdPatch(update).then(()=>{
+        visible.value = false;
+    })
+}
+async function deleteAgent(){
+    let deleteData : DeleteAgentApiV1AgentsAgentIdDeleteRequest = {
+        agentId : agent.value.id,
+    }
+    await AgApi.deleteAgentApiV1AgentsAgentIdDelete(deleteData).then(()=>{
+        visible.value = false;
+        store.removeAgent(agent.value.id);
+    })
+}
+
+</script>
