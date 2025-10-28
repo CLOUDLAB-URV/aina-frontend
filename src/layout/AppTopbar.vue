@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'vue-router';
+import {ref} from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import logo from '@/assets/vue.svg';
 import { useAuthStore } from '@/stores/auth';
@@ -8,6 +9,7 @@ import { useAuthStore } from '@/stores/auth';
 const { onMenuToggle } = useLayout();
 const router = useRouter();
 const authStore = useAuthStore()
+let dark = ref(false);
 
 function logIn() {
     router.push('/login');
@@ -20,6 +22,13 @@ async function logOut() {
     // await signOut();
     router.push('/login');
 }
+
+
+function toggleDarkMode() {
+    document.documentElement.classList.toggle('app-dark');
+    dark.value = !dark.value;
+}
+
 </script>
 
 <template>
@@ -43,6 +52,11 @@ async function logOut() {
                 </div>
                 <Button v-if="!authStore.signedIn" @click="logIn" label="Log in" icon="pi pi-sign-in" text></Button>
             </div>
+            <!-- <Button label="Toggle Dark Mode" @click="toggleDarkMode()" /> -->
+            <button @click="toggleDarkMode()">
+                <i class="pi pi-moon" v-if="!dark"></i>
+                <i class="pi pi-sun" v-if="dark"></i>
+            </button>
         </div>
     </div>
 </template>
