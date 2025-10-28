@@ -36,4 +36,8 @@ watch(()=> store.data,()=>{
 button{
     border-radius: var(--p-button-border-radius);
 }
+select{
+ background-color: var(--p-inputtext-background);
+ border-radius: var(--p-button-border-radius);
+}
 </style>

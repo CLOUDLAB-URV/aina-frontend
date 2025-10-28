@@ -1,7 +1,7 @@
 <template>
     <div class="card">
         <Tabs value="0">
-            <TabList>
+            <TabList class="tab-container">
                 <Tab v-for="tab in tabs" :key="tab.title" :value="tab.value">{{ tab.title }}</Tab>
             </TabList>
             <TabPanels>
@@ -38,3 +38,9 @@ const tabs = ref([
     { title: 'Index', list: IndkList, create: IndCreate, value: '3', type: 'none' },
 ]);
 </script>
+<style scoped>
+.tab-container{
+    border-top-left-radius:var(--content-border-radius) ;
+    border-top-right-radius:var(--content-border-radius) ;
+}
+</style>

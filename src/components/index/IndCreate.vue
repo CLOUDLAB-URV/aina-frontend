@@ -152,4 +152,8 @@ textarea {
   border-color: var(--p-inputtext-border-color);
   -webkit-scrollbar: none;
 }
+select{
+ background-color: var(--p-inputtext-background);
+ border-radius: var(--p-button-border-radius);
+}
 </style>

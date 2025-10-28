@@ -15,10 +15,12 @@ import AgentSelect from '@/components/AgentSelect.vue';
 </script>
 <style scoped>
 .prompt-container,input{
+    background-color: var(--surface-overlay);
     /* border: 1px solid var(--p-inputtext-border-color); */
-    border :1px solid black;
-    /* border-radius: var(--p-inputtext-border-radius); */
+    border-radius: var(--p-inputtext-border-radius);
     border-radius: 1rem;
 }
-
+input{
+    border: 1px solid var(--p-inputtext-border-color);
+}
 </style>

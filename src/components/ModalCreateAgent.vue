@@ -1,13 +1,13 @@
 
 <template>
     <div class="card flex justify-center">
-        <button v-if="create == 'create'" @click="visible = true" class="bg-green-200 hover:bg-green-400 p-2 flex flex-col justify-center rounded-lg">
+        <button v-if="create == 'create'" @click="visible = true" class="bg-green-400 hover:bg-green-600 p-2 flex flex-col justify-center rounded-lg" id="btn-create">
             <i class="pi pi-file-plus"></i>
         </button>
-        <button v-if="create == 'trash'" @click="visible = true" class="bg-red-200 hover:bg-red-400 p-2 flex flex-col justify-center rounded-lg">
+        <button v-if="create == 'trash'" @click="visible = true" class="bg-red-400 hover:bg-red-400 p-2 flex flex-col justify-center rounded-lg" id="btn-delete">
             <i class="pi pi-trash"></i>
         </button>
-        <button v-if="create == 'edit'" @click="visible = true" class="bg-blue-200 hover:bg-blue-400 p-2 flex flex-col justify-center rounded-lg">
+        <button v-if="create == 'edit'" @click="visible = true" class="bg-blue-400 hover:bg-blue-400 p-2 flex flex-col justify-center rounded-lg" id="btn-edit">
             <i class="pi pi-pencil"></i>
         </button>
         <Dialog v-model:visible="visible" modal header="Create an Agent" :style="{ width: '40rem' }">
@@ -133,3 +133,18 @@ async function deleteAgent(){
 }
 
 </script>
+<style scoped>
+#btn-create,#btn-edit,#btn-delete{
+    transition: box-shadow 0.2s ease-in-out;
+}
+#btn-create:hover{
+    box-shadow: 0px 0px 16px var(--color-green-400);
+}
+#btn-edit:hover{
+    box-shadow: 0px 0px 16px var(--color-blue-400);
+}
+#btn-delete:hover{
+    box-shadow: 0px 0px 16px var(--color-red-400);
+}
+
+</style>
