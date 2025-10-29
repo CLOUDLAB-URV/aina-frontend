@@ -24,23 +24,64 @@ import Dialog from 'primevue/dialog';
 const app = createApp(App);
 const pinia = createPinia();
 app.use(router);
+app.use(ToastService);
 
 const MyPreset = definePreset(Aura, {
   semantic: {
-    primary: {
-      50: "{cyan.50}",
-      100: "{cyan.100}",
-      200: "{cyan.200}",
-      300: "{cyan.300}",
-      400: "{cyan.400}",
-      500: "{cyan.500}",
-      600: "{cyan.600}",
-      700: "{cyan.700}",
-      800: "{cyan.800}",
-      900: "{cyan.900}",
-      950: "{cyan.950}",
-    },
-  },
+    colorScheme: {
+        light: {
+          primary: {
+                  50: "{cyan.50}",
+                  100: "{cyan.100}",
+                  200: "{cyan.200}",
+                  300: "{cyan.300}",
+                  400: "{cyan.400}",
+                  500: "{cyan.500}",
+                  600: "{cyan.600}",
+                  700: "{cyan.700}",
+                  800: "{cyan.800}",
+                  900: "{cyan.900}",
+                  950: "{cyan.950}",
+                },
+        },
+        dark: {
+            overlay:{
+              popover:{
+                background:'{gray.900}'
+              }
+            },
+            content:{
+              hover:{
+                background:'{gray.700}'
+              },
+              background:'{gray.900}'
+            },
+            primary:{
+              color:"{cyan.400}"
+            },
+            surface:{
+              // 50: "{cyan.50}",
+              100: "{gray.600}",
+              // 200: "{cyan.200}",
+              // 300: "{cyan.300}",
+              // 400: "{cyan.400}",
+              // 500: "{cyan.500}",
+              // 600: "{cyan.600}",
+              // 700: "{cyan.700}",
+              // 800: "{cyan.800}",
+              // 900: "{cyan.900}",
+              950: "{gray.700}",
+            },
+            datable:{
+              row:{
+                striped:{
+                  background:'{gray.900}'
+                }
+              }
+            }
+        }
+      }
+  }
 });
 
 app.use(PrimeVue, {
@@ -51,6 +92,7 @@ app.use(PrimeVue, {
     },
   },
 });
+
 app.use(ToastService);
 app.component("Toast", Toast);
 app.component("Button", Button);
