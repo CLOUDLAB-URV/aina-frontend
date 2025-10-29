@@ -32,6 +32,10 @@
             </section>
         </section>
     </div>
+    <section class="file-list-container mt-2">
+        <h3 class="mb-3 text-2xl">LogInfo Indexing Files</h3>
+        <p v-for="file in fileStore.data" class="mb-2">{{ file }}</p>
+    </section>
 </template>
 
 <script setup lang="ts">
@@ -39,9 +43,11 @@ import UploadFiles from '@/components/UploadFiles.vue';
 import { onMounted, ref } from 'vue';
 import { IndApi } from '@/apis/api';
 import type { ListFilesApiV1IndexIndexIndexIdFilesGetRequest } from '@/apis/IndexApi';
+import { useFilesStore } from '@/stores/file';
 
 let data_selected = ref();
 let data = ref();
+const fileStore = useFilesStore()
 
 onMounted(async () => {
     let index: ListFilesApiV1IndexIndexIndexIdFilesGetRequest = {
