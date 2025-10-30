@@ -34,6 +34,11 @@ export interface ChatWithAgentApiV1ChatAgentIdConversationIdPostRequest {
     chatRequest: ChatRequest;
 }
 
+export interface SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest {
+    agentId: string;
+    conversationId: string;
+}
+
 /**
  * 
  */
@@ -98,6 +103,62 @@ export class ChatApi extends runtime.BaseAPI {
      */
     async chatWithAgentApiV1ChatAgentIdConversationIdPost(requestParameters: ChatWithAgentApiV1ChatAgentIdConversationIdPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.chatWithAgentApiV1ChatAgentIdConversationIdPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Select data sources for a specific conversation.
+     * Select Conversation
+     */
+    async selectConversationApiV1ChatAgentIdConversationIdSelectPostRaw(requestParameters: SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters['agentId'] == null) {
+            throw new runtime.RequiredError(
+                'agentId',
+                'Required parameter "agentId" was null or undefined when calling selectConversationApiV1ChatAgentIdConversationIdSelectPost().'
+            );
+        }
+
+        if (requestParameters['conversationId'] == null) {
+            throw new runtime.RequiredError(
+                'conversationId',
+                'Required parameter "conversationId" was null or undefined when calling selectConversationApiV1ChatAgentIdConversationIdSelectPost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/chat/{agent_id}/{conversation_id}/select`;
+        urlPath = urlPath.replace(`{${"agent_id"}}`, encodeURIComponent(String(requestParameters['agentId'])));
+        urlPath = urlPath.replace(`{${"conversation_id"}}`, encodeURIComponent(String(requestParameters['conversationId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Select data sources for a specific conversation.
+     * Select Conversation
+     */
+    async selectConversationApiV1ChatAgentIdConversationIdSelectPost(requestParameters: SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.selectConversationApiV1ChatAgentIdConversationIdSelectPostRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
 }

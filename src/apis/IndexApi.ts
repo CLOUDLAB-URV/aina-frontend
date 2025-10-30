@@ -31,7 +31,7 @@ import {
 export interface CreateIndexApiV1IndexPostRequest {
     name: string;
     indexType: string;
-    body: object;
+    requestBody: { [key: string]: any; };
 }
 
 export interface DeleteIndexApiV1IndexIndexIndexIdDeleteRequest {
@@ -50,8 +50,7 @@ export interface GetIndexSettingsApiV1IndexIndexIndexIdSettingsGetRequest {
     indexId: number;
 }
 
-export interface IndexFilesApiV1IndexIndexIndexIdIndexFilesPostRequest {
-    indexId: number;
+export interface IndexFilesApiV1IndexIndexPostRequest {
     agentId: string;
     files: Array<Blob>;
     reindex?: boolean;
@@ -69,7 +68,7 @@ export interface ListGroupsApiV1IndexIndexIndexIdGroupsGetRequest {
 export interface UpdateIndexApiV1IndexIndexIndexIdPatchRequest {
     indexId: number;
     name?: string | null;
-    body?: object | null;
+    requestBody?: { [key: string]: any; } | null;
 }
 
 /**
@@ -95,10 +94,10 @@ export class IndexApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['body'] == null) {
+        if (requestParameters['requestBody'] == null) {
             throw new runtime.RequiredError(
-                'body',
-                'Required parameter "body" was null or undefined when calling createIndexApiV1IndexPost().'
+                'requestBody',
+                'Required parameter "requestBody" was null or undefined when calling createIndexApiV1IndexPost().'
             );
         }
 
@@ -129,7 +128,7 @@ export class IndexApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['body'] as any,
+            body: requestParameters['requestBody'],
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => IndexInfoFromJSON(jsonValue));
@@ -192,7 +191,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Admin Settings
      */
-    async getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
         if (requestParameters['indexType'] == null) {
             throw new runtime.RequiredError(
                 'indexType',
@@ -229,7 +228,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Admin Settings
      */
-    async getAdminSettingsApiV1IndexAdminSettingsGet(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async getAdminSettingsApiV1IndexAdminSettingsGet(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
         const response = await this.getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -279,7 +278,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Index Settings
      */
-    async getIndexSettingsApiV1IndexIndexIndexIdSettingsGetRaw(requestParameters: GetIndexSettingsApiV1IndexIndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async getIndexSettingsApiV1IndexIndexIndexIdSettingsGetRaw(requestParameters: GetIndexSettingsApiV1IndexIndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
         if (requestParameters['indexId'] == null) {
             throw new runtime.RequiredError(
                 'indexId',
@@ -313,7 +312,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Index Settings
      */
-    async getIndexSettingsApiV1IndexIndexIndexIdSettingsGet(requestParameters: GetIndexSettingsApiV1IndexIndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async getIndexSettingsApiV1IndexIndexIndexIdSettingsGet(requestParameters: GetIndexSettingsApiV1IndexIndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
         const response = await this.getIndexSettingsApiV1IndexIndexIndexIdSettingsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -321,25 +320,18 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Index Files
      */
-    async indexFilesApiV1IndexIndexIndexIdIndexFilesPostRaw(requestParameters: IndexFilesApiV1IndexIndexIndexIdIndexFilesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters['indexId'] == null) {
-            throw new runtime.RequiredError(
-                'indexId',
-                'Required parameter "indexId" was null or undefined when calling indexFilesApiV1IndexIndexIndexIdIndexFilesPost().'
-            );
-        }
-
+    async indexFilesApiV1IndexIndexPostRaw(requestParameters: IndexFilesApiV1IndexIndexPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
-                'Required parameter "agentId" was null or undefined when calling indexFilesApiV1IndexIndexIndexIdIndexFilesPost().'
+                'Required parameter "agentId" was null or undefined when calling indexFilesApiV1IndexIndexPost().'
             );
         }
 
         if (requestParameters['files'] == null) {
             throw new runtime.RequiredError(
                 'files',
-                'Required parameter "files" was null or undefined when calling indexFilesApiV1IndexIndexIndexIdIndexFilesPost().'
+                'Required parameter "files" was null or undefined when calling indexFilesApiV1IndexIndexPost().'
             );
         }
 
@@ -383,8 +375,7 @@ export class IndexApi extends runtime.BaseAPI {
         }
 
 
-        let urlPath = `/api/v1/index/index/{index_id}/index_files`;
-        urlPath = urlPath.replace(`{${"index_id"}}`, encodeURIComponent(String(requestParameters['indexId'])));
+        let urlPath = `/api/v1/index/index`;
 
         const response = await this.request({
             path: urlPath,
@@ -400,8 +391,8 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Index Files
      */
-    async indexFilesApiV1IndexIndexIndexIdIndexFilesPost(requestParameters: IndexFilesApiV1IndexIndexIndexIdIndexFilesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.indexFilesApiV1IndexIndexIndexIdIndexFilesPostRaw(requestParameters, initOverrides);
+    async indexFilesApiV1IndexIndexPost(requestParameters: IndexFilesApiV1IndexIndexPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.indexFilesApiV1IndexIndexPostRaw(requestParameters, initOverrides);
     }
 
     /**
@@ -607,7 +598,7 @@ export class IndexApi extends runtime.BaseAPI {
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['body'] as any,
+            body: requestParameters['requestBody'],
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {

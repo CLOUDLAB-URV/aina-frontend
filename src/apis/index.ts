@@ -7,4 +7,5 @@ export * from './ConversationsApi';
 export * from './EmbeddingsApi';
 export * from './IndexApi';
 export * from './LlmsApi';
+export * from './ReasoningsApi';
 export * from './RerankingsApi';

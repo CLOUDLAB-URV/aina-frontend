@@ -27,10 +27,10 @@ export interface EmbeddingCreate {
     name: string;
     /**
      * The specification of the embedding model
-     * @type {object}
+     * @type {{ [key: string]: any; }}
      * @memberof EmbeddingCreate
      */
-    spec: object;
+    spec: { [key: string]: any; };
     /**
      * Whether this embedding model is the default one
      * @type {boolean}

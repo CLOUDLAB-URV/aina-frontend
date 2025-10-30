@@ -49,7 +49,7 @@ export interface GetRerankingVendorDescApiV1RerankingsVendorVendorNameGetRequest
 
 export interface UpdateRerankingApiV1RerankingsRerankingRerankingNamePatchRequest {
     rerankingName: string;
-    body: object;
+    requestBody: { [key: string]: any; };
     _default?: boolean;
 }
 
@@ -323,10 +323,10 @@ export class RerankingsApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['body'] == null) {
+        if (requestParameters['requestBody'] == null) {
             throw new runtime.RequiredError(
-                'body',
-                'Required parameter "body" was null or undefined when calling updateRerankingApiV1RerankingsRerankingRerankingNamePatch().'
+                'requestBody',
+                'Required parameter "requestBody" was null or undefined when calling updateRerankingApiV1RerankingsRerankingRerankingNamePatch().'
             );
         }
 
@@ -354,7 +354,7 @@ export class RerankingsApi extends runtime.BaseAPI {
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['body'] as any,
+            body: requestParameters['requestBody'],
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {

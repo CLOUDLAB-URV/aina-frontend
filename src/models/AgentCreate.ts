@@ -38,6 +38,18 @@ export interface AgentCreate {
      */
     modelName?: string | null;
     /**
+     * 
+     * @type {string}
+     * @memberof AgentCreate
+     */
+    reasoningId?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AgentCreate
+     */
+    lang?: string | null;
+    /**
      * The name of the agent
      * @type {string}
      * @memberof AgentCreate
@@ -66,6 +78,8 @@ export function AgentCreateFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'description': json['description'] == null ? undefined : json['description'],
         'indexId': json['index_id'] == null ? undefined : json['index_id'],
         'modelName': json['model_name'] == null ? undefined : json['model_name'],
+        'reasoningId': json['reasoning_id'] == null ? undefined : json['reasoning_id'],
+        'lang': json['lang'] == null ? undefined : json['lang'],
         'name': json['name'],
     };
 }
@@ -84,6 +98,8 @@ export function AgentCreateToJSONTyped(value?: AgentCreate | null, ignoreDiscrim
         'description': value['description'],
         'index_id': value['indexId'],
         'model_name': value['modelName'],
+        'reasoning_id': value['reasoningId'],
+        'lang': value['lang'],
         'name': value['name'],
     };
 }
