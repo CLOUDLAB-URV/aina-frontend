@@ -10,6 +10,6 @@
 </template>
 
 <script setup lang="ts">
-import AgentSelect from '@/components/AgentSelect.vue';
+import AgentSelect from '@/components/AgentSelects.vue';
 import ChatComponent from '@/components/ChatComponent.vue';
 </script>

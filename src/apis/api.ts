@@ -5,6 +5,7 @@ import { EmbeddingsApi } from "@/apis/EmbeddingsApi";
 import { RerankingsApi } from "@/apis/RerankingsApi";
 import { IndexApi } from "@/apis/IndexApi";
 import { AgentsApi } from "@/apis/AgentsApi";
+import { ConversationsApi } from "@/apis/ConversationsApi";
 
 const authMiddleware: Middleware = {
   pre: async (context) => {
@@ -25,3 +26,4 @@ export const EmbApi = new EmbeddingsApi().withMiddleware(authMiddleware);
 export const RankApi = new RerankingsApi().withMiddleware(authMiddleware);
 export const IndApi = new IndexApi().withMiddleware(authMiddleware);
 export const AgApi = new AgentsApi().withMiddleware(authMiddleware);
+export const ConvApi = new ConversationsApi().withMiddleware(authMiddleware);
