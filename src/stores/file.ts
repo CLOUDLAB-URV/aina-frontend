@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 
 export const useFilesStore = defineStore("files", () => {
   const data = ref<any[]>([]);
+  const files = ref();
 
   const addFiles = (Files: any) => {
     data.value.push(Files);
@@ -22,5 +23,5 @@ export const useFilesStore = defineStore("files", () => {
     }
   };
 
-  return { data, addFiles, removeFiles, updateFiles };
+  return { data, files, addFiles, removeFiles, updateFiles };
 });

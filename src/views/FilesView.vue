@@ -18,7 +18,7 @@
                     <textarea name="" id="" class="w-full"></textarea>
                 </header>
             </div>
-            <DataTable :value="data" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
+            <DataTable :value="fileStore.files" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
                 @row-click="madeClick" tableStyle="min-width: 50rem">
                 <Column field="name" header="Name" style="width: 70%"></Column>
                 <Column field="size" header="Size" style="width: 5%"></Column>
@@ -46,7 +46,6 @@ import type { ListFilesApiV1IndexIndexIndexIdFilesGetRequest } from '@/apis/Inde
 import { useFilesStore } from '@/stores/file';
 
 let data_selected = ref();
-let data = ref();
 const fileStore = useFilesStore()
 
 onMounted(async () => {
@@ -54,8 +53,7 @@ onMounted(async () => {
         indexId: 1
     }
     let notFiltered = await IndApi.listFilesApiV1IndexIndexIndexIdFilesGet(index);
-    data.value = Object.values(notFiltered[0])
-    console.log(data.value);
+    fileStore.files = Object.values(notFiltered);
 })
 
 function madeClick(value: any) {

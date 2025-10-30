@@ -17,19 +17,22 @@
 import { ref } from 'vue';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { useFilesStore } from '@/stores/file';
+import { useToast } from 'primevue/usetoast';
+import type { ListFilesApiV1IndexIndexIndexIdFilesGetRequest } from '@/apis/IndexApi';
+import { IndApi } from '@/apis/api';
 
 let files = ref<any>([]);
 const logMessages = ref<any[]>([]);
 const isIndexing = ref(false);
 const controller = new AbortController();
-const fileStore = useFilesStore()
+const fileStore = useFilesStore();
+const toast = useToast();
 
 
 async function FileUpload(event: Event) {
 
-    const indexId = 1;
-    const agentId = "603e713e09044ddcaf068cefec12939e";
-    const url = `http://192.168.1.169:8000/api/v1/index/index/${indexId}/index_files?agent_id=${agentId}&reindex=true`;
+    const agentId = "47ca9c8bece44c059407c6e5c7e4cdef";
+    const url = `http://192.168.1.169:8000/api/v1/index/index?agent_id=${agentId}&reindex=true`;
 
     event.preventDefault();
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
@@ -54,7 +57,21 @@ async function FileUpload(event: Event) {
         },
         signal: controller.signal,
         onmessage(ev: any) {
-            console.log(ev);
+            console.log(ev.data[2]);
+            if (ev.data[2] == '❌') {
+                console.log('failed');
+                toast.add({ severity: 'error', summary: 'Something went wrong consult the log', detail: 'Something went wrong consult the log', life: 3000 })
+            } else if (ev.data[2] == '✅') {
+                console.log('uploaded correct');
+                toast.add({ severity: 'success', summary: 'Uploaded File', detail: 'Uploaded File', life: 3000 })
+                let index: ListFilesApiV1IndexIndexIndexIdFilesGetRequest = {
+                    indexId: 1
+                }
+                IndApi.listFilesApiV1IndexIndexIndexIdFilesGet(index).then((res) => {
+                    // console.log(res)
+                    fileStore.files = Object.values(res);
+                });
+            }
             fileStore.addFiles(ev.data);
         }
     });

@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { ConvApi } from '@/apis/api';
-import { watch, ref, onMounted } from 'vue';
+import { watch, ref } from 'vue';
 import type { ListConversationsApiV1ConversationsAgentIdGetRequest } from '@/apis/ConversationsApi';
 import ModalConv from '@/components/ModalConv.vue';
 import { useConvStore } from '@/stores/conv';
@@ -25,13 +25,13 @@ const props = defineProps({
     }
 })
 
-onMounted(async () => {
-    let listAgentConv: ListConversationsApiV1ConversationsAgentIdGetRequest = {
-        agentId: props.agentId
-    }
-    convStore.data = await ConvApi.listConversationsApiV1ConversationsAgentIdGet(listAgentConv);
-    conv.value = null
-})
+// onMounted(async () => {
+//     let listAgentConv: ListConversationsApiV1ConversationsAgentIdGetRequest = {
+//         agentId: props.agentId
+//     }
+//     convStore.data = await ConvApi.listConversationsApiV1ConversationsAgentIdGet(listAgentConv);
+//     conv.value = null
+// },)
 
 watch(() => props.agentId, async () => {
     let listAgentConv: ListConversationsApiV1ConversationsAgentIdGetRequest = {
@@ -39,7 +39,7 @@ watch(() => props.agentId, async () => {
     }
     convStore.data = await ConvApi.listConversationsApiV1ConversationsAgentIdGet(listAgentConv);
     conv.value = null
-})
+}, { immediate: true })
 
 
 </script>

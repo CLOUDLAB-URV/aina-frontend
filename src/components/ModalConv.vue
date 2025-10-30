@@ -40,7 +40,9 @@ import type { ConversationCreate, ConversationUpdate } from '@/models/index';
 import type { AddConversationApiV1ConversationsPostRequest, UpdateConversationApiV1ConversationsConversationIdPatchRequest, DeleteConversationApiV1ConversationsConversationIdDeleteRequest } from '@/apis/ConversationsApi';
 import { ConvApi } from '@/apis/api';
 import { useConvStore } from '@/stores/conv';
+import { useToast } from 'primevue/usetoast';
 
+const toast = useToast();
 const props = defineProps({
     create: { type: String, required: true },
     agentId: { type: String, required: true },
@@ -85,11 +87,11 @@ async function createconv() {
         isPublic: conv.value.isPublic,
         agentId: conv.value.agentId,
     }
-    console.log(convCreate);
     let info: AddConversationApiV1ConversationsPostRequest = { conversationCreate: convCreate };
     await ConvApi.addConversationApiV1ConversationsPost(info).then((res) => {
         console.log(res);
         convStore.addConv(res);
+        toast.add({ severity: 'success', summary: 'Conversation has been create successfully', detail: `Create conversation with name ${name}`, life: 300000 })
         conv.value.name = "";
         conv.value.isPublic = false;
         visible.value = false;
