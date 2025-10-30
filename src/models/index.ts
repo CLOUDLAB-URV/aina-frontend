@@ -9,6 +9,7 @@ export * from './ConversationInfo';
 export * from './ConversationUpdate';
 export * from './EmbeddingCreate';
 export * from './EmbeddingInfo';
+export * from './FileInfo';
 export * from './GenericException';
 export * from './HTTPValidationError';
 export * from './IndexInfo';

@@ -15,11 +15,14 @@
 
 import * as runtime from '../runtime';
 import type {
+  FileInfo,
   GenericException,
   HTTPValidationError,
   IndexInfo,
 } from '../models/index';
 import {
+    FileInfoFromJSON,
+    FileInfoToJSON,
     GenericExceptionFromJSON,
     GenericExceptionToJSON,
     HTTPValidationErrorFromJSON,
@@ -398,7 +401,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * List Files
      */
-    async listFilesApiV1IndexIndexIndexIdFilesGetRaw(requestParameters: ListFilesApiV1IndexIndexIndexIdFilesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async listFilesApiV1IndexIndexIndexIdFilesGetRaw(requestParameters: ListFilesApiV1IndexIndexIndexIdFilesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<FileInfo>>> {
         if (requestParameters['indexId'] == null) {
             throw new runtime.RequiredError(
                 'indexId',
@@ -430,17 +433,13 @@ export class IndexApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        if (this.isJsonMime(response.headers.get('content-type'))) {
-            return new runtime.JSONApiResponse<any>(response);
-        } else {
-            return new runtime.TextApiResponse(response) as any;
-        }
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(FileInfoFromJSON));
     }
 
     /**
      * List Files
      */
-    async listFilesApiV1IndexIndexIndexIdFilesGet(requestParameters: ListFilesApiV1IndexIndexIndexIdFilesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+    async listFilesApiV1IndexIndexIndexIdFilesGet(requestParameters: ListFilesApiV1IndexIndexIndexIdFilesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<FileInfo>> {
         const response = await this.listFilesApiV1IndexIndexIndexIdFilesGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
