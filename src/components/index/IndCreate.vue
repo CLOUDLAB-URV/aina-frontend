@@ -86,7 +86,7 @@ function sendCreate() {
   let createParam: CreateIndexApiV1IndexPostRequest = {
     name: model.value.name,
     indexType: model.value.indexType,
-    body: yaml.load(model.value.config) as Object,
+    requestBody: yaml.load(model.value.config) as Object,
   };
   IndApi.createIndexApiV1IndexPost(createParam).then((res) => {
     console.log("created " + model.value.name);
@@ -119,7 +119,7 @@ function update() {
   let index: UpdateIndexApiV1IndexIndexIndexIdPatchRequest = {
     indexId: model.value.id,
     name: model.value.name,
-    body: yaml.load(model.value.config) as Object,
+    requestBody: yaml.load(model.value.config) as Object,
   };
   IndApi.updateIndexApiV1IndexIndexIndexIdPatch(index).then(() => {
     console.log("updated " + model.value.name);
@@ -152,8 +152,9 @@ textarea {
   border-color: var(--p-inputtext-border-color);
   -webkit-scrollbar: none;
 }
-select{
- background-color: var(--p-inputtext-background);
- border-radius: var(--p-button-border-radius);
+
+select {
+  background-color: var(--p-inputtext-background);
+  border-radius: var(--p-button-border-radius);
 }
 </style>
