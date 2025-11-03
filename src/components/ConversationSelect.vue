@@ -17,6 +17,7 @@ import { useConvStore } from '@/stores/conv';
 
 const convStore = useConvStore();
 let conv = ref();
+const emit = defineEmits(['selectConv'])
 
 const props = defineProps({
     agentId: {
@@ -25,22 +26,23 @@ const props = defineProps({
     }
 })
 
-// onMounted(async () => {
-//     let listAgentConv: ListConversationsApiV1ConversationsAgentIdGetRequest = {
-//         agentId: props.agentId
-//     }
-//     convStore.data = await ConvApi.listConversationsApiV1ConversationsAgentIdGet(listAgentConv);
-//     conv.value = null
-// },)
 
 watch(() => props.agentId, async () => {
     let listAgentConv: ListConversationsApiV1ConversationsAgentIdGetRequest = {
         agentId: props.agentId
     }
     convStore.data = await ConvApi.listConversationsApiV1ConversationsAgentIdGet(listAgentConv);
-    conv.value = null
+    conv.value = ""
 }, { immediate: true })
 
+watch(
+    ()=> conv.value ,
+    ()=> {
+        console.log('The emit has been made')
+            emit('selectConv',{convId :conv.value.id,agentId:conv.value.agentId
+        })
+    }
+)
 
 </script>
 

@@ -31,8 +31,8 @@ const toast = useToast();
 
 async function FileUpload(event: Event) {
 
-    const agentId = "47ca9c8bece44c059407c6e5c7e4cdef";
-    const url = `http://192.168.1.169:8000/api/v1/index/index?agent_id=${agentId}&reindex=true`;
+    const agentId = "6abd302a40b146af91d2bec674292380";
+    const url = `http://localhost:8000/api/v1/index/index?agent_id=${agentId}&reindex=true`;
 
     event.preventDefault();
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;

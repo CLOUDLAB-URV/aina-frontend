@@ -3,14 +3,14 @@
         <select name="agent" id="agent" v-model="agent" :key="store.data.length">
             <option disabled value="">Please select one</option>
             <option :value="agentItem" v-for="agentItem in store.data" :key="agentItem.id">{{ agentItem.name
-                }}</option>
+            }}</option>
         </select>
         <div class="flex justify-between items-center gap-2">
             <ModalCreateAgent create="create" />
             <ModalCreateAgent create="edit" :data="agent" />
             <ModalCreateAgent create="trash" :data="agent" />
         </div>
-        <ConversationSelect v-if="agent?.id" :agentId="agent.id" />
+        <ConversationSelect v-if="agent?.id" :agentId="agent?.id" v-bind="$attrs" />
     </div>
 </template>
 <script lang="ts" setup>
