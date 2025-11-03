@@ -39,8 +39,8 @@ watch(
     ()=> conv.value ,
     ()=> {
         console.log('The emit has been made')
-            emit('selectConv',{convId :conv.value.id,agentId:conv.value.agentId
-        })
+        // console.log(conv.value)
+        emit('selectConv',conv.value)
     }
 )
 

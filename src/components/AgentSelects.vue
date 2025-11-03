@@ -10,7 +10,7 @@
             <ModalCreateAgent create="edit" :data="agent" />
             <ModalCreateAgent create="trash" :data="agent" />
         </div>
-        <ConversationSelect v-if="agent?.id" :agentId="agent?.id" v-bind="$attrs" />
+        <!-- <ConversationSelect v-if="agent?.id" :agentId="agent?.id" v-bind="$attrs" /> -->
     </div>
 </template>
 <script lang="ts" setup>
@@ -18,7 +18,10 @@ import { AgApi } from '@/apis/api';
 import { onMounted, ref, watch } from 'vue';
 import ModalCreateAgent from './ModalCreateAgent.vue';
 import { useAgentStore } from '@/stores/agent';
-import ConversationSelect from './ConversationSelect.vue';
+// import ConversationSelect from './ConversationSelect.vue';
+
+const emit = defineEmits(['agentSelected'])
+
 const store = useAgentStore();
 let agent = ref();
 
@@ -31,6 +34,10 @@ watch(() => store.data, () => {
     if (store.data.length == 0) {
         agent.value = ""
     }
+})
+
+watch(() => agent.value, () => {
+    emit('agentSelected',agent.value)
 })
 
 </script>

@@ -5,7 +5,8 @@
             <Button @click="sendMessage" icon="pi pi-send"></Button>
         </section>
         <section class="flex gap-4 items-center mt-2">
-            <AgentSelects @selectConv="(n:any)=>ids = n"/>
+            <AgentSelects @agentSelected="(ag:any)=>agent = ag"/>
+            <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n:any)=>conv = n"/>
         </section>
     </div>
 </template>
@@ -15,7 +16,10 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 import AgentSelects from '@/components/AgentSelects.vue';
 // import { useToast } from 'primevue/usetoast';
 import { useChatStore } from '@/stores/chat';
+import ConversationSelect from './ConversationSelect.vue';
 
+let agent=ref();
+let conv=ref();
 let ids = ref();
 let message =ref();
 const controller = new AbortController();
@@ -26,7 +30,7 @@ async function sendMessage(event: Event) {
     console.log('SendMessage');
     console.log(ids.value);
 
-    const url = `http://localhost:8000/api/v1/chat/${ids.value.agentId}/${ids.value.convId}`;
+    const url = `http://localhost:8000/api/v1/chat/${agent.value.id}/${conv.value.id}`;
 
     event.preventDefault();
 
