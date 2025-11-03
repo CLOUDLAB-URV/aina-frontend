@@ -18,6 +18,7 @@ import type {
   ChatRequest,
   GenericException,
   HTTPValidationError,
+  Liked,
 } from '../models/index';
 import {
     ChatRequestFromJSON,
@@ -26,12 +27,21 @@ import {
     GenericExceptionToJSON,
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
+    LikedFromJSON,
+    LikedToJSON,
 } from '../models/index';
 
 export interface ChatWithAgentApiV1ChatAgentIdConversationIdPostRequest {
     agentId: string;
     conversationId: string;
     chatRequest: ChatRequest;
+}
+
+export interface LikeMessageApiV1ChatAgentIdConversationIdLikePostRequest {
+    agentId: string;
+    conversationId: string;
+    messageIndex: number;
+    liked?: Liked;
 }
 
 export interface SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest {
@@ -103,6 +113,73 @@ export class ChatApi extends runtime.BaseAPI {
      */
     async chatWithAgentApiV1ChatAgentIdConversationIdPost(requestParameters: ChatWithAgentApiV1ChatAgentIdConversationIdPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.chatWithAgentApiV1ChatAgentIdConversationIdPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Like or dislike a message in a specific conversation.
+     * Like Message
+     */
+    async likeMessageApiV1ChatAgentIdConversationIdLikePostRaw(requestParameters: LikeMessageApiV1ChatAgentIdConversationIdLikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters['agentId'] == null) {
+            throw new runtime.RequiredError(
+                'agentId',
+                'Required parameter "agentId" was null or undefined when calling likeMessageApiV1ChatAgentIdConversationIdLikePost().'
+            );
+        }
+
+        if (requestParameters['conversationId'] == null) {
+            throw new runtime.RequiredError(
+                'conversationId',
+                'Required parameter "conversationId" was null or undefined when calling likeMessageApiV1ChatAgentIdConversationIdLikePost().'
+            );
+        }
+
+        if (requestParameters['messageIndex'] == null) {
+            throw new runtime.RequiredError(
+                'messageIndex',
+                'Required parameter "messageIndex" was null or undefined when calling likeMessageApiV1ChatAgentIdConversationIdLikePost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['messageIndex'] != null) {
+            queryParameters['message_index'] = requestParameters['messageIndex'];
+        }
+
+        if (requestParameters['liked'] != null) {
+            queryParameters['liked'] = requestParameters['liked'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/chat/{agent_id}/{conversation_id}/like`;
+        urlPath = urlPath.replace(`{${"agent_id"}}`, encodeURIComponent(String(requestParameters['agentId'])));
+        urlPath = urlPath.replace(`{${"conversation_id"}}`, encodeURIComponent(String(requestParameters['conversationId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Like or dislike a message in a specific conversation.
+     * Like Message
+     */
+    async likeMessageApiV1ChatAgentIdConversationIdLikePost(requestParameters: LikeMessageApiV1ChatAgentIdConversationIdLikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.likeMessageApiV1ChatAgentIdConversationIdLikePostRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**

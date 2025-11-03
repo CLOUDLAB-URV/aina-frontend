@@ -13,6 +13,7 @@ export * from './FileInfo';
 export * from './GenericException';
 export * from './HTTPValidationError';
 export * from './IndexInfo';
+export * from './Liked';
 export * from './LlmCreate';
 export * from './LlmInfo';
 export * from './RerankingCreate';
