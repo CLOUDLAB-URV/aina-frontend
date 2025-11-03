@@ -1,9 +1,11 @@
 <template>
     <div class="flex gap-2">
-        <section class="file-list-container flex flex-col w-1/4">
-            <h3 class="mb-3 text-2xl">File Upload</h3>
-            <UploadFiles />
-            <p class="mb-4 mt-4">
+        <section class="file-list-container flex flex-col w-1/4 gap-3">
+            <h3 class="text-2xl">File Upload</h3>
+            <AgentSelects @agent-selected="(ag:any) => agent = ag"/>
+            <!-- <Button v-if="agent" label="Delete all Files" icon="pi pi-trash" severity="danger" @click="deleteAllFiles"/> -->
+            <UploadFiles v-if="agent?.id" :agent-id="agent.id" class="p-1"/>
+            <p class="">
                 Supported file types: .png, .jpeg, .jpg, .tiff, .tif, .pdf, .xls, .xlsx, .doc, .docx, .pptx, .csv,
                 .html, .mhtml, .txt, .zip
             </p>
@@ -15,7 +17,11 @@
                 <header>
                     <h4 class="mb-2 text-xl">Filter by name:</h4>
                     <p class="mb-2 text-sm">(1) Case-insesitive, (2) Seach with empty string to show all files</p>
-                    <textarea name="" id="" class="w-full"></textarea>
+                    <div class="flex gap-2">
+                        <!-- <textarea name="" id="" class="w-full" v-model="filter"></textarea> -->
+                        <InputText v-model="filter" class="grow"/>
+                        <Button icon="pi pi-search" @click="search"/>
+                    </div>                    
                 </header>
             </div>
             <DataTable :value="fileStore.files" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
@@ -27,8 +33,8 @@
                 <Column field="date_created" header="Date Created" style="width: 15%"></Column>
             </DataTable>
             <section v-if="data_selected" class="flex gap-2 mt-3">
-                <Button severity="danger" icon="pi pi-trash" label="Delete" class="grow"></Button>
-                <Button severity="info" icon="pi pi-download" label="Download File" class="grow"></Button>
+                <Button severity="danger" icon="pi pi-trash" label="Delete" class="grow" @click=delete_file></Button>
+                <!-- <Button severity="info" icon="pi pi-download" label="Download File" class="grow"></Button> -->
             </section>
         </section>
     </div>
@@ -40,24 +46,63 @@
 
 <script setup lang="ts">
 import UploadFiles from '@/components/UploadFiles.vue';
-import { onMounted, ref } from 'vue';
+import { ref,watch } from 'vue';
 import { IndApi } from '@/apis/api';
-import type { ListFilesApiV1IndexIndexIndexIdFilesGetRequest } from '@/apis/IndexApi';
+import type { ListFilesApiV1IndexIndexIdFilesGetRequest,DeleteFileApiV1IndexIndexIdFilesFileIdDeleteRequest } from '@/apis/IndexApi';
 import { useFilesStore } from '@/stores/file';
+import AgentSelects from '@/components/AgentSelects.vue';
 
 let data_selected = ref();
-const fileStore = useFilesStore()
+let agent = ref();
+let filter = ref();
+const fileStore = useFilesStore();
 
-onMounted(async () => {
-    let index: ListFilesApiV1IndexIndexIndexIdFilesGetRequest = {
-        indexId: 1
+watch(
+    () => agent.value,
+    async ()=>{
+        if(agent.value.id){
+            let index: ListFilesApiV1IndexIndexIdFilesGetRequest = {
+                indexId: agent.value.indexId
+            }
+            let notFiltered = await IndApi.listFilesApiV1IndexIndexIdFilesGet(index);
+            fileStore.files = Object.values(notFiltered);
+        }
     }
-    let notFiltered = await IndApi.listFilesApiV1IndexIndexIndexIdFilesGet(index);
-    fileStore.files = Object.values(notFiltered);
-})
+)
 
-function madeClick(value: any) {
+async function search(){
+    let index: ListFilesApiV1IndexIndexIdFilesGetRequest = {
+        indexId: agent.value.indexId,
+        namePattern : filter.value
+    }
+    let notFiltered = await IndApi.listFilesApiV1IndexIndexIdFilesGet(index);
+    fileStore.files = Object.values(notFiltered);
+}
+
+async function delete_file(){
+    let data : DeleteFileApiV1IndexIndexIdFilesFileIdDeleteRequest ={
+        indexId: agent.value.indexId,
+        fileId: data_selected.value.id,
+    }
+    await IndApi.deleteFileApiV1IndexIndexIdFilesFileIdDelete(data).then((res)=>{
+        console.log(res);
+        fileStore.removeFiles(res)
+        data_selected.value = null
+    })
+}
+
+// async function deleteAllFiles(){
+//     let data : DeleteAllFilesApiV1IndexIndexIdFilesDeleteRequest ={
+//         indexId:agent.value.indexId
+//     }
+//     await IndApi.deleteAllFilesApiV1IndexIndexIdFilesDelete(data).then(()=>{
+//         fileStore.files = [];
+//     })
+// }
+
+async function madeClick(value: any) {
     data_selected.value = value.data;
+    console.log(data_selected.value)
 }
 </script>
 <style scoped>

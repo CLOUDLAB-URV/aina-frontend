@@ -9,11 +9,11 @@ export const useFilesStore = defineStore("files", () => {
     data.value.push(Files);
   };
 
-  const removeFiles = (Files: any) => {
-    let filtered = data.value.filter(
-      (element: any) => element.name !== Files.name
+  const removeFiles = (file: any) => {
+    let filtered = files.value.filter(
+      (element: any) => element.name !== file
     );
-    data.value = filtered;
+    files.value = filtered;
   };
 
   const updateFiles = (Files: any) => {
