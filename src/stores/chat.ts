@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 
 // 1. Definir la interfaz para cada elemento del chat
-interface ChatItem {
+export interface ChatItem {
   user: string;
   ai: String; // Un array, por si la IA da múltiples respuestas
 }

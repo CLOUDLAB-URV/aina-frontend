@@ -10,12 +10,16 @@
 
 <script setup lang="ts">
 import { ConvApi } from '@/apis/api';
+import { ChApi } from '@/apis/api';
+import type { ChatItem } from '@/stores/chat';
 import { watch, ref } from 'vue';
 import type { ListConversationsApiV1ConversationsAgentIdGetRequest } from '@/apis/ConversationsApi';
 import ModalConv from '@/components/ModalConv.vue';
 import { useConvStore } from '@/stores/conv';
+import { useChatStore } from '@/stores/chat';
 
 const convStore = useConvStore();
+const chatStore = useChatStore();
 let conv = ref();
 const emit = defineEmits(['selectConv'])
 
@@ -36,11 +40,19 @@ watch(() => props.agentId, async () => {
 }, { immediate: true })
 
 watch(
-    ()=> conv.value ,
-    ()=> {
-        console.log('The emit has been made')
-        // console.log(conv.value)
-        emit('selectConv',conv.value)
+    () => conv.value,
+    async () => {
+        emit('selectConv', conv.value)
+        const res = await ChApi.selectConversationApiV1ChatAgentIdConversationIdSelectPost({
+            agentId: props.agentId,
+            conversationId: conv.value.id
+        });
+        chatStore.data = res.messages.map(v => {
+            return {
+                user: v[0],
+                ai: v[1],
+            } as ChatItem;
+        });
     }
 )
 
