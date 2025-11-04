@@ -49,7 +49,7 @@ export interface GetEmbeddingVendorDescApiV1EmbeddingsVendorVendorNameGetRequest
 
 export interface UpdateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatchRequest {
     embeddingName: string;
-    body: object;
+    requestBody: { [key: string]: any; };
     _default?: boolean;
 }
 
@@ -323,10 +323,10 @@ export class EmbeddingsApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['body'] == null) {
+        if (requestParameters['requestBody'] == null) {
             throw new runtime.RequiredError(
-                'body',
-                'Required parameter "body" was null or undefined when calling updateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatch().'
+                'requestBody',
+                'Required parameter "requestBody" was null or undefined when calling updateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatch().'
             );
         }
 
@@ -354,7 +354,7 @@ export class EmbeddingsApi extends runtime.BaseAPI {
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['body'] as any,
+            body: requestParameters['requestBody'],
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {

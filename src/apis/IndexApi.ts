@@ -15,12 +15,15 @@
 
 import * as runtime from '../runtime';
 import type {
+  BodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatch,
   FileInfo,
   GenericException,
   HTTPValidationError,
   IndexInfo,
 } from '../models/index';
 import {
+    BodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatchFromJSON,
+    BodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatchToJSON,
     FileInfoFromJSON,
     FileInfoToJSON,
     GenericExceptionFromJSON,
@@ -31,10 +34,16 @@ import {
     IndexInfoToJSON,
 } from '../models/index';
 
+export interface CreateGroupApiV1IndexIndexIdGroupsPostRequest {
+    indexId: number;
+    groupName: string;
+    requestBody: Array<string | null>;
+}
+
 export interface CreateIndexApiV1IndexPostRequest {
     name: string;
     indexType: string;
-    body: object;
+    requestBody: { [key: string]: any; };
 }
 
 export interface DeleteAllFilesApiV1IndexIndexIdFilesDeleteRequest {
@@ -44,6 +53,11 @@ export interface DeleteAllFilesApiV1IndexIndexIdFilesDeleteRequest {
 export interface DeleteFileApiV1IndexIndexIdFilesFileIdDeleteRequest {
     indexId: number;
     fileId: string;
+}
+
+export interface DeleteGroupApiV1IndexIndexIdGroupsGroupIdDeleteRequest {
+    indexId: number;
+    groupId: string;
 }
 
 export interface DeleteIndexApiV1IndexIndexIdDeleteRequest {
@@ -77,16 +91,90 @@ export interface ListGroupsApiV1IndexIndexIdGroupsGetRequest {
     indexId: number;
 }
 
+export interface UpdateGroupApiV1IndexIndexIdGroupsGroupIdPatchRequest {
+    indexId: number;
+    groupId: string;
+    groupName?: string | null;
+    bodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatch?: BodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatch;
+}
+
 export interface UpdateIndexApiV1IndexIndexIdPatchRequest {
     indexId: number;
     name?: string | null;
-    body?: object | null;
+    requestBody?: { [key: string]: any; } | null;
 }
 
 /**
  * 
  */
 export class IndexApi extends runtime.BaseAPI {
+
+    /**
+     * Create Group
+     */
+    async createGroupApiV1IndexIndexIdGroupsPostRaw(requestParameters: CreateGroupApiV1IndexIndexIdGroupsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters['indexId'] == null) {
+            throw new runtime.RequiredError(
+                'indexId',
+                'Required parameter "indexId" was null or undefined when calling createGroupApiV1IndexIndexIdGroupsPost().'
+            );
+        }
+
+        if (requestParameters['groupName'] == null) {
+            throw new runtime.RequiredError(
+                'groupName',
+                'Required parameter "groupName" was null or undefined when calling createGroupApiV1IndexIndexIdGroupsPost().'
+            );
+        }
+
+        if (requestParameters['requestBody'] == null) {
+            throw new runtime.RequiredError(
+                'requestBody',
+                'Required parameter "requestBody" was null or undefined when calling createGroupApiV1IndexIndexIdGroupsPost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['groupName'] != null) {
+            queryParameters['group_name'] = requestParameters['groupName'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/index/{index_id}/groups`;
+        urlPath = urlPath.replace(`{${"index_id"}}`, encodeURIComponent(String(requestParameters['indexId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['requestBody'],
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Create Group
+     */
+    async createGroupApiV1IndexIndexIdGroupsPost(requestParameters: CreateGroupApiV1IndexIndexIdGroupsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.createGroupApiV1IndexIndexIdGroupsPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * Create Index
@@ -106,10 +194,10 @@ export class IndexApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['body'] == null) {
+        if (requestParameters['requestBody'] == null) {
             throw new runtime.RequiredError(
-                'body',
-                'Required parameter "body" was null or undefined when calling createIndexApiV1IndexPost().'
+                'requestBody',
+                'Required parameter "requestBody" was null or undefined when calling createIndexApiV1IndexPost().'
             );
         }
 
@@ -140,7 +228,7 @@ export class IndexApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['body'] as any,
+            body: requestParameters['requestBody'],
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => IndexInfoFromJSON(jsonValue));
@@ -251,6 +339,60 @@ export class IndexApi extends runtime.BaseAPI {
     }
 
     /**
+     * Delete Group
+     */
+    async deleteGroupApiV1IndexIndexIdGroupsGroupIdDeleteRaw(requestParameters: DeleteGroupApiV1IndexIndexIdGroupsGroupIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters['indexId'] == null) {
+            throw new runtime.RequiredError(
+                'indexId',
+                'Required parameter "indexId" was null or undefined when calling deleteGroupApiV1IndexIndexIdGroupsGroupIdDelete().'
+            );
+        }
+
+        if (requestParameters['groupId'] == null) {
+            throw new runtime.RequiredError(
+                'groupId',
+                'Required parameter "groupId" was null or undefined when calling deleteGroupApiV1IndexIndexIdGroupsGroupIdDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/index/{index_id}/groups/{group_id}`;
+        urlPath = urlPath.replace(`{${"index_id"}}`, encodeURIComponent(String(requestParameters['indexId'])));
+        urlPath = urlPath.replace(`{${"group_id"}}`, encodeURIComponent(String(requestParameters['groupId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Delete Group
+     */
+    async deleteGroupApiV1IndexIndexIdGroupsGroupIdDelete(requestParameters: DeleteGroupApiV1IndexIndexIdGroupsGroupIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.deleteGroupApiV1IndexIndexIdGroupsGroupIdDeleteRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Delete Index
      */
     async deleteIndexApiV1IndexIndexIdDeleteRaw(requestParameters: DeleteIndexApiV1IndexIndexIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -299,7 +441,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Admin Settings
      */
-    async getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
         if (requestParameters['indexType'] == null) {
             throw new runtime.RequiredError(
                 'indexType',
@@ -336,7 +478,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Admin Settings
      */
-    async getAdminSettingsApiV1IndexAdminSettingsGet(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async getAdminSettingsApiV1IndexAdminSettingsGet(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
         const response = await this.getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -386,7 +528,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Index Settings
      */
-    async getIndexSettingsApiV1IndexIndexIdSettingsGetRaw(requestParameters: GetIndexSettingsApiV1IndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async getIndexSettingsApiV1IndexIndexIdSettingsGetRaw(requestParameters: GetIndexSettingsApiV1IndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
         if (requestParameters['indexId'] == null) {
             throw new runtime.RequiredError(
                 'indexId',
@@ -420,7 +562,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Index Settings
      */
-    async getIndexSettingsApiV1IndexIndexIdSettingsGet(requestParameters: GetIndexSettingsApiV1IndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async getIndexSettingsApiV1IndexIndexIdSettingsGet(requestParameters: GetIndexSettingsApiV1IndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
         const response = await this.getIndexSettingsApiV1IndexIndexIdSettingsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -668,6 +810,67 @@ export class IndexApi extends runtime.BaseAPI {
     }
 
     /**
+     * Update Group
+     */
+    async updateGroupApiV1IndexIndexIdGroupsGroupIdPatchRaw(requestParameters: UpdateGroupApiV1IndexIndexIdGroupsGroupIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters['indexId'] == null) {
+            throw new runtime.RequiredError(
+                'indexId',
+                'Required parameter "indexId" was null or undefined when calling updateGroupApiV1IndexIndexIdGroupsGroupIdPatch().'
+            );
+        }
+
+        if (requestParameters['groupId'] == null) {
+            throw new runtime.RequiredError(
+                'groupId',
+                'Required parameter "groupId" was null or undefined when calling updateGroupApiV1IndexIndexIdGroupsGroupIdPatch().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['groupName'] != null) {
+            queryParameters['group_name'] = requestParameters['groupName'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/index/{index_id}/groups/{group_id}`;
+        urlPath = urlPath.replace(`{${"index_id"}}`, encodeURIComponent(String(requestParameters['indexId'])));
+        urlPath = urlPath.replace(`{${"group_id"}}`, encodeURIComponent(String(requestParameters['groupId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: BodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatchToJSON(requestParameters['bodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatch']),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Update Group
+     */
+    async updateGroupApiV1IndexIndexIdGroupsGroupIdPatch(requestParameters: UpdateGroupApiV1IndexIndexIdGroupsGroupIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.updateGroupApiV1IndexIndexIdGroupsGroupIdPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Update Index
      */
     async updateIndexApiV1IndexIndexIdPatchRaw(requestParameters: UpdateIndexApiV1IndexIndexIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -702,7 +905,7 @@ export class IndexApi extends runtime.BaseAPI {
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['body'] as any,
+            body: requestParameters['requestBody'],
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {

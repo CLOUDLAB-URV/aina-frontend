@@ -15,12 +15,15 @@
 
 import * as runtime from '../runtime';
 import type {
+  ApiSchemasChatConversationInfo,
   ChatRequest,
   GenericException,
   HTTPValidationError,
   Liked,
 } from '../models/index';
 import {
+    ApiSchemasChatConversationInfoFromJSON,
+    ApiSchemasChatConversationInfoToJSON,
     ChatRequestFromJSON,
     ChatRequestToJSON,
     GenericExceptionFromJSON,
@@ -119,7 +122,7 @@ export class ChatApi extends runtime.BaseAPI {
      * Like or dislike a message in a specific conversation.
      * Like Message
      */
-    async likeMessageApiV1ChatAgentIdConversationIdLikePostRaw(requestParameters: LikeMessageApiV1ChatAgentIdConversationIdLikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async likeMessageApiV1ChatAgentIdConversationIdLikePostRaw(requestParameters: LikeMessageApiV1ChatAgentIdConversationIdLikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
@@ -170,14 +173,18 @@ export class ChatApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse<any>(response);
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
     }
 
     /**
      * Like or dislike a message in a specific conversation.
      * Like Message
      */
-    async likeMessageApiV1ChatAgentIdConversationIdLikePost(requestParameters: LikeMessageApiV1ChatAgentIdConversationIdLikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async likeMessageApiV1ChatAgentIdConversationIdLikePost(requestParameters: LikeMessageApiV1ChatAgentIdConversationIdLikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.likeMessageApiV1ChatAgentIdConversationIdLikePostRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -186,7 +193,7 @@ export class ChatApi extends runtime.BaseAPI {
      * Select data sources for a specific conversation.
      * Select Conversation
      */
-    async selectConversationApiV1ChatAgentIdConversationIdSelectPostRaw(requestParameters: SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async selectConversationApiV1ChatAgentIdConversationIdSelectPostRaw(requestParameters: SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ApiSchemasChatConversationInfo>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
@@ -222,18 +229,14 @@ export class ChatApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        if (this.isJsonMime(response.headers.get('content-type'))) {
-            return new runtime.JSONApiResponse<any>(response);
-        } else {
-            return new runtime.TextApiResponse(response) as any;
-        }
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApiSchemasChatConversationInfoFromJSON(jsonValue));
     }
 
     /**
      * Select data sources for a specific conversation.
      * Select Conversation
      */
-    async selectConversationApiV1ChatAgentIdConversationIdSelectPost(requestParameters: SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+    async selectConversationApiV1ChatAgentIdConversationIdSelectPost(requestParameters: SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ApiSchemasChatConversationInfo> {
         const response = await this.selectConversationApiV1ChatAgentIdConversationIdSelectPostRaw(requestParameters, initOverrides);
         return await response.value();
     }

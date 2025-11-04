@@ -15,17 +15,17 @@
 
 import * as runtime from '../runtime';
 import type {
+  ApiSchemasConversationsConversationInfo,
   ConversationCreate,
-  ConversationInfo,
   ConversationUpdate,
   GenericException,
   HTTPValidationError,
 } from '../models/index';
 import {
+    ApiSchemasConversationsConversationInfoFromJSON,
+    ApiSchemasConversationsConversationInfoToJSON,
     ConversationCreateFromJSON,
     ConversationCreateToJSON,
-    ConversationInfoFromJSON,
-    ConversationInfoToJSON,
     ConversationUpdateFromJSON,
     ConversationUpdateToJSON,
     GenericExceptionFromJSON,
@@ -158,7 +158,7 @@ export class ConversationsApi extends runtime.BaseAPI {
      * List conversations for a given user.
      * List Conversations
      */
-    async listConversationsApiV1ConversationsAgentIdGetRaw(requestParameters: ListConversationsApiV1ConversationsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ConversationInfo>>> {
+    async listConversationsApiV1ConversationsAgentIdGetRaw(requestParameters: ListConversationsApiV1ConversationsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ApiSchemasConversationsConversationInfo>>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
@@ -186,14 +186,14 @@ export class ConversationsApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ConversationInfoFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ApiSchemasConversationsConversationInfoFromJSON));
     }
 
     /**
      * List conversations for a given user.
      * List Conversations
      */
-    async listConversationsApiV1ConversationsAgentIdGet(requestParameters: ListConversationsApiV1ConversationsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ConversationInfo>> {
+    async listConversationsApiV1ConversationsAgentIdGet(requestParameters: ListConversationsApiV1ConversationsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ApiSchemasConversationsConversationInfo>> {
         const response = await this.listConversationsApiV1ConversationsAgentIdGetRaw(requestParameters, initOverrides);
         return await response.value();
     }

@@ -16,57 +16,57 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface ConversationInfo
+ * @interface ApiSchemasConversationsConversationInfo
  */
-export interface ConversationInfo {
+export interface ApiSchemasConversationsConversationInfo {
     /**
      * The ID of the conversation
      * @type {string}
-     * @memberof ConversationInfo
+     * @memberof ApiSchemasConversationsConversationInfo
      */
     id: string;
     /**
      * The name of the conversation
      * @type {string}
-     * @memberof ConversationInfo
+     * @memberof ApiSchemasConversationsConversationInfo
      */
     name: string;
     /**
      * The ID of the user who owns the conversation
      * @type {string}
-     * @memberof ConversationInfo
+     * @memberof ApiSchemasConversationsConversationInfo
      */
     user: string;
     /**
      * Whether the conversation is public
      * @type {boolean}
-     * @memberof ConversationInfo
+     * @memberof ApiSchemasConversationsConversationInfo
      */
     isPublic?: boolean;
     /**
      * The creation timestamp of the conversation
      * @type {Date}
-     * @memberof ConversationInfo
+     * @memberof ApiSchemasConversationsConversationInfo
      */
     dateCreated: Date;
     /**
      * The last update timestamp of the conversation
      * @type {Date}
-     * @memberof ConversationInfo
+     * @memberof ApiSchemasConversationsConversationInfo
      */
     dateUpdated: Date;
     /**
      * 
      * @type {string}
-     * @memberof ConversationInfo
+     * @memberof ApiSchemasConversationsConversationInfo
      */
     agentId?: string | null;
 }
 
 /**
- * Check if a given object implements the ConversationInfo interface.
+ * Check if a given object implements the ApiSchemasConversationsConversationInfo interface.
  */
-export function instanceOfConversationInfo(value: object): value is ConversationInfo {
+export function instanceOfApiSchemasConversationsConversationInfo(value: object): value is ApiSchemasConversationsConversationInfo {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('user' in value) || value['user'] === undefined) return false;
@@ -75,11 +75,11 @@ export function instanceOfConversationInfo(value: object): value is Conversation
     return true;
 }
 
-export function ConversationInfoFromJSON(json: any): ConversationInfo {
-    return ConversationInfoFromJSONTyped(json, false);
+export function ApiSchemasConversationsConversationInfoFromJSON(json: any): ApiSchemasConversationsConversationInfo {
+    return ApiSchemasConversationsConversationInfoFromJSONTyped(json, false);
 }
 
-export function ConversationInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): ConversationInfo {
+export function ApiSchemasConversationsConversationInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): ApiSchemasConversationsConversationInfo {
     if (json == null) {
         return json;
     }
@@ -95,11 +95,11 @@ export function ConversationInfoFromJSONTyped(json: any, ignoreDiscriminator: bo
     };
 }
 
-export function ConversationInfoToJSON(json: any): ConversationInfo {
-    return ConversationInfoToJSONTyped(json, false);
+export function ApiSchemasConversationsConversationInfoToJSON(json: any): ApiSchemasConversationsConversationInfo {
+    return ApiSchemasConversationsConversationInfoToJSONTyped(json, false);
 }
 
-export function ConversationInfoToJSONTyped(value?: ConversationInfo | null, ignoreDiscriminator: boolean = false): any {
+export function ApiSchemasConversationsConversationInfoToJSONTyped(value?: ApiSchemasConversationsConversationInfo | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
