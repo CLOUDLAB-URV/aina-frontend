@@ -120,15 +120,7 @@ async function createAgent() {
             let indexInfo: CreateIndexApiV1IndexPostRequest = {
                 name: `${agent.value.name}_index`,
                 indexType: 'FileIndex',
-                requestBody: {
-                    "embedding": "default",
-                    "supported_file_types": ".pdf, .md",
-                    "max_file_size": 1000,
-                    "max_number_of_files": 0,
-                    "private": true,
-                    "chunk_size": 0,
-                    "chunk_overlap": 0
-                }
+                requestBody: {}
             };
 
             IndApi.createIndexApiV1IndexPost(indexInfo).then(async (res) => {

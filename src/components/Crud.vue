@@ -1,6 +1,6 @@
 <template>
     <div class="card">
-        <Tabs value="0">
+        <Tabs value="list">
             <TabList>
                 <Tab value="list">{{ ` List ${title}` }}</Tab>
                 <Tab value="create">{{ ` Create ${title}` }}</Tab>
