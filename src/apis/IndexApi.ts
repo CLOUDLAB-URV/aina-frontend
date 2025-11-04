@@ -18,6 +18,7 @@ import type {
   BodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatch,
   FileInfo,
   GenericException,
+  GroupInfo,
   HTTPValidationError,
   IndexInfo,
 } from '../models/index';
@@ -28,6 +29,8 @@ import {
     FileInfoToJSON,
     GenericExceptionFromJSON,
     GenericExceptionToJSON,
+    GroupInfoFromJSON,
+    GroupInfoToJSON,
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
     IndexInfoFromJSON,
@@ -43,7 +46,7 @@ export interface CreateGroupApiV1IndexIndexIdGroupsPostRequest {
 export interface CreateIndexApiV1IndexPostRequest {
     name: string;
     indexType: string;
-    requestBody: { [key: string]: any; };
+    requestBody?: { [key: string]: any; } | null;
 }
 
 export interface DeleteAllFilesApiV1IndexIndexIdFilesDeleteRequest {
@@ -191,13 +194,6 @@ export class IndexApi extends runtime.BaseAPI {
             throw new runtime.RequiredError(
                 'indexType',
                 'Required parameter "indexType" was null or undefined when calling createIndexApiV1IndexPost().'
-            );
-        }
-
-        if (requestParameters['requestBody'] == null) {
-            throw new runtime.RequiredError(
-                'requestBody',
-                'Required parameter "requestBody" was null or undefined when calling createIndexApiV1IndexPost().'
             );
         }
 
@@ -694,7 +690,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * List Groups
      */
-    async listGroupsApiV1IndexIndexIdGroupsGetRaw(requestParameters: ListGroupsApiV1IndexIndexIdGroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async listGroupsApiV1IndexIndexIdGroupsGetRaw(requestParameters: ListGroupsApiV1IndexIndexIdGroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GroupInfo>>> {
         if (requestParameters['indexId'] == null) {
             throw new runtime.RequiredError(
                 'indexId',
@@ -722,17 +718,13 @@ export class IndexApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        if (this.isJsonMime(response.headers.get('content-type'))) {
-            return new runtime.JSONApiResponse<any>(response);
-        } else {
-            return new runtime.TextApiResponse(response) as any;
-        }
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(GroupInfoFromJSON));
     }
 
     /**
      * List Groups
      */
-    async listGroupsApiV1IndexIndexIdGroupsGet(requestParameters: ListGroupsApiV1IndexIndexIdGroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+    async listGroupsApiV1IndexIndexIdGroupsGet(requestParameters: ListGroupsApiV1IndexIndexIdGroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GroupInfo>> {
         const response = await this.listGroupsApiV1IndexIndexIdGroupsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }

@@ -13,6 +13,7 @@ export * from './EmbeddingCreate';
 export * from './EmbeddingInfo';
 export * from './FileInfo';
 export * from './GenericException';
+export * from './GroupInfo';
 export * from './HTTPValidationError';
 export * from './IndexInfo';
 export * from './Liked';
