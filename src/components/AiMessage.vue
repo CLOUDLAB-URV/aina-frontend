@@ -8,6 +8,6 @@
 </template>
 <script setup lang="ts">
 defineProps<{
-    message: string;
+    message: String;
 }>();
 </script>
