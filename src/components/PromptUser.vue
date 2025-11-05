@@ -6,7 +6,7 @@
         </section>
         <section class="flex gap-4 items-center mt-2">
             <AgentSelects @agentSelected="(ag: AgentResponse | null) => agent = ag" />
-            <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n: any) => conv = n" />
+            <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n: any) => conv = n" :conv="conv" />
         </section>
         <section v-if="agent?.id && conv?.id" class="flex flex-wrap gap-4 mt-2">
             <div class="flex items-center gap-2">
@@ -31,24 +31,24 @@
 import { ref, watch } from 'vue'
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import AgentSelects from '@/components/AgentSelects.vue';
-// import { useToast } from 'primevue/usetoast';
+import type { ConversationCreate } from '@/models/index';
+import type { AddConversationApiV1ConversationsPostRequest } from '@/apis/ConversationsApi';
 import { useChatStore } from '@/stores/chat';
 import ConversationSelect from './ConversationSelect.vue';
 import Button from 'primevue/button';
 import RadioButton from 'primevue/radiobutton';
 import MultiSelect from 'primevue/multiselect';
 import type { AgentResponse, FileInfo } from '@/models';
+import { ConvApi } from '@/apis/api';
+import { useConvStore } from '@/stores/conv';
 
 let showFiles = ref(false);
-
+const convStore = useConvStore();
 let files = ref<FileInfo[]>([]);
-
 let selectedFiles = ref([]);
-
 let select = ref('all');
 let agent = ref<AgentResponse | null>(null);
 let conv = ref();
-let ids = ref();
 let message = ref();
 const controller = new AbortController();
 const chatter = useChatStore()
@@ -70,11 +70,23 @@ watch(agent, (newAgent) => {
 
 async function sendMessage(event: Event) {
 
-    console.log('SendMessage');
-    console.log(ids.value);
-
-    if (!agent.value || !conv.value)
+    if (!agent.value || !message.value)
         return;
+
+
+    if(!conv.value){
+        let convCreate: ConversationCreate = {
+            name: `${message.value}_conversation`,
+            isPublic: false,
+            agentId: agent.value.id,
+        }
+        let info: AddConversationApiV1ConversationsPostRequest = { conversationCreate: convCreate };
+            await ConvApi.addConversationApiV1ConversationsPost(info).then((res) => {
+                convStore.addConv(res);
+                conv.value = res;
+            }
+        );
+    }
 
     const url = `http://localhost:8000/api/v1/chat/${agent.value.id}/${conv.value.id}`;
 
@@ -88,6 +100,7 @@ async function sendMessage(event: Event) {
         message: message.value
     };
 
+    message.value = ""
     fetchEventSource(url, {
         method: 'POST',
         body: JSON.stringify(bodyData),

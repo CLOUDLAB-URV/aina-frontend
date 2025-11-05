@@ -13,7 +13,7 @@ export const useChatStore = defineStore("Chat", () => {
   const addUserChat = (chat: string) => {
     data.value.push({
       user: chat,
-      ai: "", 
+      ai: "Thinking ... ", 
     });
   };
 
@@ -21,7 +21,11 @@ export const useChatStore = defineStore("Chat", () => {
     if (data.value.length > 0) {
       const lastItem = data.value[data.value.length - 1];
       if (lastItem != undefined){
-        lastItem.ai = lastItem.ai + chat;
+        if (lastItem.ai == "Thinking ... "){
+          lastItem.ai = chat;
+        }else{
+          lastItem.ai = lastItem.ai + chat;
+        }
       }
     } else {
       console.warn("Se intentó añadir una respuesta de IA, pero no hay ningún chat de usuario al que responder.");

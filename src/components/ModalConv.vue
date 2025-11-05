@@ -42,6 +42,7 @@ import { ConvApi } from '@/apis/api';
 import { useConvStore } from '@/stores/conv';
 import { useToast } from 'primevue/usetoast';
 
+const emit =defineEmits(['deleted']);
 const toast = useToast();
 const props = defineProps({
     create: { type: String, required: true },
@@ -123,6 +124,8 @@ async function deleteconv() {
     await ConvApi.deleteConversationApiV1ConversationsConversationIdDelete(deleteData).then(() => {
         visible.value = false;
         convStore.removeConv(conv.value);
+        console.log("EMIT")
+        emit('deleted')
     })
 }
 

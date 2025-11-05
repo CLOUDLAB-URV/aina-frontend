@@ -5,7 +5,7 @@
     </select>
     <ModalConv create="create" :agentId="props.agentId" />
     <ModalConv create="edit" :data="conv" :agentId="props.agentId" />
-    <ModalConv create="trash" :data="conv" :agentId="props.agentId" />
+    <ModalConv create="trash" :data="conv" :agentId="props.agentId" @deleted=" conv = null"/>
 </template>
 
 <script setup lang="ts">
@@ -27,17 +27,26 @@ const props = defineProps({
     agentId: {
         type: String,
         required: true
+    },
+    conv:{
+        type : Object,
+        required : true
     }
 })
-
 
 watch(() => props.agentId, async () => {
     let listAgentConv: ListConversationsApiV1ConversationsAgentIdGetRequest = {
         agentId: props.agentId
     }
     convStore.data = await ConvApi.listConversationsApiV1ConversationsAgentIdGet(listAgentConv);
-    conv.value = ""
+    conv.value = null
 }, { immediate: true })
+
+watch(
+    ()=> props.conv,
+    ()=>{conv.value = props.conv},
+    {immediate:true}
+)
 
 watch(
     () => conv.value,
@@ -51,12 +60,14 @@ watch(
             agentId: props.agentId,
             conversationId: conv.value.id
         });
-        chatStore.data = res.messages.map(v => {
-            return {
-                user: v[0],
-                ai: v[1],
-            } as ChatItem;
-        });
+        if (res.messages.length != 0){
+            chatStore.data = res.messages.map(v => {
+                return {
+                    user: v[0],
+                    ai: v[1],
+                } as ChatItem;
+            });
+        }
     }
 )
 

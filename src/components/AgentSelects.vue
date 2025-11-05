@@ -1,9 +1,8 @@
 <template>
     <div class="flex gap-2">
         <select name="agent" id="agent" v-model="agent" :key="store.data.length">
-            <option disabled value="">Please select one</option>
-            <option :value="agentItem" v-for="agentItem in store.data" :key="agentItem.id">{{ agentItem.name
-            }}</option>
+            <option disabled :value="null">Please select one</option>
+            <option :value="agentItem" v-for="agentItem in store.data" :key="agentItem.id">{{ agentItem.name }}</option>
         </select>
         <div class="flex justify-between items-center gap-2">
             <ModalCreateAgent create="create" />
@@ -19,7 +18,6 @@ import { onMounted, ref, watch } from 'vue';
 import ModalCreateAgent from './ModalCreateAgent.vue';
 import { useAgentStore } from '@/stores/agent';
 import type { AgentResponse } from '@/models';
-// import ConversationSelect from './ConversationSelect.vue';
 
 const emit = defineEmits<{ 'agentSelected': [agent: AgentResponse | null] }>();
 
