@@ -7,8 +7,8 @@
         </select>
         <div class="flex justify-between items-center gap-2">
             <ModalCreateAgent create="create" />
-            <ModalCreateAgent create="edit" :data="agent" />
-            <ModalCreateAgent create="trash" :data="agent" />
+            <ModalCreateAgent v-if="agent" create="edit" :data="agent" />
+            <ModalCreateAgent v-if="agent" create="trash" :data="agent" />
         </div>
         <!-- <ConversationSelect v-if="agent?.id" :agentId="agent?.id" v-bind="$attrs" /> -->
     </div>
@@ -18,26 +18,27 @@ import { AgApi } from '@/apis/api';
 import { onMounted, ref, watch } from 'vue';
 import ModalCreateAgent from './ModalCreateAgent.vue';
 import { useAgentStore } from '@/stores/agent';
+import type { AgentResponse } from '@/models';
 // import ConversationSelect from './ConversationSelect.vue';
 
-const emit = defineEmits(['agentSelected'])
+const emit = defineEmits<{ 'agentSelected': [agent: AgentResponse | null] }>();
 
 const store = useAgentStore();
-let agent = ref();
+let agent = ref<AgentResponse | null>(null);
 
 onMounted(async () => {
     store.data = await AgApi.listAgentsCreatedApiV1AgentsCreatedGet();
-    agent.value = ""
+    agent.value = null;
 })
 
 watch(() => store.data, () => {
     if (store.data.length == 0) {
-        agent.value = ""
+        agent.value = null;
     }
 })
 
 watch(() => agent.value, () => {
-    emit('agentSelected',agent.value)
+    emit('agentSelected', agent.value)
 })
 
 </script>

@@ -1,10 +1,11 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import type { AgentResponse } from "@/models";
 
 export const useAgentStore = defineStore("Agent", () => {
-  const data = ref<any[]>([]);
+  const data = ref<AgentResponse[]>([]);
 
-  const addAgent = (Agent: any) => {
+  const addAgent = (Agent: AgentResponse) => {
     data.value.push(Agent);
   };
 
@@ -12,8 +13,8 @@ export const useAgentStore = defineStore("Agent", () => {
     data.value = data.value.filter(agent => agent.id !== id)
   }
 
-  const updateAgent = (Agent: any) => {
-    let index = data.value.findIndex((item: any) => item.id === Agent.id);
+  const updateAgent = (Agent: AgentResponse) => {
+    let index = data.value.findIndex((item: AgentResponse) => item.id === Agent.id);
     if (index !== -1) {
       data.value[index] = Agent;
     }
