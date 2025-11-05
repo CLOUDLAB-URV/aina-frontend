@@ -4,8 +4,8 @@
         <option v-for="conv in convStore.data" :value="conv">{{ conv.name }}</option>
     </select>
     <ModalConv create="create" :agentId="props.agentId" />
-    <ModalConv create="edit" :data="conv" :agentId="props.agentId" />
-    <ModalConv create="trash" :data="conv" :agentId="props.agentId" @deleted=" conv = null"/>
+    <ModalConv create="edit" v-if="conv" :data="conv" :agentId="props.agentId" />
+    <ModalConv create="trash" v-if="conv" :data="conv" :agentId="props.agentId" @deleted=" conv = null" />
 </template>
 
 <script setup lang="ts">
@@ -28,9 +28,9 @@ const props = defineProps({
         type: String,
         required: true
     },
-    conv:{
-        type : Object,
-        required : true
+    conv: {
+        type: Object,
+        required: true
     }
 })
 
@@ -43,9 +43,9 @@ watch(() => props.agentId, async () => {
 }, { immediate: true })
 
 watch(
-    ()=> props.conv,
-    ()=>{conv.value = props.conv},
-    {immediate:true}
+    () => props.conv,
+    () => { conv.value = props.conv },
+    { immediate: true }
 )
 
 watch(
@@ -60,7 +60,7 @@ watch(
             agentId: props.agentId,
             conversationId: conv.value.id
         });
-        if (!chatStore.lastThinking()){
+        if (!chatStore.lastThinking()) {
             chatStore.data = res.messages.map(v => {
                 return {
                     user: v[0],

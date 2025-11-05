@@ -9,21 +9,20 @@
             <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n: any) => conv = n" :conv="conv" />
         </section>
         <section v-if="agent?.id && conv?.id" class="flex flex-wrap gap-4 mt-2">
-            <div class="flex items-center gap-2">
-                <RadioButton value="all" id="all" v-model="select" />
-                <label for="all">Search all</label>
-            </div>
-            <div class="flex items-center gap-2">
-                <RadioButton value="select" id="select" v-model="select" />
-                <label for="select">Search in files</label>
-            </div>
-            <div class="flex items-center gap-2">
-                <RadioButton value="disabled" id="disabled" v-model="select" />
-                <label for="disabled">Disabled</label>
+            <div v-for="option in SelectMode" :key="option" class="flex items-center gap-2">
+                <RadioButton :value="option" :id="option" v-model="select" />
+                <label :for="option">
+                    {{
+                        option === 'all' ? 'Search all' :
+                            option === 'select' ? 'Search in files' :
+                                'Disabled'
+                    }}
+                </label>
             </div>
         </section>
         <section>
-            <MultiSelect v-if="showFiles" :options="files" v-model="selectedFiles" />
+            <MultiSelect v-if="showFiles" :options="files" optionLabel="name" optionValue="id"
+                v-model="selectedFiles" />
         </section>
     </div>
 </template>
@@ -38,15 +37,17 @@ import ConversationSelect from './ConversationSelect.vue';
 import Button from 'primevue/button';
 import RadioButton from 'primevue/radiobutton';
 import MultiSelect from 'primevue/multiselect';
-import type { AgentResponse, FileInfo } from '@/models';
 import { ConvApi } from '@/apis/api';
 import { useConvStore } from '@/stores/conv';
+import { ChatRequestToJSON, SelectMode, type AgentResponse, type ChatRequest, type FileInfo } from '@/models';
+import { IndApi } from '@/apis/api';
 
 let showFiles = ref(false);
 const convStore = useConvStore();
 let files = ref<FileInfo[]>([]);
 let selectedFiles = ref([]);
-let select = ref('all');
+
+let select = ref<SelectMode>(SelectMode.All);
 let agent = ref<AgentResponse | null>(null);
 let conv = ref();
 let message = ref();
@@ -58,34 +59,31 @@ watch(select, (newValue) => {
     showFiles.value = newValue === 'select';
 });
 
-watch(agent, (newAgent) => {
+watch(agent, async (newAgent) => {
     console.log('Agent changed to:', newAgent);
     conv.value = null;
-    if (newAgent) {
-        files.value = [];
+    if (newAgent && newAgent.indexId) {
+        files.value = await IndApi.listFilesApiV1IndexIndexIdFilesGet({ indexId: newAgent.indexId });
         selectedFiles.value = [];
     }
 });
-
 
 async function sendMessage(event: Event) {
 
     if (!agent.value || !message.value)
         return;
 
-
-    if(!conv.value){
+    if (!conv.value) {
         let convCreate: ConversationCreate = {
             name: `${message.value}_conversation`,
             isPublic: false,
             agentId: agent.value.id,
         }
         let info: AddConversationApiV1ConversationsPostRequest = { conversationCreate: convCreate };
-            await ConvApi.addConversationApiV1ConversationsPost(info).then((res) => {
-                convStore.addConv(res);
-                conv.value = res;
-            }
-        );
+        await ConvApi.addConversationApiV1ConversationsPost(info).then((res) => {
+            convStore.addConv(res);
+            conv.value = res;
+        });
     }
 
     const url = `http://localhost:8000/api/v1/chat/${agent.value.id}/${conv.value.id}`;
@@ -96,14 +94,16 @@ async function sendMessage(event: Event) {
     chatter.addUserChat(message.value)
     formData.append('message', message.value)
 
-    const bodyData = {
-        message: message.value
+    const bodyData: ChatRequest = {
+        message: message.value,
+        selectedFiles: select.value === 'select' ? selectedFiles.value : undefined,
+        selectMode: select.value
     };
 
     message.value = ""
     fetchEventSource(url, {
         method: 'POST',
-        body: JSON.stringify(bodyData),
+        body: JSON.stringify(ChatRequestToJSON(bodyData)),
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'Content-Type': 'application/json'
