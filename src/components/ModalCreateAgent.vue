@@ -51,6 +51,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import type { AgentUpdate } from '@/models/AgentUpdate.ts';
+import type { AgentResponse } from '@/models';
 import { AgApi } from "@/apis/api";
 import type { AddAgentApiV1AgentsPostRequest, UpdateAgentApiV1AgentsAgentIdPatchRequest, DeleteAgentApiV1AgentsAgentIdDeleteRequest } from "@/apis";
 import type { AgentCreate } from '@/models';
@@ -62,10 +63,10 @@ import { LlmApi } from '@/apis/api';
 
 const toast = useToast();
 const store = useAgentStore();
-const props = defineProps({
-    create: { type: String, required: true },
-    data: Object,
-});
+const props = defineProps<{
+    create: string,
+    data?: AgentResponse
+}>();
 let modelsNames = ref();
 
 const visible = ref(false);

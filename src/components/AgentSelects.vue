@@ -1,9 +1,10 @@
 <template>
     <div class="flex gap-2">
-        <select name="agent" id="agent" v-model="agent" :key="store.data.length">
+        <Select v-model="agent" :options="store.data" optionLabel="name" placeholder="Please select an agent" />
+        <!-- <select name="agent" id="agent" v-model="agent" :key="store.data.length">
             <option disabled :value="null">Please select one</option>
             <option :value="agentItem" v-for="agentItem in store.data" :key="agentItem.id">{{ agentItem.name }}</option>
-        </select>
+        </select> -->
         <div class="flex justify-between items-center gap-2">
             <ModalCreateAgent create="create" />
             <ModalCreateAgent v-if="agent" create="edit" :data="agent" />
@@ -18,25 +19,27 @@ import { onMounted, ref, watch } from 'vue';
 import ModalCreateAgent from './ModalCreateAgent.vue';
 import { useAgentStore } from '@/stores/agent';
 import type { AgentResponse } from '@/models';
+import Select from 'primevue/select';
 
-const emit = defineEmits<{ 'agentSelected': [agent: AgentResponse | null] }>();
+const emit = defineEmits<{ 'agentSelected': [agent?: AgentResponse] }>();
 
 const store = useAgentStore();
-let agent = ref<AgentResponse | null>(null);
+let agent = ref<AgentResponse>();
 
 onMounted(async () => {
     store.data = await AgApi.listAgentsCreatedApiV1AgentsCreatedGet();
-    agent.value = null;
+    delete agent.value;
 })
 
-watch(() => store.data, () => {
+watch(store.data, () => {
     if (store.data.length == 0) {
-        agent.value = null;
+        delete agent.value;
     }
 })
 
-watch(() => agent.value, () => {
+watch(agent, () => {
     emit('agentSelected', agent.value)
+    console.log('Selected agent:', agent.value);
 })
 
 </script>

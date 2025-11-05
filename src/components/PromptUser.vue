@@ -5,7 +5,7 @@
             <Button @click="sendMessage" icon="pi pi-send"></Button>
         </section>
         <section class="flex gap-4 items-center mt-2">
-            <AgentSelects @agentSelected="(ag: AgentResponse | null) => agent = ag" />
+            <AgentSelects @agentSelected="(ag) => agent = ag" />
             <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n: any) => conv = n" :conv="conv" />
         </section>
         <section v-if="agent?.id && conv?.id" class="flex flex-wrap gap-4 mt-2">
@@ -48,7 +48,7 @@ let files = ref<FileInfo[]>([]);
 let selectedFiles = ref([]);
 
 let select = ref<SelectMode>(SelectMode.All);
-let agent = ref<AgentResponse | null>(null);
+let agent = ref<AgentResponse>();
 let conv = ref();
 let message = ref();
 const controller = new AbortController();
