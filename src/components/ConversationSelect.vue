@@ -43,6 +43,10 @@ watch(
     () => conv.value,
     async () => {
         emit('selectConv', conv.value)
+        if (!conv.value) {
+            chatStore.data = [];
+            return;
+        }
         const res = await ChApi.selectConversationApiV1ChatAgentIdConversationIdSelectPost({
             agentId: props.agentId,
             conversationId: conv.value.id
