@@ -29,6 +29,10 @@ const props = defineProps({
     agentId:{
         type:String,
         required:true,
+    },
+    indexId:{
+        type:Number,
+        required:true,
     }
 })
 
@@ -75,10 +79,10 @@ async function FileUpload(event: Event) {
                 console.log('uploaded correct');
                 toast.add({ severity: 'success', summary: 'Uploaded File', detail: 'Uploaded File', life: 3000 })
                 let index: ListFilesApiV1IndexIndexIdFilesGetRequest = {
-                    indexId: 1
+                    indexId: props.indexId
                 }
                 IndApi.listFilesApiV1IndexIndexIdFilesGet(index).then((res) => {
-                    // console.log(res)
+                    console.log(res)
                     fileStore.files = Object.values(res);
                 });
             }

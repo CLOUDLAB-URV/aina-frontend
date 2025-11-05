@@ -4,7 +4,7 @@
             <h3 class="text-2xl">File Upload</h3>
             <AgentSelects @agent-selected="(ag: any) => agent = ag" />
             <!-- <Button v-if="agent" label="Delete all Files" icon="pi pi-trash" severity="danger" @click="deleteAllFiles"/> -->
-            <UploadFiles v-if="agent?.id" :agent-id="agent.id" class="p-1" />
+            <UploadFiles v-if="agent?.id" :agent-id="agent.id" class="p-1" :index-id="agent.indexId"/>
             <p class="">
                 Supported file types: .png, .jpeg, .jpg, .tiff, .tif, .pdf, .xls, .xlsx, .doc, .docx, .pptx, .csv,
                 .html, .mhtml, .txt, .zip

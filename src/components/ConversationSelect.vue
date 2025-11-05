@@ -60,7 +60,7 @@ watch(
             agentId: props.agentId,
             conversationId: conv.value.id
         });
-        if (res.messages.length != 0){
+        if (!chatStore.lastThinking()){
             chatStore.data = res.messages.map(v => {
                 return {
                     user: v[0],

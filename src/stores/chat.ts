@@ -32,5 +32,13 @@ export const useChatStore = defineStore("Chat", () => {
     }
   };
 
-  return { data, addUserChat, addAiChat };
+  const lastThinking = () => {
+    const lastItem = data.value[data.value.length - 1];
+    if (lastItem != undefined){
+      return (lastItem.ai == "Thinking ... ")
+    }
+    return false
+  }
+
+  return { data, addUserChat, addAiChat,lastThinking };
 });
