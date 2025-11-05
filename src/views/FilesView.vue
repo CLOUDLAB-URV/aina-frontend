@@ -40,24 +40,24 @@
                             <Button severity="danger" icon="pi pi-trash" label="Delete" class="grow"
                                 @click=delete_file></Button>
                             <Button severity="secondary" label="Close" icon="pi pi-times" class="p-button-text"
-                                @click="file_selected = null"></Button>
+                                @click="delete file_selected"></Button>
                             <!-- <Button severity="info" icon="pi pi-download" label="Download File" class="grow"></Button> -->
                         </section>
                     </TabPanel>
                     <TabPanel value="1">
                         <h3 class="mb-3 text-2xl">Groups</h3>
-                        <DataTable :value="groupStore.groups" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
-                            stripedRows @row-click="groupClick" tableStyle="min-width: 50rem">
+                        <DataTable :value="groups" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
+                            @row-click="groupClick" tableStyle="min-width: 50rem">
                             <Column field="name" header="Name" style="width: 15%"></Column>
-                            <Column field="fileNames" header="Files" style="width: 70%"></Column>
-                            <Column field="dateCreated" header="Date Created" style="width: 15%"></Column>
+                            <Column field="fileNames" header="Files" style="width: 60%"></Column>
+                            <Column field="dateCreated" header="Date Created" style="width: 25%"></Column>
                         </DataTable>
                         <section v-if="!group_selected" class="flex flex-col gap-2 mt-3">
                             <!-- button to add group -->
                             <Button label="Add" icon="pi pi-plus" severity="success"
-                                @click="newGroup = { name: '', files: [] }"></Button>
+                                @click="showNewGroupDialog = true"></Button>
                         </section>
-                        <Dialog v-model:visible="newGroup" modal header="Create New Group" :style="{ width: '30rem' }">
+                        <Dialog v-if="showNewGroupDialog" modal header="Create New Group" :style="{ width: '30rem' }">
                             <div class="flex flex-col gap-4 mb-4">
                                 <label for="group-name">Group Name</label>
                                 <InputText id="group-name" v-model="newGroup.name" class="grow" />
@@ -66,8 +66,8 @@
                                     optionLabel="name" optionValue="id" />
                             </div>
                             <template #footer>
-                                <Button label="Cancel" icon="pi pi-times" severity="secondary" @click="newGroup = null"
-                                    autofocus></Button>
+                                <Button label="Cancel" icon="pi pi-times" severity="secondary"
+                                    @click="showNewGroupDialog = false" autofocus></Button>
                                 <Button label="Create" icon="pi pi-check" severity="success" @click="add_group"
                                     autofocus></Button>
                             </template>
@@ -82,48 +82,46 @@
                                 optionLabel="name" optionValue="id" />
                             <Button label="Save" icon="pi pi-check" @click="save_group"></Button>
                             <Button severity="secondary" label="Close" icon="pi pi-times" class="p-button-text"
-                                @click="group_selected = null"></Button>
+                                @click="group_selected = undefined"></Button>
                         </section>
                     </TabPanel>
                 </TabPanels>
             </Tabs>
         </section>
     </div>
-    <section class="file-list-container mt-2">
-        <h3 class="mb-3 text-2xl">LogInfo Indexing Files</h3>
-        <p v-for="file in fileStore.data" class="mb-2">{{ file }}</p>
-    </section>
 </template>
 
 <script setup lang="ts">
 import UploadFiles from '@/components/UploadFiles.vue';
 import { ref, watch } from 'vue';
 import { IndApi } from '@/apis/api';
-import type { ListFilesApiV1IndexIndexIdFilesGetRequest, DeleteFileApiV1IndexIndexIdFilesFileIdDeleteRequest } from '@/apis/IndexApi';
 import { useFilesStore } from '@/stores/file';
-import { useGroupsStore } from '@/stores/group';
 import AgentSelects from '@/components/AgentSelects.vue';
-import { type IndexInfo, type AgentResponse, type GroupInfo } from '@/models';
+import { type IndexInfo, type AgentResponse, type GroupInfo, type FileInfo } from '@/models';
 import MultiSelect from 'primevue/multiselect';
 
-let file_selected = ref();
-let group_selected = ref();
+let file_selected = ref<FileInfo>();
+let group_selected = ref<GroupInfo>();
+let showNewGroupDialog = ref(false);
 
-let newGroup = ref();
+let newGroup = ref<{ name: string; files: string[] }>(getDefaultGroup());
 
 let index = ref<IndexInfo>();
 
 let agent = ref<AgentResponse>();
-let filter = ref();
+let filter = ref<string>();
 const fileStore = useFilesStore();
-const groupStore = useGroupsStore();
+let groups = ref<GroupInfo[]>();
+
+function getDefaultGroup(): { name: string; files: string[] } {
+    return { name: "", files: [] };
+}
 
 async function loadFilesAndGroups() {
     if (agent.value?.indexId) {
-        let index: ListFilesApiV1IndexIndexIdFilesGetRequest = {
+        let notFiltered = await IndApi.listFilesApiV1IndexIndexIdFilesGet({
             indexId: agent.value.indexId
-        }
-        let notFiltered = await IndApi.listFilesApiV1IndexIndexIdFilesGet(index);
+        });
         fileStore.files = Object.values(notFiltered);
         let indexGroups = await IndApi.listGroupsApiV1IndexIndexIdGroupsGet({
             indexId: agent.value.indexId
@@ -132,7 +130,7 @@ async function loadFilesAndGroups() {
             let fileNames = group.files.map((file) => notFiltered.find((f) => f.id === file)?.name).join(", ");
             return { ...group, fileNames };
         });
-        groupStore.groups = Object.values(info);
+        groups.value = Object.values(info);
     }
 }
 
@@ -154,62 +152,54 @@ async function search() {
     if (!agent.value?.id || !agent.value?.indexId) {
         return;
     }
-    let index: ListFilesApiV1IndexIndexIdFilesGetRequest = {
+    let notFiltered = await IndApi.listFilesApiV1IndexIndexIdFilesGet({
         indexId: agent.value.indexId,
         namePattern: filter.value
-    }
-    let notFiltered = await IndApi.listFilesApiV1IndexIndexIdFilesGet(index);
+    });
     fileStore.files = Object.values(notFiltered);
 }
 
 async function delete_file() {
-    if (!agent.value?.id || !agent.value?.indexId) {
+    if (!agent.value?.id || !agent.value?.indexId || !file_selected.value) {
         return;
     }
-    let data: DeleteFileApiV1IndexIndexIdFilesFileIdDeleteRequest = {
+    await IndApi.deleteFileApiV1IndexIndexIdFilesFileIdDelete({
         indexId: agent.value.indexId,
         fileId: file_selected.value.id,
-    }
-    await IndApi.deleteFileApiV1IndexIndexIdFilesFileIdDelete(data).then((res) => {
-        console.log(res);
-        fileStore.removeFiles(res)
-        file_selected.value = null
     })
+    fileStore.removeFile(file_selected.value.id)
+    delete file_selected.value;
 }
 
 async function add_group() {
-    if (!agent.value?.id || !agent.value?.indexId) {
+    if (!agent.value?.id || !agent.value?.indexId || !newGroup.value) {
         return;
     }
     await IndApi.createGroupApiV1IndexIndexIdGroupsPost({
         indexId: agent.value.indexId,
         groupName: newGroup.value.name,
         requestBody: newGroup.value.files
-    }).then((res) => {
-        console.log(res);
-        groupStore.addGroup(res)
-        group_selected.value = res
-        newGroup.value = null
-    })
-    loadFilesAndGroups();
+    });
+    await loadFilesAndGroups();
+    group_selected.value = undefined;
+    showNewGroupDialog.value = false;
+    newGroup.value = getDefaultGroup();
 }
 
 async function delete_group() {
-    if (!agent.value?.id || !agent.value?.indexId) {
+    if (!agent.value?.id || !agent.value?.indexId || !group_selected.value) {
         return;
     }
     await IndApi.deleteGroupApiV1IndexIndexIdGroupsGroupIdDelete({
         indexId: agent.value.indexId,
         groupId: group_selected.value.id,
-    }).then((res) => {
-        console.log(res);
-        groupStore.removeGroup(res)
-        group_selected.value = null
-    })
+    });
+    await loadFilesAndGroups();
+    group_selected.value = undefined;
 }
 
 async function save_group() {
-    if (!agent.value?.id || !agent.value?.indexId) {
+    if (!agent.value?.id || !agent.value?.indexId || !group_selected.value) {
         return;
     }
     await IndApi.updateGroupApiV1IndexIndexIdGroupsGroupIdPatch({
@@ -219,12 +209,9 @@ async function save_group() {
         bodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatch: {
             fileIds: group_selected.value.files
         }
-    }).then((res) => {
-        console.log(res);
-        groupStore.updateGroups(res);
-        // Refresh the group list to show updated file names
-        loadFilesAndGroups();
-    })
+    });
+    await loadFilesAndGroups();
+    group_selected.value = undefined;
 }
 
 // async function deleteAllFiles(){

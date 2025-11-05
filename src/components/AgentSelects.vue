@@ -28,12 +28,12 @@ let agent = ref<AgentResponse>();
 
 onMounted(async () => {
     store.data = await AgApi.listAgentsCreatedApiV1AgentsCreatedGet();
-    delete agent.value;
+    agent.value = undefined;
 })
 
 watch(store.data, () => {
     if (store.data.length == 0) {
-        delete agent.value;
+        agent.value = undefined;
     }
 })
 

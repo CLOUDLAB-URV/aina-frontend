@@ -53,11 +53,33 @@
             <label for="reindex">ReIndex</label>
         </div>
 
-        <div v-if="logMessages.length > 0" class="mt-4">
+        <div v-if="isIndexing || logMessages.status || logMessages.details" class="mt-4">
             <h5>Upload Progress</h5>
-            <div class="bg-surface border rounded-lg p-3 max-h-40 overflow-y-auto">
-                <div v-for="(message, index) in logMessages" :key="index" class="text-sm">
-                    {{ message }}
+
+            <!-- Status/Result section -->
+            <div v-if="logMessages.status" class="mb-3">
+                <h6 class="text-sm font-semibold mb-2">Status:</h6>
+                <div class="bg-surface border rounded-lg p-3">
+                    <div class="text-sm flex items-center gap-2">
+                        <pre class="whitespace-pre-wrap m-0">{{ logMessages.status.replace(/\\n/g, '\n') }}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed progress section -->
+            <div v-if="logMessages.details" class="mb-3">
+                <h6 class="text-sm font-semibold mb-2">Details:</h6>
+                <div class="bg-surface border rounded-lg p-3 max-h-40 overflow-y-auto">
+                    <pre class="text-sm whitespace-pre-wrap">{{ logMessages.details.replace(/\\n/g, '\n') }}</pre>
+                </div>
+            </div>
+
+            <!-- Loading indicator when indexing -->
+            <div v-if="isIndexing && !logMessages.status && !logMessages.details"
+                class="bg-surface border rounded-lg p-3">
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-spin pi-spinner"></i>
+                    <span class="text-sm">Starting upload process...</span>
                 </div>
             </div>
         </div>
@@ -69,7 +91,6 @@ import { ref, computed } from 'vue';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { useFilesStore } from '@/stores/file';
 import { useToast } from 'primevue/usetoast';
-import type { ListFilesApiV1IndexIndexIdFilesGetRequest } from '@/apis/IndexApi';
 import type { IndexInfo } from '@/models';
 import { IndApi } from '@/apis/api';
 import { Checkbox, FileUpload, Button } from 'primevue';
@@ -81,7 +102,7 @@ const props = defineProps<{
 const fileUpload = ref<InstanceType<typeof FileUpload>>();
 const selectedFiles = ref<File[]>([]);
 let reindex = ref(false);
-const logMessages = ref<any[]>([]);
+const logMessages = ref<{ status: string, details: string }>({ status: '', details: '' });
 const isIndexing = ref(false);
 const controller = new AbortController();
 const fileStore = useFilesStore();
@@ -139,7 +160,7 @@ function validateFile(file: File): boolean {
     }
 
     if (props.index?.config?.max_file_size) {
-        const maxSizeBytes = props.index.config.max_file_size * 1024 * 1024; // Convert MB to bytes
+        const maxSizeBytes = props.index.config.max_file_size * 1024 * 1024;
 
         if (file.size > maxSizeBytes) {
             toast.add({
@@ -169,7 +190,7 @@ async function uploadFiles() {
     const url = `http://localhost:8000/api/v1/index/index?agent_id=${props.agentId}&reindex=${reindex.value}`;
 
     isIndexing.value = true;
-    logMessages.value = [];
+    logMessages.value = { status: '', details: '' };
 
     const formData = new FormData();
     for (const file of selectedFiles.value) {
@@ -185,19 +206,41 @@ async function uploadFiles() {
             },
             signal: controller.signal,
             onmessage(ev: any) {
-                console.log(ev.data[2]);
-                logMessages.value.push(ev.data);
+                console.log('Raw event data:', ev.data);
 
-                if (ev.data[2] == '❌') {
-                    console.log('failed');
+                let status = '';
+                let details = '';
+
+                try {
+                    // The data comes as a string representation of a tuple (status, details)
+                    // Example: "('✅ | file.pdf', 'Indexing [1/1]: file.pdf\n => Converting...')"
+                    const tupleMatch = ev.data.match(/^\('([^']*)',\s*'([^']*)'\)$/);
+                    if (tupleMatch) {
+                        status = tupleMatch[1];
+                        details = tupleMatch[2];
+                    } else {
+                        status = ev.data;
+                        details = '';
+                    }
+                } catch (error) {
+                    console.error('Error parsing event data:', error);
+                    status = ev.data;
+                    details = '';
+                }
+
+                logMessages.value.status = status;
+                logMessages.value.details = details;
+
+                if (status && status.includes('❌')) {
+                    console.log('Upload failed');
                     toast.add({
                         severity: 'error',
                         summary: 'Upload Failed',
                         detail: 'Something went wrong, consult the log',
                         life: 5000
                     });
-                } else if (ev.data[2] == '✅') {
-                    console.log('uploaded correct');
+                } else if (status && status.includes('✅')) {
+                    console.log('Upload successful');
                     toast.add({
                         severity: 'success',
                         summary: 'Upload Successful',
@@ -205,17 +248,16 @@ async function uploadFiles() {
                         life: 3000
                     });
 
-                    // Refresh file list
-                    let index: ListFilesApiV1IndexIndexIdFilesGetRequest = {
+                    IndApi.listFilesApiV1IndexIndexIdFilesGet({
                         indexId: props.index.id
-                    }
-                    IndApi.listFilesApiV1IndexIndexIdFilesGet(index).then((res) => {
+                    }).then((res) => {
                         console.log(res)
                         fileStore.files = Object.values(res);
                     });
 
                     selectedFiles.value = [];
                 }
+
                 fileStore.addFiles(ev.data);
             },
             onerror(err) {

@@ -1,27 +1,29 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import type { FileInfo } from "@/models";
 
 export const useFilesStore = defineStore("files", () => {
-  const data = ref<any[]>([]);
-  const files = ref();
+  const files = ref<FileInfo[]>([]);
 
-  const addFiles = (Files: any) => {
-    data.value.push(Files);
+  const addFiles = (file: FileInfo) => {
+    files.value.push(file);
   };
 
-  const removeFiles = (file: any) => {
+  const removeFile = (fileId: string) => {
     let filtered = files.value.filter(
-      (element: any) => element.name !== file
+      (element: FileInfo) => element.id !== fileId
     );
     files.value = filtered;
   };
 
-  const updateFiles = (Files: any) => {
-    let index = data.value.findIndex((item: any) => item.name === Files.name);
+  const updateFiles = (Files: FileInfo) => {
+    let index = files.value.findIndex(
+      (item: FileInfo) => item.name === Files.name
+    );
     if (index !== -1) {
-      data.value[index] = Files;
+      files.value[index] = Files;
     }
   };
 
-  return { data, files, addFiles, removeFiles, updateFiles };
+  return { files, addFiles, removeFile, updateFiles };
 });
