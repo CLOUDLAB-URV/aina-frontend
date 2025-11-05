@@ -5,15 +5,9 @@ import AppMenuItem from './AppMenuItem.vue';
 
 const model = ref([
     {
-        label: 'Home',
-        items: [
-            { label: 'Home', icon: 'pi pi-fw pi-home', to: '/' }
-        ]
-    },
-    {
         label: 'Intelligent Apps',
         items: [
-            { label: 'Chat', icon: 'pi pi-comments', to: '/chat' },
+            { label: 'Chat', icon: 'pi pi-comments', to: '/' },
             { label: 'Agent', icon: 'pi pi-microchip-ai', to: '/agent' },
             { label: 'Files', icon: 'pi pi-folder-open', to: '/files' },
         ]

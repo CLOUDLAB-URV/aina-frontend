@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AppLayout from "@/layout/AppLayout.vue";
-import HomeView from "@/views/HomeView.vue";
 import { getCurrentUser } from "@/apis/getCurrentUser";
 import AgentView from "@/views/AgentView.vue";
-import ChatVIew from "@/views/ChatVIew.vue";
+import ChatView from "@/views/ChatVIew.vue";
 import LoginView from "@/views/LoginView.vue";
 import GeneralSettings from "@/views/GeneralSettings.vue";
 import FilesView from "@/views/FilesView.vue";
@@ -17,8 +16,8 @@ const router = createRouter({
       children: [
         {
           path: "/",
-          name: "home",
-          component: HomeView,
+          name: "chat",
+          component: ChatView,
           beforeEnter: async (to, from) => {
             try {
               await getCurrentUser();
@@ -32,19 +31,6 @@ const router = createRouter({
           path: "/agent",
           name: "agent",
           component: AgentView,
-          beforeEnter: async (to, from) => {
-            try {
-              await getCurrentUser();
-              return true;
-            } catch (e: any) {
-              return "/login";
-            }
-          },
-        },
-        {
-          path: "/chat",
-          name: "chat",
-          component: ChatVIew,
           beforeEnter: async (to, from) => {
             try {
               await getCurrentUser();
