@@ -8,22 +8,29 @@
             <AgentSelects @agentSelected="(ag) => agent = ag" />
             <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n: any) => conv = n" :conv="conv" />
         </section>
-        <section v-if="agent?.id && conv?.id" class="flex flex-wrap gap-4 mt-2">
-            <div v-for="option in SelectMode" :key="option" class="flex items-center gap-2">
-                <RadioButton :value="option" :id="option" v-model="select" />
-                <label :for="option">
-                    {{
-                        option === 'all' ? 'Search all' :
-                            option === 'select' ? 'Search in files' :
-                                'Disabled'
-                    }}
-                </label>
-            </div>
-        </section>
-        <section>
-            <MultiSelect v-if="showFiles" :options="files" optionLabel="name" optionValue="id"
-                v-model="selectedFiles" />
-        </section>
+        <Accordion value="" v-if="agent?.id && conv?.id">
+            <AccordionPanel value="0">
+                <AccordionHeader>Advanced Options</AccordionHeader>
+                <AccordionContent>
+                <section class="flex flex-wrap gap-4">
+                    <div v-for="option in SelectMode" :key="option" class="flex items-center gap-2">
+                        <RadioButton :value="option" :id="option" v-model="select" />
+                        <label :for="option">
+                            {{
+                                option === 'all' ? 'Search all' :
+                                    option === 'select' ? 'Search in files' :
+                                        'Disabled'
+                            }}
+                        </label>
+                    </div>
+                    <section>
+                        <MultiSelect  placeholder="Select Files" v-if="showFiles" :options="files" optionLabel="name" optionValue="id"
+                            v-model="selectedFiles"/>
+                    </section>
+                </section>
+                </AccordionContent>
+            </AccordionPanel>
+        </Accordion>
     </div>
 </template>
 <script lang="ts" setup>

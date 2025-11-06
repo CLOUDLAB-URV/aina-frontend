@@ -1,16 +1,11 @@
 <template>
-    <div class="flex gap-2">
+    <div class="flex gap-3">
         <Select v-model="agent" :options="store.data" optionLabel="name" placeholder="Please select an agent" />
-        <!-- <select name="agent" id="agent" v-model="agent" :key="store.data.length">
-            <option disabled :value="null">Please select one</option>
-            <option :value="agentItem" v-for="agentItem in store.data" :key="agentItem.id">{{ agentItem.name }}</option>
-        </select> -->
-        <div class="flex justify-between items-center gap-2">
+        <div class="flex justify-between items-center gap-4">
             <ModalCreateAgent create="create" />
             <ModalCreateAgent v-if="agent" create="edit" :data="agent" />
             <ModalCreateAgent v-if="agent" create="trash" :data="agent" />
         </div>
-        <!-- <ConversationSelect v-if="agent?.id" :agentId="agent?.id" v-bind="$attrs" /> -->
     </div>
 </template>
 <script lang="ts" setup>

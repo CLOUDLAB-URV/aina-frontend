@@ -1,11 +1,15 @@
 <template>
-    <select name="" id="" class="p-2" v-model="conv">
-        <option disabled :value="null">Select Conversations</option>
-        <option v-for="conv in convStore.data" :value="conv">{{ conv.name }}</option>
-    </select>
-    <ModalConv create="create" :agentId="props.agentId" />
-    <ModalConv create="edit" v-if="conv" :data="conv" :agentId="props.agentId" />
-    <ModalConv create="trash" v-if="conv" :data="conv" :agentId="props.agentId" @deleted=" conv = null" />
+    <div class="flex gap-3">
+        <select name="" id="" class="p-2" v-model="conv">
+            <option disabled :value="null">Select Conversations</option>
+            <option v-for="conv in convStore.data" :value="conv">{{ conv.name }}</option>
+        </select>
+        <div class="flex justify-between items-center gap-4">
+            <ModalConv create="create" :agentId="props.agentId" />
+            <ModalConv create="edit" v-if="conv" :data="conv" :agentId="props.agentId" />
+            <ModalConv create="trash" v-if="conv" :data="conv" :agentId="props.agentId" @deleted=" conv = null" />
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
