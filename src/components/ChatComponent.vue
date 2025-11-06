@@ -2,7 +2,7 @@
     <div class="flex flex-col gap-4">
         <div class="grow h-[70vh] overflow-y-auto rounded-lg p-4 flex flex-col gap-4 chat">
             <template v-for="chat in chat.data">
-                <UserMessage :message="chat.user" />
+                <UserMessage :message="chat.user" :info="chat.info" />
                 <AiMessage :message="chat.ai"/>
             </template>
             <Dialog v-model:visible="visible" header="Information Extract" :style="{ width: '40rem' }" position="right" :modal="true" :draggable="false">
