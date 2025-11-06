@@ -65,12 +65,17 @@ watch(
             conversationId: conv.value.id
         });
         if (!chatStore.lastThinking()) {
-            chatStore.data = res.messages.map(v => {
-                return {
-                    user: v[0],
-                    ai: v[1],
-                } as ChatItem;
-            });
+            let aux = []
+            for(let i = 0; i < res.messages.length;i++){
+                const message = res.messages[i]
+                console.log(message?.[0])
+                aux.push({
+                    user: message?.[0] ?? "",
+                    ai: message?.[1] ?? "",
+                    info: res.retrievalMessages[i] ?? ""
+                } as ChatItem)
+            }
+            chatStore.data = aux
         }
     }
 )

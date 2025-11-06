@@ -3,6 +3,7 @@
         <section class="flex gap-2">
             <input type="text" placeholder="Type your message here..." class="w-full p-2 rounded" v-model="message" />
             <Button @click="sendMessage" icon="pi pi-send"></Button>
+            <Button icon="pi pi-info" v-if="agent?.id && conv?.id" @click="emits('moreInfo')"></Button>
         </section>
         <section class="flex gap-4 items-center mt-2">
             <AgentSelects @agentSelected="(ag) => agent = ag" />
@@ -48,6 +49,8 @@ import { ConvApi } from '@/apis/api';
 import { useConvStore } from '@/stores/conv';
 import { ChatRequestToJSON, SelectMode, type AgentResponse, type ChatRequest, type FileInfo } from '@/models';
 import { IndApi } from '@/apis/api';
+
+const emits = defineEmits(['moreInfo'])
 
 let showFiles = ref(false);
 const convStore = useConvStore();
@@ -117,6 +120,7 @@ async function sendMessage(event: Event) {
         },
         signal: controller.signal,
         onmessage(ev: any) {
+            console.log(ev)
             let data = JSON.parse(ev.data)
             if (data.channel == 'chat' && data.content != "") {
                 let contingut = data.content
@@ -125,6 +129,9 @@ async function sendMessage(event: Event) {
                     .replace(/\\/g, '')
                     .replace(/\s+/g, ' ');
                 chatter.addAiChat(contingut);
+            }
+            if(data.channel == 'info' && data.content != ""){
+                chatter.addInfoChat(data.content)
             }
         }
     });

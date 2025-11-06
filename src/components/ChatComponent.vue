@@ -5,8 +5,13 @@
                 <UserMessage :message="chat.user" />
                 <AiMessage :message="chat.ai"/>
             </template>
+            <Dialog v-model:visible="visible" header="Information Extract" :style="{ width: '40rem' }" position="right" :modal="true" :draggable="false">
+                <template v-for="chat in  chat.data">
+                    <div v-html="chat.info"></div>
+                </template>
+            </Dialog>
         </div>
-        <PromptUser />
+        <PromptUser @more-info="visible = true"/>
     </div>
 </template>
 <script setup lang="ts">
@@ -14,8 +19,10 @@ import PromptUser from '@/components/PromptUser.vue';
 import { useChatStore } from '@/stores/chat';
 import UserMessage from '@/components/UserMessage.vue';
 import AiMessage from '@/components/AiMessage.vue';
+import { ref } from 'vue';
 
 let chat = useChatStore();
+let visible = ref(false);
 </script>
 <style scoped>
 .chat{
