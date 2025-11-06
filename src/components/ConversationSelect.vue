@@ -72,8 +72,18 @@ watch(
                 aux.push({
                     user: message?.[0] ?? "",
                     ai: message?.[1] ?? "",
-                    info: res.retrievalMessages[i] ?? ""
+                    info: res.retrievalMessages[i] ?? "",
+                    liked: ""
                 } as ChatItem)
+            }
+
+            for (let i = 0; i < res.likes.length; i++) {
+                let like = res.likes[i];
+                let info_like = like[0];
+                const key = info_like[0];
+                if (aux[key] !== undefined) { 
+                    aux[key].liked = like[2];
+                }
             }
             chatStore.data = aux
         }

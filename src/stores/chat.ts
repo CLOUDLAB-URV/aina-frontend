@@ -6,6 +6,7 @@ export interface ChatItem {
   user: string;
   ai: String;
   info:String;
+  liked:String;
 }
 
 export const useChatStore = defineStore("Chat", () => {
@@ -15,7 +16,8 @@ export const useChatStore = defineStore("Chat", () => {
     data.value.push({
       user: chat,
       ai: "Thinking ... ",
-      info:"" 
+      info:"" ,
+      liked:"",
     });
   };
 
@@ -53,5 +55,11 @@ export const useChatStore = defineStore("Chat", () => {
     return false
   }
 
-  return { data, addUserChat, addAiChat,lastThinking,addInfoChat };
+  const like = (index:number,val : boolean | undefined)=>{
+    if (data.value[index] !== undefined) {
+      data.value[index].liked = val === undefined ? "" : `${val}`;
+    }
+  }
+
+  return { data, addUserChat, addAiChat,lastThinking,addInfoChat,like};
 });

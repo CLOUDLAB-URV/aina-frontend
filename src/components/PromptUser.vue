@@ -50,7 +50,7 @@ import { useConvStore } from '@/stores/conv';
 import { ChatRequestToJSON, SelectMode, type AgentResponse, type ChatRequest, type FileInfo } from '@/models';
 import { IndApi } from '@/apis/api';
 
-const emits = defineEmits(['moreInfo'])
+const emits = defineEmits(['moreInfo','conversationChanged'])
 
 let showFiles = ref(false);
 const convStore = useConvStore();
@@ -77,6 +77,10 @@ watch(agent, async (newAgent) => {
         selectedFiles.value = [];
     }
 });
+
+watch(conv,()=>{
+    emits('conversationChanged',conv)
+})
 
 async function sendMessage(event: Event) {
 
