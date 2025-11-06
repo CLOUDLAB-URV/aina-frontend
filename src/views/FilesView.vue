@@ -168,7 +168,7 @@ async function delete_file() {
         fileId: file_selected.value.id,
     })
     fileStore.removeFile(file_selected.value.id)
-    delete file_selected.value;
+    file_selected.value = undefined;
 }
 
 async function add_group() {
