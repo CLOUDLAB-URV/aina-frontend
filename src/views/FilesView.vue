@@ -40,7 +40,7 @@
                             <Button severity="danger" icon="pi pi-trash" label="Delete" class="grow"
                                 @click=delete_file></Button>
                             <Button severity="secondary" label="Close" icon="pi pi-times" class="p-button-text"
-                                @click="delete file_selected"></Button>
+                                @click="file_selected = undefined"></Button>
                             <!-- <Button severity="info" icon="pi pi-download" label="Download File" class="grow"></Button> -->
                         </section>
                     </TabPanel>
