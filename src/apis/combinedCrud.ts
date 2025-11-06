@@ -81,7 +81,7 @@ export async function createElement(type: String, model: any) {
       llmCreate: create,
     };
     await LlmApi.addLlmApiV1LlmsLlmPost(createParam).then(() => {
-      llmStore.addLlm(model);
+      llmStore.addLlm({...model});
       console.log(llmStore.data);
     });
   } else if (type == "emb") {
@@ -97,7 +97,7 @@ export async function createElement(type: String, model: any) {
     };
     await EmbApi.addEmbeddingApiV1EmbeddingsEmbeddingPost(createParam).then(
       () => {
-        embStore.addEmb(model);
+        embStore.addEmb({...model});
       }
     );
   } else if (type == "rank") {
@@ -113,7 +113,7 @@ export async function createElement(type: String, model: any) {
     };
     await RankApi.addRerankingApiV1RerankingsRerankingPost(createParam).then(
       () => {
-        rankStore.addRank(model);
+        rankStore.addRank({...model});
       }
     );
   }
@@ -166,12 +166,7 @@ export function updateElement(type: String, model: any) {
       requestBody: yaml.load(model.spec) as Object,
     };
     LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm).then(() => {
-      llmStore.updateLlm({
-        name: model.name,
-        _default: model._default,
-        vendorName: model.vendorName,
-        spec: model.spec,
-      });
+      llmStore.updateLlm({...model});
     });
   } else if (type == "emb") {
     const embStore = useEmbStore();
@@ -185,7 +180,7 @@ export function updateElement(type: String, model: any) {
       name_llm
     ).then(() => {
       console.log("updated " + model.name);
-      embStore.updateEmb(model);
+      embStore.updateEmb({...model});
     });
   } else if (type == "rank") {
     const rankStore = useRankStore();
@@ -199,7 +194,7 @@ export function updateElement(type: String, model: any) {
       name_llm
     ).then(() => {
       console.log("updated " + model.name);
-      rankStore.updateRank(model);
+      rankStore.updateRank({...model});
     });
   }
 }

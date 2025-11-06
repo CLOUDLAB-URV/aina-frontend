@@ -5,7 +5,20 @@ export const useEmbStore = defineStore("emb", () => {
   const data = ref<any[]>([]);
 
   const addEmb = (emb: any) => {
-    data.value.find((item: any) => item.name === emb.name);
+    console.log("IMHERE")
+    if (emb._default == true){
+      console.log("IMHERE2")
+      data.value = data.value.filter(
+        (emb)=>{
+          if (emb._default == true){
+            emb._default = false
+            return emb
+          }else{
+            return emb
+          }
+        }
+      )
+    }
     data.value.push(emb);
   };
 
@@ -17,6 +30,18 @@ export const useEmbStore = defineStore("emb", () => {
   };
 
   const updateEmb = (emb: any) => {
+    if (emb._default == true){
+      data.value = data.value.filter(
+        (emb)=>{
+          if (emb._default == true){
+            emb._default = false
+            return emb
+          }else{
+            return emb
+          }
+        }
+      )
+    }
     let index = data.value.findIndex((item: any) => item.name === emb.name);
     if (index !== -1) {
       data.value[index] = emb;
