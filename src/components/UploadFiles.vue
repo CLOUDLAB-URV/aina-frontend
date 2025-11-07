@@ -187,7 +187,7 @@ async function uploadFiles() {
         return;
     }
 
-    const url = `http://localhost:8000/api/v1/index/index?agent_id=${props.agentId}&reindex=${reindex.value}`;
+    const url = `${import.meta.env.VITE_IP_BACKEND}/api/v1/index/index?agent_id=${props.agentId}&reindex=${reindex.value}`;
 
     isIndexing.value = true;
     logMessages.value = { status: '', details: '' };

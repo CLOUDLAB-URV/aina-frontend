@@ -100,7 +100,7 @@ async function sendMessage(event: Event) {
         });
     }
 
-    const url = `http://localhost:8000/api/v1/chat/${agent.value.id}/${conv.value.id}`;
+    const url = `${import.meta.env.VITE_IP_BACKEND}/api/v1/chat/${agent.value.id}/${conv.value.id}`;
 
     event.preventDefault();
 

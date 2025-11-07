@@ -11,9 +11,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
-
-export const BASE_PATH = "http://localhost:8000".replace(/\/+$/, "");
+export const BASE_PATH = `${import.meta.env.VITE_IP_BACKEND}`.replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
     basePath?: string; // override base path
