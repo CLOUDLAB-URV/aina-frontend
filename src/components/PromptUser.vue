@@ -7,28 +7,29 @@
         </section>
         <section class="flex gap-4 items-center mt-2">
             <AgentSelects @agentSelected="(ag) => agent = ag" />
-            <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n: any) => conv = n" :conv="conv" />
+            <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n) => conv = n"
+                :conv="conv" />
         </section>
         <Accordion value="" v-if="agent?.id && conv?.id">
             <AccordionPanel value="0">
                 <AccordionHeader>Advanced Options</AccordionHeader>
                 <AccordionContent>
-                <section class="flex flex-wrap gap-4">
-                    <div v-for="option in SelectMode" :key="option" class="flex items-center gap-2">
-                        <RadioButton :value="option" :id="option" v-model="select" />
-                        <label :for="option">
-                            {{
-                                option === 'all' ? 'Search all' :
-                                    option === 'select' ? 'Search in files' :
-                                        'Disabled'
-                            }}
-                        </label>
-                    </div>
-                    <section>
-                        <MultiSelect  placeholder="Select Files" v-if="showFiles" :options="files" optionLabel="name" optionValue="id"
-                            v-model="selectedFiles"/>
+                    <section class="flex flex-wrap gap-4">
+                        <div v-for="option in SelectMode" :key="option" class="flex items-center gap-2">
+                            <RadioButton :value="option" :id="option" v-model="select" />
+                            <label :for="option">
+                                {{
+                                    option === 'all' ? 'Search all' :
+                                        option === 'select' ? 'Search in files' :
+                                            'Disabled'
+                                }}
+                            </label>
+                        </div>
+                        <section>
+                            <MultiSelect placeholder="Select Files" v-if="showFiles" :options="files" optionLabel="name"
+                                optionValue="id" v-model="selectedFiles" />
+                        </section>
                     </section>
-                </section>
                 </AccordionContent>
             </AccordionPanel>
         </Accordion>
@@ -39,6 +40,7 @@ import { ref, watch } from 'vue'
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import AgentSelects from '@/components/AgentSelects.vue';
 import type { ConversationCreate } from '@/models/index';
+import type { ApiSchemasConversationsConversationInfo } from '@/models';
 import type { AddConversationApiV1ConversationsPostRequest } from '@/apis/ConversationsApi';
 import { useChatStore } from '@/stores/chat';
 import ConversationSelect from './ConversationSelect.vue';
@@ -50,7 +52,7 @@ import { useConvStore } from '@/stores/conv';
 import { ChatRequestToJSON, SelectMode, type AgentResponse, type ChatRequest, type FileInfo } from '@/models';
 import { IndApi } from '@/apis/api';
 
-const emits = defineEmits(['moreInfo','conversationChanged'])
+const emits = defineEmits(['moreInfo', 'conversationChanged'])
 
 let showFiles = ref(false);
 const convStore = useConvStore();
@@ -59,7 +61,7 @@ let selectedFiles = ref([]);
 
 let select = ref<SelectMode>(SelectMode.All);
 let agent = ref<AgentResponse>();
-let conv = ref();
+let conv = ref<ApiSchemasConversationsConversationInfo>();
 let message = ref();
 const controller = new AbortController();
 const chatter = useChatStore()
@@ -71,15 +73,15 @@ watch(select, (newValue) => {
 
 watch(agent, async (newAgent) => {
     console.log('Agent changed to:', newAgent);
-    conv.value = null;
+    conv.value = undefined;
     if (newAgent && newAgent.indexId) {
         files.value = await IndApi.listFilesApiV1IndexIndexIdFilesGet({ indexId: newAgent.indexId });
         selectedFiles.value = [];
     }
 });
 
-watch(conv,()=>{
-    emits('conversationChanged',conv)
+watch(conv, () => {
+    emits('conversationChanged', conv)
 })
 
 async function sendMessage(event: Event) {
@@ -94,10 +96,9 @@ async function sendMessage(event: Event) {
             agentId: agent.value.id,
         }
         let info: AddConversationApiV1ConversationsPostRequest = { conversationCreate: convCreate };
-        await ConvApi.addConversationApiV1ConversationsPost(info).then((res) => {
-            convStore.addConv(res);
-            conv.value = res;
-        });
+        let res = await ConvApi.addConversationApiV1ConversationsPost(info);
+        convStore.addConv(res);
+        conv.value = res;
     }
 
     const url = `${import.meta.env.VITE_IP_BACKEND}/api/v1/chat/${agent.value.id}/${conv.value.id}`;
@@ -134,7 +135,7 @@ async function sendMessage(event: Event) {
                     .replace(/\s+/g, ' ');
                 chatter.addAiChat(contingut);
             }
-            if(data.channel == 'info' && data.content != ""){
+            if (data.channel == 'info' && data.content != "") {
                 chatter.addInfoChat(data.content)
             }
         }

@@ -4,7 +4,7 @@
         <div class="flex justify-between items-center gap-4">
             <ModalConv create="create" :agentId="props.agentId" />
             <ModalConv create="edit" v-if="conv" :data="conv" :agentId="props.agentId" />
-            <ModalConv create="trash" v-if="conv" :data="conv" :agentId="props.agentId" @deleted=" conv = null" />
+            <ModalConv create="trash" v-if="conv" :data="conv" :agentId="props.agentId" @deleted="conv = undefined" />
         </div>
     </div>
 </template>
@@ -13,6 +13,7 @@
 import { ConvApi } from '@/apis/api';
 import { ChApi } from '@/apis/api';
 import type { ChatItem } from '@/stores/chat';
+import type { ApiSchemasConversationsConversationInfo } from '@/models';
 import { watch, ref } from 'vue';
 import type { ListConversationsApiV1ConversationsAgentIdGetRequest } from '@/apis/ConversationsApi';
 import ModalConv from '@/components/ModalConv.vue';
@@ -22,26 +23,20 @@ import Select from 'primevue/select';
 
 const convStore = useConvStore();
 const chatStore = useChatStore();
-let conv = ref();
+let conv = ref<ApiSchemasConversationsConversationInfo>();
 const emit = defineEmits(['selectConv'])
 
-const props = defineProps({
-    agentId: {
-        type: String,
-        required: true
-    },
-    conv: {
-        type: Object,
-        required: true
-    }
-})
+const props = defineProps<{
+    agentId: string
+    conv?: ApiSchemasConversationsConversationInfo
+}>();
 
 watch(() => props.agentId, async () => {
     let listAgentConv: ListConversationsApiV1ConversationsAgentIdGetRequest = {
         agentId: props.agentId
     }
     convStore.data = await ConvApi.listConversationsApiV1ConversationsAgentIdGet(listAgentConv);
-    conv.value = null
+    conv.value = undefined;
 }, { immediate: true })
 
 watch(
