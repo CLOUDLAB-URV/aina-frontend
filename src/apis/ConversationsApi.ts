@@ -60,7 +60,7 @@ export class ConversationsApi extends runtime.BaseAPI {
      * Create a new conversation.
      * Add Conversation
      */
-    async addConversationApiV1ConversationsPostRaw(requestParameters: AddConversationApiV1ConversationsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async addConversationApiV1ConversationsPostRaw(requestParameters: AddConversationApiV1ConversationsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ApiSchemasConversationsConversationInfo>> {
         if (requestParameters['conversationCreate'] == null) {
             throw new runtime.RequiredError(
                 'conversationCreate',
@@ -90,18 +90,14 @@ export class ConversationsApi extends runtime.BaseAPI {
             body: ConversationCreateToJSON(requestParameters['conversationCreate']),
         }, initOverrides);
 
-        if (this.isJsonMime(response.headers.get('content-type'))) {
-            return new runtime.JSONApiResponse<any>(response);
-        } else {
-            return new runtime.TextApiResponse(response) as any;
-        }
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApiSchemasConversationsConversationInfoFromJSON(jsonValue));
     }
 
     /**
      * Create a new conversation.
      * Add Conversation
      */
-    async addConversationApiV1ConversationsPost(requestParameters: AddConversationApiV1ConversationsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+    async addConversationApiV1ConversationsPost(requestParameters: AddConversationApiV1ConversationsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ApiSchemasConversationsConversationInfo> {
         const response = await this.addConversationApiV1ConversationsPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -202,7 +198,7 @@ export class ConversationsApi extends runtime.BaseAPI {
      * Update a conversation by ID.
      * Update Conversation
      */
-    async updateConversationApiV1ConversationsConversationIdPatchRaw(requestParameters: UpdateConversationApiV1ConversationsConversationIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async updateConversationApiV1ConversationsConversationIdPatchRaw(requestParameters: UpdateConversationApiV1ConversationsConversationIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ApiSchemasConversationsConversationInfo>> {
         if (requestParameters['conversationId'] == null) {
             throw new runtime.RequiredError(
                 'conversationId',
@@ -240,18 +236,14 @@ export class ConversationsApi extends runtime.BaseAPI {
             body: ConversationUpdateToJSON(requestParameters['conversationUpdate']),
         }, initOverrides);
 
-        if (this.isJsonMime(response.headers.get('content-type'))) {
-            return new runtime.JSONApiResponse<any>(response);
-        } else {
-            return new runtime.TextApiResponse(response) as any;
-        }
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApiSchemasConversationsConversationInfoFromJSON(jsonValue));
     }
 
     /**
      * Update a conversation by ID.
      * Update Conversation
      */
-    async updateConversationApiV1ConversationsConversationIdPatch(requestParameters: UpdateConversationApiV1ConversationsConversationIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+    async updateConversationApiV1ConversationsConversationIdPatch(requestParameters: UpdateConversationApiV1ConversationsConversationIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ApiSchemasConversationsConversationInfo> {
         const response = await this.updateConversationApiV1ConversationsConversationIdPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
