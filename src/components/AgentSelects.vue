@@ -13,28 +13,33 @@ import { AgApi } from '@/apis/api';
 import { onMounted, ref, watch } from 'vue';
 import ModalCreateAgent from './ModalCreateAgent.vue';
 import { useAgentStore } from '@/stores/agent';
+import { useChatStore } from '@/stores/chat';
 import type { AgentResponse } from '@/models';
 import Select from 'primevue/select';
 
 const emit = defineEmits<{ 'agentSelected': [agent?: AgentResponse] }>();
 
 const store = useAgentStore();
+const chatStore = useChatStore();
 let agent = ref<AgentResponse>();
 
 onMounted(async () => {
     store.data = await AgApi.listAgentsCreatedApiV1AgentsCreatedGet();
     agent.value = undefined;
+    chatStore.data = [];
 })
 
 watch(store.data, () => {
     if (store.data.length == 0) {
         agent.value = undefined;
+        chatStore.data = [];
     }
 })
 
 watch(agent, () => {
     emit('agentSelected', agent.value)
     console.log('Selected agent:', agent.value);
+    chatStore.data = [];
 })
 
 </script>
