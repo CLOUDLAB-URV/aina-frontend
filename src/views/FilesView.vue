@@ -11,6 +11,7 @@
                 <TabList class="tab-container">
                     <Tab value="0">File List</Tab>
                     <Tab value="1">Groups</Tab>
+                    <Tab value="stadistics">Stadistics</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel value="0">
@@ -85,6 +86,9 @@
                                 @click="group_selected = undefined"></Button>
                         </section>
                     </TabPanel>
+                    <TabPanel value="stadistics">
+                        <Stadistics/>
+                    </TabPanel>
                 </TabPanels>
             </Tabs>
         </section>
@@ -99,6 +103,7 @@ import { useFilesStore } from '@/stores/file';
 import AgentSelects from '@/components/AgentSelects.vue';
 import { type IndexInfo, type AgentResponse, type GroupInfo, type FileInfo } from '@/models';
 import MultiSelect from 'primevue/multiselect';
+import Stadistics from '@/components/Stadistics.vue';
 
 let file_selected = ref<FileInfo>();
 let group_selected = ref<GroupInfo>();

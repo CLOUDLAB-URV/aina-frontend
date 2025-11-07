@@ -1,8 +1,8 @@
 <template>
     <div class="flex gap-2">
-    <i class="pi pi-database"></i>
-    <div class="flex flex-col gap-3">
-            <div class="p-4 bg-blue-100 rounded-lg w-[70%]">
+        <i class="pi pi-database"></i>
+        <div class="flex flex-col gap-3 w-[70%]">
+            <div class="p-4 bg-blue-100 rounded-lg">
                 <p class="text-gray-800">{{ message }}</p>
             </div>
             <div class="flex gap-3 w-fit rounded-lg bg-blue-100">
