@@ -1,9 +1,6 @@
 <template>
     <div class="flex gap-3">
-        <select name="" id="" class="p-2" v-model="conv">
-            <option disabled :value="null">Select Conversations</option>
-            <option v-for="conv in convStore.data" :value="conv">{{ conv.name }}</option>
-        </select>
+        <Select v-model="conv" :options="convStore.data" optionLabel="name" placeholder="Select conversation" />
         <div class="flex justify-between items-center gap-4">
             <ModalConv create="create" :agentId="props.agentId" />
             <ModalConv create="edit" v-if="conv" :data="conv" :agentId="props.agentId" />
@@ -21,6 +18,7 @@ import type { ListConversationsApiV1ConversationsAgentIdGetRequest } from '@/api
 import ModalConv from '@/components/ModalConv.vue';
 import { useConvStore } from '@/stores/conv';
 import { useChatStore } from '@/stores/chat';
+import Select from 'primevue/select';
 
 const convStore = useConvStore();
 const chatStore = useChatStore();
@@ -66,7 +64,7 @@ watch(
         });
         if (!chatStore.lastThinking()) {
             let aux = []
-            for(let i = 0; i < res.messages.length;i++){
+            for (let i = 0; i < res.messages.length; i++) {
                 const message = res.messages[i]
                 console.log(message?.[0])
                 aux.push({
@@ -81,7 +79,7 @@ watch(
                 let like = res.likes[i];
                 let info_like = like[0];
                 const key = info_like[0];
-                if (aux[key] !== undefined) { 
+                if (aux[key] !== undefined) {
                     aux[key].liked = like[2];
                 }
             }
