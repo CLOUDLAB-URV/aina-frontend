@@ -3,33 +3,12 @@
         <div v-if="loading" class="text-sm opacity-70">Loading settings...</div>
         <div v-else-if="error" class="text-red-500">{{ error }}</div>
         <div v-else>
-            <section v-if="indexSettings">
-                <h2 class="font-semibold text-lg mb-3">Index Settings</h2>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <div v-for="(setting, key) in indexSettings" :key="`index-${key}`">
-                        <label class="font-medium mb-1 block">{{ setting.name }}</label>
-                        <template v-if="setting.component === 'radio'">
-                            <div class="flex flex-wrap gap-4">
-                                <div v-for="(choice, idx) in setting.choices" :key="`${key}-radio-${idx}`"
-                                    class="flex items-center gap-2">
-                                    <RadioButton :inputId="`${key}-radio-${idx}`" :name="key"
-                                        :value="choice[1] || choice"
-                                        v-model="formValues[`index.options.${currentIndex}.${key}`]" />
-                                    <label :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
-                                </div>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <component :is="resolveComponent(setting)" :label="setting.name"
-                                v-model="formValues[`index.options.${currentIndex}.${key}`]"
-                                v-bind="getComponentProps(setting)" />
-                        </template>
-                    </div>
-                </div>
-            </section>
-
-            <section v-if="reasonSettings" class="mt-6">
+            <section v-if="reasonSettings">
                 <h2 class="font-semibold text-lg mb-3">Reasoning Settings</h2>
+                <div class="mb-4">
+                    <label class="font-medium mb-1 block">Reasoning Type</label>
+                    <Select v-model="currentReasoning" :options="reasoningOptions" />
+                </div>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div v-for="(setting, key) in reasonSettings" :key="`reason-${key}`">
                         <label class="font-medium mb-1 block">{{ setting.name }}</label>
@@ -53,6 +32,35 @@
                 </div>
             </section>
 
+            <section v-if="indexSettings" class="mt-6">
+                <h2 class="font-semibold text-lg mb-3">Index Settings</h2>
+                <div class="mb-4">
+                    <label class="font-medium mb-1 block">Index ID</label>
+                    <InputNumber label="Index ID" v-model="currentIndex" />
+                </div>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div v-for="(setting, key) in indexSettings" :key="`index-${key}`">
+                        <label class="font-medium mb-1 block">{{ setting.name }}</label>
+                        <template v-if="setting.component === 'radio'">
+                            <div class="flex flex-wrap gap-4">
+                                <div v-for="(choice, idx) in setting.choices" :key="`${key}-radio-${idx}`"
+                                    class="flex items-center gap-2">
+                                    <RadioButton :inputId="`${key}-radio-${idx}`" :name="key"
+                                        :value="choice[1] || choice"
+                                        v-model="formValues[`index.options.${currentIndex}.${key}`]" />
+                                    <label :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <component :is="resolveComponent(setting)" :label="setting.name"
+                                v-model="formValues[`index.options.${currentIndex}.${key}`]"
+                                v-bind="getComponentProps(setting)" />
+                        </template>
+                    </div>
+                </div>
+            </section>
+
             <div v-if="indexSettings || reasonSettings" class="flex justify-end mt-6">
                 <button class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700" @click="saveSettings"
                     :disabled="saving">
@@ -64,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import type { AgentResponse } from '@/models';
 import { AgApi, IndApi, ReasonApi } from '@/apis/api';
 import { Checkbox, InputNumber, InputText, RadioButton, Select, Textarea } from 'primevue';
@@ -77,9 +85,10 @@ const saving = ref(false);
 const error = ref<string>();
 const currentReasoning = ref<string>();
 const currentIndex = ref<number>();
-const indexSettings = ref<Record<string, Record<string, any>>>();
-const reasonSettings = ref<Record<string, Record<string, any>>>();
+const indexSettings = ref<Record<string, any>>();
+const reasonSettings = ref<Record<string, any>>();
 const formValues = ref<Record<string, any>>({});
+const reasoningOptions = ref<string[]>([]);
 
 async function loadSettings(agent: AgentResponse) {
     if (!agent) return;
@@ -145,6 +154,11 @@ async function loadSettings(agent: AgentResponse) {
     }
 }
 
+onMounted(async () => {
+    let reasonings = await ReasonApi.listReasoningsApiV1ReasoningsGet();
+    reasoningOptions.value = reasonings.map(r => r || '');
+});
+
 watch(
     () => props.agent,
     (newAgent) => {
@@ -152,6 +166,18 @@ watch(
     },
     { immediate: true }
 );
+
+watch(currentReasoning, async (newReasoning) => {
+    if (props.agent && newReasoning) {
+        await AgApi.updateAgentSettingsApiV1AgentsSettingsAgentIdPatch({
+            agentId: props.agent.id,
+            requestBody: {
+                'reasoning.use': newReasoning
+            }
+        });
+        loadSettings(props.agent);
+    }
+});
 
 function resolveComponent(setting: Record<string, any>) {
     switch (setting.component) {
@@ -196,6 +222,14 @@ async function saveSettings() {
     saving.value = true;
     try {
         await AgApi.updateAgentSettingsApiV1AgentsSettingsAgentIdPatch({ agentId: props.agent?.id, requestBody: formValues.value });
+        if (currentIndex.value && currentIndex.value !== props.agent.indexId) {
+            await AgApi.updateAgentApiV1AgentsAgentIdPatch({
+                agentId: props.agent.id,
+                agentUpdate: {
+                    indexId: currentIndex.value
+                }
+            });
+        }
     } catch (err: any) {
         console.error(err);
         error.value = err?.message || 'Failed to save settings';
