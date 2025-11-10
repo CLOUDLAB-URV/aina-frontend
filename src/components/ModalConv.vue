@@ -42,6 +42,10 @@ import { ConvApi } from '@/apis/api';
 import { useConvStore } from '@/stores/conv';
 import { useToast } from 'primevue/usetoast';
 import type { ApiSchemasConversationsConversationInfo } from '@/models';
+import Dialog from 'primevue/dialog';
+import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
+import Checkbox from 'primevue/checkbox';
 
 const emit = defineEmits(['deleted']);
 const toast = useToast();
