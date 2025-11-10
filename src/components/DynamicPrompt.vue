@@ -6,19 +6,48 @@
             <section v-if="indexSettings">
                 <h2 class="font-semibold text-lg mb-3">Index Settings</h2>
                 <div class="grid gap-4 sm:grid-cols-2">
-                    <component v-for="(setting, key) in indexSettings" :key="`index-${key}`"
-                        :is="resolveComponent(setting)" :label="setting.name" v-model="formValues[`index.${key}`]"
-                        v-bind="getComponentProps(setting)" />
+                    <div v-for="(setting, key) in indexSettings" :key="`index-${key}`">
+                        <label class="font-medium mb-1 block">{{ setting.name }}</label>
+                        <template v-if="setting.component === 'radio'">
+                            <div class="flex flex-wrap gap-4">
+                                <div v-for="(choice, idx) in setting.choices" :key="`${key}-radio-${idx}`"
+                                    class="flex items-center gap-2">
+                                    <RadioButton :inputId="`${key}-radio-${idx}`" :name="key"
+                                        :value="choice[1] || choice" v-model="formValues[`index.${key}`]" />
+                                    <label :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <component :is="resolveComponent(setting)" :label="setting.name"
+                                v-model="formValues[`index.${key}`]" v-bind="getComponentProps(setting)" />
+                        </template>
+                    </div>
                 </div>
             </section>
 
             <section v-if="reasonSettings" class="mt-6">
                 <h2 class="font-semibold text-lg mb-3">Reasoning Settings</h2>
                 <div class="grid gap-4 sm:grid-cols-2">
-                    <component v-for="(setting, key) in reasonSettings" :key="`reason-${key}`"
-                        :is="resolveComponent(setting)" :label="setting.name"
-                        v-model="formValues[`reasoning.${currentReasoning}.${key}`]"
-                        v-bind="getComponentProps(setting)" />
+                    <div v-for="(setting, key) in reasonSettings" :key="`reason-${key}`">
+                        <label class="font-medium mb-1 block">{{ setting.name }}</label>
+                        <template v-if="setting.component === 'radio'">
+                            <div class="flex flex-wrap gap-4">
+                                <div v-for="(choice, idx) in setting.choices" :key="`${key}-radio-${idx}`"
+                                    class="flex items-center gap-2">
+                                    <RadioButton :inputId="`${key}-radio-${idx}`" :name="key"
+                                        :value="choice[1] || choice"
+                                        v-model="formValues[`reasoning.${currentReasoning}.${key}`]" />
+                                    <label :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <component :is="resolveComponent(setting)" :label="setting.name"
+                                v-model="formValues[`reasoning.${currentReasoning}.${key}`]"
+                                v-bind="getComponentProps(setting)" />
+                        </template>
+                    </div>
                 </div>
             </section>
 
@@ -36,7 +65,8 @@
 import { ref, watch } from 'vue';
 import type { AgentResponse } from '@/models';
 import { AgApi, IndApi, ReasonApi } from '@/apis/api';
-import { Checkbox, InputNumber, InputText, RadioButton, Select } from 'primevue';
+import { Checkbox, InputNumber, InputText, RadioButton, Select, Textarea } from 'primevue';
+
 
 const props = defineProps<{ agent?: AgentResponse }>();
 
@@ -44,8 +74,8 @@ const loading = ref(false);
 const saving = ref(false);
 const error = ref<string>();
 const currentReasoning = ref<string>();
-const indexSettings = ref<Record<string, any>>();
-const reasonSettings = ref<Record<string, any>>();
+const indexSettings = ref<Record<string, Record<string, any>>>();
+const reasonSettings = ref<Record<string, Record<string, any>>>();
 const formValues = ref<Record<string, any>>({});
 
 async function loadSettings(agent: AgentResponse) {
@@ -119,7 +149,7 @@ watch(
     { immediate: true }
 );
 
-function resolveComponent(setting: any) {
+function resolveComponent(setting: Record<string, any>) {
     switch (setting.component) {
         case 'dropdown':
             return Select;
@@ -130,16 +160,31 @@ function resolveComponent(setting: any) {
         case 'number':
             return InputNumber;
         default:
+            if (setting.kwargs && setting.kwargs.lines && setting.kwargs.lines > 1) {
+                return Textarea;
+            }
             return InputText;
     }
 }
 
-function getComponentProps(setting: any) {
-    return {
-        choices: setting.choices,
-        info: setting.info,
-        kwargs: setting.kwargs,
-    };
+function getComponentProps(setting: Record<string, any>) {
+    let res: Record<string, any> = {};
+    if (Array.isArray(setting.choices?.[0])) {
+        res.options = setting.choices;
+        res.optionLabel = (s: string[]) => s[0];
+        res.optionValue = (s: string[]) => s[1];
+    } else if (Array.isArray(setting.choices)) {
+        res.options = setting.choices;
+    }
+    if (setting.component !== 'dropdown'
+        && setting.component !== 'checkbox'
+        && setting.component !== 'radio'
+        && setting.component !== 'number'
+        && setting.kwargs && setting.kwargs.lines && setting.kwargs.lines > 1) {
+        res.rows = setting.kwargs.lines;
+    }
+    res.cols = setting.kwargs?.cols || 50;
+    return res;
 }
 
 async function saveSettings() {
