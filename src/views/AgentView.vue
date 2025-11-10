@@ -6,7 +6,7 @@
         </div> -->
         <ChatComponent class="h-full grow" @agent-changed="(n) => agent = n" />
     </div>
-    <Accordion class="mb-4">
+    <Accordion v-if="agent" class="mb-4">
         <AccordionPanel value="0">
             <AccordionHeader>Advanced Agent Settings</AccordionHeader>
             <AccordionContent>

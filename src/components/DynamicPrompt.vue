@@ -51,7 +51,7 @@
                 </div>
             </section>
 
-            <div class="flex justify-end mt-6">
+            <div v-if="indexSettings || reasonSettings" class="flex justify-end mt-6">
                 <button class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700" @click="saveSettings"
                     :disabled="saving">
                     {{ saving ? 'Saving...' : 'Save Settings' }}
