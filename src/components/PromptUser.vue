@@ -126,18 +126,26 @@ async function sendMessage(event: Event) {
         signal: controller.signal,
         onmessage(ev: any) {
             console.log(ev)
-            let data = JSON.parse(ev.data)
-            if (data.channel == 'chat' && data.content != "") {
-                let contingut = data.content
-                    .replace(/\n+/g, ' ')
-                    .replace(/\*\*/g, ' ')
-                    .replace(/\\/g, '')
-                    .replace(/\s+/g, ' ');
-                chatter.addAiChat(contingut);
+            try{
+                let data = JSON.parse(ev.data)
+                if (data.channel == 'chat' && data.content != "") {
+                    let contingut = data.content
+                        .replace(/\n+/g, ' ')
+                        .replace(/\*\*/g, ' ')
+                        .replace(/\\/g, '')
+                        .replace(/\s+/g, ' ');
+                    chatter.addAiChat(contingut);
+                }
+                if(data.channel == 'info' && data.content != ""){
+                    chatter.addInfoChat(data.content)
+                }
+            }catch(err){
+                console.log("EROR JSON")
             }
-            if (data.channel == 'info' && data.content != "") {
-                chatter.addInfoChat(data.content)
-            }
+        },
+        onerror(err) {
+            console.error('Upload error:', err);
+            throw err;
         }
     });
 }

@@ -268,6 +268,7 @@ async function uploadFiles() {
                     detail: 'An error occurred during upload',
                     life: 5000
                 });
+                throw err;
             }
         });
     } catch (error) {
