@@ -13,14 +13,16 @@
                                 <div v-for="(choice, idx) in setting.choices" :key="`${key}-radio-${idx}`"
                                     class="flex items-center gap-2">
                                     <RadioButton :inputId="`${key}-radio-${idx}`" :name="key"
-                                        :value="choice[1] || choice" v-model="formValues[`index.${key}`]" />
+                                        :value="choice[1] || choice"
+                                        v-model="formValues[`index.options.${currentIndex}.${key}`]" />
                                     <label :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
                                 </div>
                             </div>
                         </template>
                         <template v-else>
                             <component :is="resolveComponent(setting)" :label="setting.name"
-                                v-model="formValues[`index.${key}`]" v-bind="getComponentProps(setting)" />
+                                v-model="formValues[`index.options.${currentIndex}.${key}`]"
+                                v-bind="getComponentProps(setting)" />
                         </template>
                     </div>
                 </div>
@@ -37,14 +39,14 @@
                                     class="flex items-center gap-2">
                                     <RadioButton :inputId="`${key}-radio-${idx}`" :name="key"
                                         :value="choice[1] || choice"
-                                        v-model="formValues[`reasoning.${currentReasoning}.${key}`]" />
+                                        v-model="formValues[`reasoning.options.${currentReasoning}.${key}`]" />
                                     <label :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
                                 </div>
                             </div>
                         </template>
                         <template v-else>
                             <component :is="resolveComponent(setting)" :label="setting.name"
-                                v-model="formValues[`reasoning.${currentReasoning}.${key}`]"
+                                v-model="formValues[`reasoning.options.${currentReasoning}.${key}`]"
                                 v-bind="getComponentProps(setting)" />
                         </template>
                     </div>
@@ -74,6 +76,7 @@ const loading = ref(false);
 const saving = ref(false);
 const error = ref<string>();
 const currentReasoning = ref<string>();
+const currentIndex = ref<number>();
 const indexSettings = ref<Record<string, Record<string, any>>>();
 const reasonSettings = ref<Record<string, Record<string, any>>>();
 const formValues = ref<Record<string, any>>({});
@@ -102,6 +105,7 @@ async function loadSettings(agent: AgentResponse) {
         const indexId = agent.indexId;
 
         currentReasoning.value = reasoningName;
+        currentIndex.value = indexId;
 
         // 3. Fetch schemas
         const [reasonConfig, indexConfig] = await Promise.all([
@@ -122,13 +126,13 @@ async function loadSettings(agent: AgentResponse) {
         // index
         for (const key in indexConfig) {
             const fullKey = `index.options.${indexId}.${key}`;
-            merged[`index.${key}`] = currentValues[fullKey] ?? indexConfig[key].value;
+            merged[fullKey] = currentValues[fullKey] ?? indexConfig[key].value;
         }
 
         // reasoning
         for (const key in reasonConfig) {
             const fullKey = `reasoning.options.${reasoningName}.${key}`;
-            merged[`reasoning.${reasoningName}.${key}`] =
+            merged[fullKey] =
                 currentValues[fullKey] ?? reasonConfig[key].value;
         }
 
