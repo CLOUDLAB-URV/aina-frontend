@@ -55,6 +55,12 @@ export interface AgentUpdate {
      * @memberof AgentUpdate
      */
     name?: string | null;
+    /**
+     * 
+     * @type {{ [key: string]: any; }}
+     * @memberof AgentUpdate
+     */
+    settings?: { [key: string]: any; } | null;
 }
 
 /**
@@ -80,6 +86,7 @@ export function AgentUpdateFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'reasoningId': json['reasoning_id'] == null ? undefined : json['reasoning_id'],
         'lang': json['lang'] == null ? undefined : json['lang'],
         'name': json['name'] == null ? undefined : json['name'],
+        'settings': json['settings'] == null ? undefined : json['settings'],
     };
 }
 
@@ -100,6 +107,7 @@ export function AgentUpdateToJSONTyped(value?: AgentUpdate | null, ignoreDiscrim
         'reasoning_id': value['reasoningId'],
         'lang': value['lang'],
         'name': value['name'],
+        'settings': value['settings'],
     };
 }
 
