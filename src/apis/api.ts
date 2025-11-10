@@ -7,6 +7,7 @@ import { IndexApi } from "@/apis/IndexApi";
 import { AgentsApi } from "@/apis/AgentsApi";
 import { ConversationsApi } from "@/apis/ConversationsApi";
 import { ChatApi } from "@/apis/ChatApi";
+import { ReasoningsApi } from "./ReasoningsApi";
 
 const authMiddleware: Middleware = {
   pre: async (context) => {
@@ -29,3 +30,4 @@ export const IndApi = new IndexApi().withMiddleware(authMiddleware);
 export const AgApi = new AgentsApi().withMiddleware(authMiddleware);
 export const ConvApi = new ConversationsApi().withMiddleware(authMiddleware);
 export const ChApi = new ChatApi().withMiddleware(authMiddleware);
+export const ReasonApi = new ReasoningsApi().withMiddleware(authMiddleware);

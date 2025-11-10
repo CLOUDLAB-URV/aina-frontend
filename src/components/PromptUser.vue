@@ -3,12 +3,11 @@
         <section class="flex gap-2">
             <input type="text" placeholder="Type your message here..." class="w-full p-2 rounded" v-model="message" />
             <Button @click="sendMessage" icon="pi pi-send"></Button>
-            <Button icon="pi pi-info" v-if="agent?.id && conv?.id" @click="emits('moreInfo')"></Button>
+            <Button icon="pi pi-info" v-if="agent?.id && conv?.id" @click="emit('moreInfo')"></Button>
         </section>
         <section class="flex gap-4 items-center mt-2">
             <AgentSelects @agentSelected="(ag) => agent = ag" />
-            <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n) => conv = n"
-                :conv="conv" />
+            <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n) => conv = n" :conv="conv" />
         </section>
         <Accordion value="" v-if="agent?.id && conv?.id">
             <AccordionPanel value="0">
@@ -52,7 +51,11 @@ import { useConvStore } from '@/stores/conv';
 import { ChatRequestToJSON, SelectMode, type AgentResponse, type ChatRequest, type FileInfo } from '@/models';
 import { IndApi } from '@/apis/api';
 
-const emits = defineEmits(['moreInfo', 'conversationChanged'])
+const emit = defineEmits<{
+    moreInfo: [];
+    conversationChanged: [conv?: ApiSchemasConversationsConversationInfo];
+    agentChanged: [agent?: AgentResponse];
+}>();
 
 let showFiles = ref(false);
 const convStore = useConvStore();
@@ -62,7 +65,7 @@ let selectedFiles = ref([]);
 let select = ref<SelectMode>(SelectMode.All);
 let agent = ref<AgentResponse>();
 let conv = ref<ApiSchemasConversationsConversationInfo>();
-let message = ref();
+let message = ref<string>();
 const controller = new AbortController();
 const chatter = useChatStore()
 
@@ -73,6 +76,7 @@ watch(select, (newValue) => {
 
 watch(agent, async (newAgent) => {
     console.log('Agent changed to:', newAgent);
+    emit('agentChanged', newAgent);
     conv.value = undefined;
     if (newAgent && newAgent.indexId) {
         files.value = await IndApi.listFilesApiV1IndexIndexIdFilesGet({ indexId: newAgent.indexId });
@@ -81,7 +85,7 @@ watch(agent, async (newAgent) => {
 });
 
 watch(conv, () => {
-    emits('conversationChanged', conv)
+    emit('conversationChanged', conv.value)
 })
 
 async function sendMessage(event: Event) {
@@ -115,7 +119,7 @@ async function sendMessage(event: Event) {
         selectMode: select.value
     };
 
-    message.value = ""
+    message.value = undefined;
     fetchEventSource(url, {
         method: 'POST',
         body: JSON.stringify(ChatRequestToJSON(bodyData)),

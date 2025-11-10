@@ -9,8 +9,8 @@ export const useConvStore = defineStore("Conv", () => {
     data.value.push(Conv);
   };
 
-  const removeConv = (Conv: ApiSchemasConversationsConversationInfo) => {
-    let filtered = data.value.filter((element: ApiSchemasConversationsConversationInfo) => element.id !== Conv.id);
+  const removeConv = (id: string) => {
+    let filtered = data.value.filter((element: ApiSchemasConversationsConversationInfo) => element.id !== id);
     data.value = filtered;
   };
 

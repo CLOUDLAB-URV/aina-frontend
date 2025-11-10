@@ -18,8 +18,8 @@
                 <InputText v-model="conv.name" id="name" class="flex-auto" autocomplete="off" />
             </div>
             <div class="flex gap-2">
-                <label for="default">Default</label>
-                <Checkbox id="default" binary v-model="conv.isPublic" />
+                <label for="public">Public</label>
+                <Checkbox id="public" binary v-model="conv.isPublic" />
             </div>
             <template #footer>
                 <Button label="Cancel" text severity="secondary" @click="visible = false" autofocus />
@@ -41,14 +41,15 @@ import type { AddConversationApiV1ConversationsPostRequest, UpdateConversationAp
 import { ConvApi } from '@/apis/api';
 import { useConvStore } from '@/stores/conv';
 import { useToast } from 'primevue/usetoast';
+import type { ApiSchemasConversationsConversationInfo } from '@/models';
 
-const emit =defineEmits(['deleted']);
+const emit = defineEmits(['deleted']);
 const toast = useToast();
-const props = defineProps({
-    create: { type: String, required: true },
-    agentId: { type: String, required: true },
-    data: Object,
-});
+const props = defineProps<{
+    create: string;
+    agentId: string;
+    conv?: ApiSchemasConversationsConversationInfo;
+}>();
 
 const convStore = useConvStore();
 const visible = ref(false);
@@ -65,7 +66,7 @@ onMounted(async () => {
     conv.value.agentId = props.agentId;
 });
 
-watch(() => props.data, async () => {
+watch(() => props.conv, async () => {
     change_model();
 });
 
@@ -75,10 +76,10 @@ watch(() => props.agentId, async () => {
 
 
 function change_model() {
-    console.log(props.data)
-    conv.value.name = props.data?.name ?? "";
-    conv.value.isPublic = props.data?.isPublic ?? false;
-    conv.value.id = props.data?.id ?? "";
+    console.log(props.conv);
+    conv.value.name = props.conv?.name ?? "";
+    conv.value.isPublic = props.conv?.isPublic ?? false;
+    conv.value.id = props.conv?.id ?? "";
 }
 
 async function createconv() {
@@ -123,7 +124,7 @@ async function deleteconv() {
     }
     await ConvApi.deleteConversationApiV1ConversationsConversationIdDelete(deleteData).then(() => {
         visible.value = false;
-        convStore.removeConv(conv.value);
+        convStore.removeConv(conv.value.id);
         console.log("EMIT")
         emit('deleted')
     })

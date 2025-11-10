@@ -3,8 +3,8 @@
         <Select v-model="conv" :options="convStore.data" optionLabel="name" placeholder="Select conversation" />
         <div class="flex justify-between items-center gap-4">
             <ModalConv create="create" :agentId="props.agentId" />
-            <ModalConv create="edit" v-if="conv" :data="conv" :agentId="props.agentId" />
-            <ModalConv create="trash" v-if="conv" :data="conv" :agentId="props.agentId" @deleted="conv = undefined" />
+            <ModalConv create="edit" v-if="conv" :conv="conv" :agentId="props.agentId" />
+            <ModalConv create="trash" v-if="conv" :conv="conv" :agentId="props.agentId" @deleted="conv = undefined" />
         </div>
     </div>
 </template>
@@ -24,7 +24,9 @@ import Select from 'primevue/select';
 const convStore = useConvStore();
 const chatStore = useChatStore();
 let conv = ref<ApiSchemasConversationsConversationInfo>();
-const emit = defineEmits(['selectConv'])
+const emit = defineEmits<{
+    selectConv: [conv?: ApiSchemasConversationsConversationInfo];
+}>();
 
 const props = defineProps<{
     agentId: string
