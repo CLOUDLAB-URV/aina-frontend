@@ -11,7 +11,7 @@
                         :class="{ 'text-green-500': props.data_msg[0] == 'true' }" />
                 </button>
                 <button @click="sendLike(false)">
-                    <i class="pi pi-thumbs-up-fill p-3 rounded-lg hover:text-red-500"
+                    <i class="pi pi-thumbs-down-fill p-3 rounded-lg hover:text-red-500"
                         :class="{ 'text-red-500': props.data_msg[0] == 'false' }" />
                 </button>
                 <button @click="sendLike(undefined)">
