@@ -35,6 +35,40 @@ export interface GetReasoningConfigApiV1ReasoningsReasoningNameConfigGetRequest 
 export class ReasoningsApi extends runtime.BaseAPI {
 
     /**
+     * Get Reasoning App Settings
+     */
+    async getReasoningAppSettingsApiV1ReasoningsSettingsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("OAuth2PasswordBearer", []);
+        }
+
+
+        let urlPath = `/api/v1/reasonings/settings`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Get Reasoning App Settings
+     */
+    async getReasoningAppSettingsApiV1ReasoningsSettingsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
+        const response = await this.getReasoningAppSettingsApiV1ReasoningsSettingsGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get Reasoning Config
      */
     async getReasoningConfigApiV1ReasoningsReasoningNameConfigGetRaw(requestParameters: GetReasoningConfigApiV1ReasoningsReasoningNameConfigGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {

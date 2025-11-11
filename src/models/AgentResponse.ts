@@ -36,19 +36,7 @@ export interface AgentResponse {
      * @type {string}
      * @memberof AgentResponse
      */
-    modelName?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof AgentResponse
-     */
     reasoningId?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof AgentResponse
-     */
-    lang?: string | null;
     /**
      * The name of the agent
      * @type {string}
@@ -91,9 +79,7 @@ export function AgentResponseFromJSONTyped(json: any, ignoreDiscriminator: boole
         
         'description': json['description'] == null ? undefined : json['description'],
         'indexId': json['index_id'] == null ? undefined : json['index_id'],
-        'modelName': json['model_name'] == null ? undefined : json['model_name'],
         'reasoningId': json['reasoning_id'] == null ? undefined : json['reasoning_id'],
-        'lang': json['lang'] == null ? undefined : json['lang'],
         'name': json['name'],
         'id': json['id'],
         'dateCreated': (new Date(json['date_created'])),
@@ -113,9 +99,7 @@ export function AgentResponseToJSONTyped(value?: AgentResponse | null, ignoreDis
         
         'description': value['description'],
         'index_id': value['indexId'],
-        'model_name': value['modelName'],
         'reasoning_id': value['reasoningId'],
-        'lang': value['lang'],
         'name': value['name'],
         'id': value['id'],
         'date_created': value['dateCreated'].toISOString(),

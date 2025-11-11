@@ -23,14 +23,6 @@
                     autocomplete="off" />
             </div>
 
-            <div class="flex items-center gap-4 mb-2">
-                <label for="modelName" class="font-semibold w-24">Model</label>
-                <Select v-model="agent.modelName" id="modelName" class="flex-auto" :options="modelsNames" />
-                <!-- <select id="modelName" v-model="agent.modelName" class="w-full">
-                    <option value="">Please Select an Option</option>
-                    <option :value="model" v-for="model in modelsNames">{{ model }}</option>
-                </select> -->
-            </div>
             <!-- <div class="flex items-center gap-4 mb-2" v-if="create == 'edit'">
                 <label for="indexId" class="font-semibold w-24">IndexId</label>
                 <InputNumber v-model="agent.indexId" id="indexId" class="flex-auto" autocomplete="off" />
@@ -49,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import type { AgentResponse } from '@/models';
 import { AgApi } from "@/apis/api";
 import { useAgentStore } from '@/stores/agent';
@@ -58,8 +50,6 @@ import { useToast } from 'primevue/usetoast';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import Select from 'primevue/select';
-import { LlmApi } from '@/apis/api';
 import { Textarea } from 'primevue';
 
 const toast = useToast();
@@ -68,7 +58,6 @@ const props = defineProps<{
     create: string,
     data?: AgentResponse
 }>();
-let modelsNames = ref();
 
 const visible = ref(false);
 
@@ -76,21 +65,7 @@ let agent = ref({
     name: "",
     description: "",
     indexId: 0,
-    modelName: "",
     id: ""
-})
-
-onMounted(async () => {
-    try {
-        const response = await LlmApi.listLlmsApiV1LlmsGet();
-        if (response) {
-            modelsNames.value = Object.entries(response)?.map((llm: any) => {
-                return llm[0]
-            });
-        }
-    } catch (error) {
-        console.error("Failed to retrieve LLMs:", error);
-    }
 })
 
 watch(() => props.data, async () => {
@@ -102,7 +77,6 @@ watch(() => props.data, async () => {
 function change_model() {
     agent.value.name = props.data?.name ?? "";
     agent.value.description = props.data?.description ?? "";
-    agent.value.modelName = props.data?.modelName ?? "";
     agent.value.id = props.data?.id ?? "";
 }
 
@@ -112,7 +86,6 @@ async function createAgent() {
         agentCreate: {
             name: agent.value.name,
             description: agent.value.description,
-            modelName: agent.value.modelName,
         }
     });
     let index = await IndApi.createIndexApiV1IndexPost({
@@ -123,7 +96,6 @@ async function createAgent() {
         agentId: newAgent.id,
         agentUpdate: {
             indexId: index.id,
-            modelName: newAgent.modelName
         }
     });
     visible.value = false;
@@ -140,7 +112,6 @@ async function updateAgent() {
         agentId: agent.value.id,
         agentUpdate: {
             indexId: agent.value.indexId,
-            modelName: agent.value.modelName,
             name: agent.value.name,
             description: agent.value.description
         }

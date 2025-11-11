@@ -36,19 +36,7 @@ export interface AgentUpdate {
      * @type {string}
      * @memberof AgentUpdate
      */
-    modelName?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof AgentUpdate
-     */
     reasoningId?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof AgentUpdate
-     */
-    lang?: string | null;
     /**
      * 
      * @type {string}
@@ -82,9 +70,7 @@ export function AgentUpdateFromJSONTyped(json: any, ignoreDiscriminator: boolean
         
         'description': json['description'] == null ? undefined : json['description'],
         'indexId': json['index_id'] == null ? undefined : json['index_id'],
-        'modelName': json['model_name'] == null ? undefined : json['model_name'],
         'reasoningId': json['reasoning_id'] == null ? undefined : json['reasoning_id'],
-        'lang': json['lang'] == null ? undefined : json['lang'],
         'name': json['name'] == null ? undefined : json['name'],
         'settings': json['settings'] == null ? undefined : json['settings'],
     };
@@ -103,9 +89,7 @@ export function AgentUpdateToJSONTyped(value?: AgentUpdate | null, ignoreDiscrim
         
         'description': value['description'],
         'index_id': value['indexId'],
-        'model_name': value['modelName'],
         'reasoning_id': value['reasoningId'],
-        'lang': value['lang'],
         'name': value['name'],
         'settings': value['settings'],
     };
