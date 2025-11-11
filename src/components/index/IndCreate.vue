@@ -2,43 +2,43 @@
   <form class="flex flex-col gap-4">
     <div class="flex flex-col gap-2">
       <label for="id">Index Name</label>
-      <InputText id="Id" placeholder="Id" v-model="model.name" />
+      <InputText id="Id" placeholder="Id" v-model="model.name.value" :invalid="model.name.invalid"/>
     </div>
 
     <div class="flex flex-col gap-2">
       <label for="vendorName">Index Type</label>
-      <select v-model="model.indexType" class="border p-2 rounded-xl border-[var(--surface-border)]">
-        <option disabled value="">Please select one</option>
-        <option v-for="vendor in vendors" :value="vendor">{{ vendor }}</option>
-      </select>
+      <Select 
+            v-model="model.indexType.value" 
+            :options="vendors" 
+            optionLabel="value" 
+            placeholder="Select conversation" 
+            :invalid="model.indexType.invalid"
+            optionValue="value"
+      />
     </div>
 
     <div class="flex flex-col gap-2">
       <label for="spec">Configuration</label>
-      <textarea v-model="model.config" id="spec" placeholder="Configuration" class="border p-2" rows="10" />
+      <Textarea id="spec" v-model="model.config.value" placeholder="Configuration of the Index" rows="10"/>
     </div>
 
     <ButtonsCrud :create="create" @createElement="sendCreate" @updateElement="update" @deleteElement="delete_element" />
   </form>
-  <!-- <section class="mt-8">
-    <h3 class="text-xl mb-4 text-[var(--text-color)]">Spec Params definitions</h3>
-    <DataTable :value="vendor_info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
-      tableStyle="min-width: 50rem">
-      <Column field="name" header="Name" style="width: 10%"></Column>
-      <Column field="help" header="Help" style="width: 65%"></Column>
-      <Column field="type" header="Type" style="width: 10%"></Column>
-    </DataTable>
-  </section> -->
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
-import { useIndStore } from "@/stores/ind";
-import { IndApi } from "@/apis/api.ts";
-import type { CreateIndexApiV1IndexPostRequest } from "@/apis/IndexApi.ts";
+import type { CreateIndexApiV1IndexPostRequest, DeleteIndexApiV1IndexIndexIdDeleteRequest,UpdateIndexApiV1IndexIndexIdPatchRequest } from "@/apis/IndexApi.ts";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref, watch } from "vue";
+import InputText from 'primevue/inputtext';
+import { useIndStore } from "@/stores/ind";
+import Textarea from 'primevue/textarea';
+import { IndApi } from "@/apis/api.ts";
+import Select from 'primevue/select';
 import yaml from 'js-yaml';
 
+const toast = useToast()
 let indStore = useIndStore();
 
 const props = defineProps<{
@@ -51,93 +51,118 @@ const props = defineProps<{
   }
 }>();
 
-
 const emits = defineEmits(['deselect']);
-
-// let vendor_info = ref();
 let vendors = ref<any[]>([]);
 let model = ref({
   id: -1,
-  name: "",
-  config: "",
-  indexType: "",
+  name: {
+    value:"",
+    invalid:false
+  },
+  config: {
+    value:"",
+    invalid:false
+  },
+  indexType: {
+    value: "",
+    invalid:false
+  },
 })
 
 onMounted(async () => {
-  vendors.value = await IndApi.listIndexTypesApiV1IndexTypesGet();
-  change_model()
+  let response = await IndApi.listIndexTypesApiV1IndexTypesGet();
+  vendors.value = response.map((vendor:any)=>{
+    return {'value': vendor}
+  })
 });
 
 watch(() => props.data, () => {
   change_model();
-});
-
+},{immediate:true});
 
 function change_model() {
-  console.log(props.data);
-  model.value.name = props.data?.name ?? "";
+  model.value.name.value = props.data?.name ?? "";
+  model.value.name.invalid = false;
   model.value.id = props.data?.id ?? -1;
-  model.value.config = props.data?.config ?? "";
-  model.value.indexType = props.data?.indexType ?? "";
-  return model;
+  model.value.config.value = props.data?.config ?? "";
+  model.value.config.invalid = false;
+  model.value.indexType.value = props.data?.indexType ?? "";
+  model.value.indexType.invalid = false;
+}
+
+function validate(){
+  let made=true
+  if(!model.value.name.value || model.value.name.value == ' '){
+    toast.add({severity:'error',detail:'You have to put a Name to the Index'})
+    model.value.name.invalid = true
+    made=false
+  }
+  if(!model.value.indexType.value || model.value.indexType.value == ' '){
+    toast.add({severity:'error',detail:'You have to select an IndexType for validating the request'})
+    model.value.indexType.invalid = true
+    made=false
+  }
+  try{
+    yaml.load(model.value.config.value)
+  }catch(err){
+    toast.add({severity:'error',detail:'There is a mistake in the Configuration Text Area'})
+    model.value.config.invalid = true
+    made=false
+  }
+  return made
 }
 
 function sendCreate() {
-  IndApi.createIndexApiV1IndexPost({
-    name: model.value.name,
-    indexType: model.value.indexType,
-    requestBody: yaml.load(model.value.config) as Object,
-  }).then((res) => {
-    console.log("created " + model.value.name);
-    // let create = {
-    //   name: model.value.name,
-    //   id: model.value.id,
-    //   indexType: model.value.indexType,
-    //   config: model.value.config,
-    // }
-    model.value.id = res.id;
-    indStore.addInd(model.value);
+  if(!validate()){return}
+  let createParam: CreateIndexApiV1IndexPostRequest = {
+    name: model.value.name.value,
+    indexType: model.value.indexType.value,
+    requestBody: yaml.load(model.value.config.value) as Object,
+  };
+  IndApi.createIndexApiV1IndexPost(createParam).then((res) => {
+    indStore.addInd({
+      name: res.name,
+      id:res.id,
+      indexType:res.indexType,
+      config : yaml.dump(res.config)
+    });
+    toast.add({severity:'success',detail:"The Index has been created succesfully",life:3000})
+    change_model()
+  }).catch(()=>{
+    toast.add({severity:'error',detail:'The name put in the field input name it has been already used'})
+    model.value.name.invalid = true
   });
 }
 
 function delete_element() {
-  console.log("delete");
-  IndApi.deleteIndexApiV1IndexIndexIdDelete({
+  let index: DeleteIndexApiV1IndexIndexIdDeleteRequest = {
     indexId: model.value.id,
-  }).then(() => {
-    console.log("deleted " + model.value.name);
-    indStore.removeInd(model.value);
+  };
+  IndApi.deleteIndexApiV1IndexIndexIdDelete(index).then(() => {
+    indStore.removeInd(model.value.id);
     emits('deselect');
+    toast.add({severity:'success',detail:'The Index has been deleted'})
   });
-  console.log("deleted " + model.value.name);
 }
 
 function update() {
-  console.log("update");
-  IndApi.updateIndexApiV1IndexIndexIdPatch({
+  if(!validate()){return}
+  let index: UpdateIndexApiV1IndexIndexIdPatchRequest = {
     indexId: model.value.id,
-    name: model.value.name,
-    requestBody: yaml.load(model.value.config) as Object,
-  }).then(() => {
-    console.log("updated " + model.value.name);
-    // let change = {
-    //   name: model.value.name,
-    //   id: model.value.id,
-    //   indexType: model.value.indexType,
-    //   config: model.value.config,
-    // }\
-    // console.log(res)
-    // model.value.id = res.id;
-    indStore.updateInd(model.value);
+    name: model.value.name.value,
+    requestBody: yaml.load(model.value.config.value) as Object,
+  };
+  IndApi.updateIndexApiV1IndexIndexIdPatch(index).then(() => {
+    indStore.updateInd({
+      name : model.value.name.value,
+      id : props.data?.id ?? -1,
+      config : model.value.config.value,
+      indexType : model.value.indexType.value
+    });
+  }).catch(()=>{
+    toast.add({severity:'error',detail:'The name put in the field input name it has been already used'})
   });
 }
-
-// async function getInfo(value: string) {
-//   let name: GetRerankingVendorDescApiV1RerankingsVendorVendorNameGetRequest = {
-//     vendorName: value
-//   }
-//   vendor_info.value = transformParams(Object.values(await IndApi.getRerankingVendorDescApiV1RerankingsVendorVendorNameGet(name))[1]);
-// }
 
 </script>
 

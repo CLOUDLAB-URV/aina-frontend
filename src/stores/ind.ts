@@ -10,14 +10,14 @@ export const useIndStore = defineStore("Ind", () => {
 
   const removeInd = (Ind: any) => {
     let filtered = ind.value.filter(
-      (element: any) => element.name !== Ind.name
+      (element: any) => element.id !== Ind
     );
     ind.value = filtered;
   };
 
   const updateInd = (Ind: any) => {
-    let index = ind.value.findIndex((item: any) => item.name === Ind.name);
-    if (index !== -1) {
+    let index = ind.value.findIndex((item: any) => item.id === Ind.id);
+    if (index != -1) {
       ind.value[index] = Ind;
     }
   };

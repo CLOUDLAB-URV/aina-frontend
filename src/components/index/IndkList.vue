@@ -17,6 +17,7 @@ import { IndApi } from '@/apis/api';
 import { useIndStore } from '@/stores/ind';
 import IndCreate from '@/components/index/IndCreate.vue';
 import yaml from 'js-yaml';
+import type { IndexInfo } from '@/models';
 
 const IndStore = useIndStore();
 
@@ -28,8 +29,8 @@ onMounted(async () => {
     IndStore.ind = Object.values(data);
 })
 
-function parse_data(data: any) {
-    return Object.values(data).map((ind: any) => {
+function parse_data(data: IndexInfo[]) {
+    return Object.values(data).map((ind: IndexInfo) => {
         let aux = {
             name: ind.name,
             id: ind.id,
