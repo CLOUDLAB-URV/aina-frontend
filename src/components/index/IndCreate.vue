@@ -35,7 +35,7 @@
 import { onMounted, ref, watch } from "vue";
 import { useIndStore } from "@/stores/ind";
 import { IndApi } from "@/apis/api.ts";
-import type { CreateIndexApiV1IndexPostRequest, DeleteIndexApiV1IndexIndexIndexIdDeleteRequest, UpdateIndexApiV1IndexIndexIndexIdPatchRequest } from "@/apis/IndexApi.ts";
+import type { CreateIndexApiV1IndexPostRequest } from "@/apis/IndexApi.ts";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
 import yaml from 'js-yaml';
 
@@ -83,12 +83,11 @@ function change_model() {
 }
 
 function sendCreate() {
-  let createParam: CreateIndexApiV1IndexPostRequest = {
+  IndApi.createIndexApiV1IndexPost({
     name: model.value.name,
     indexType: model.value.indexType,
     requestBody: yaml.load(model.value.config) as Object,
-  };
-  IndApi.createIndexApiV1IndexPost(createParam).then((res) => {
+  }).then((res) => {
     console.log("created " + model.value.name);
     // let create = {
     //   name: model.value.name,
@@ -103,10 +102,9 @@ function sendCreate() {
 
 function delete_element() {
   console.log("delete");
-  let index: DeleteIndexApiV1IndexIndexIndexIdDeleteRequest = {
+  IndApi.deleteIndexApiV1IndexIndexIdDelete({
     indexId: model.value.id,
-  };
-  IndApi.deleteIndexApiV1IndexIndexIndexIdDelete(index).then(() => {
+  }).then(() => {
     console.log("deleted " + model.value.name);
     indStore.removeInd(model.value);
     emits('deselect');
@@ -116,12 +114,11 @@ function delete_element() {
 
 function update() {
   console.log("update");
-  let index: UpdateIndexApiV1IndexIndexIndexIdPatchRequest = {
+  IndApi.updateIndexApiV1IndexIndexIdPatch({
     indexId: model.value.id,
     name: model.value.name,
     requestBody: yaml.load(model.value.config) as Object,
-  };
-  IndApi.updateIndexApiV1IndexIndexIndexIdPatch(index).then(() => {
+  }).then(() => {
     console.log("updated " + model.value.name);
     // let change = {
     //   name: model.value.name,
