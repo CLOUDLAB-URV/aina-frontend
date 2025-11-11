@@ -1,11 +1,11 @@
 <template>
     <div class="p-4 flex flex-col prompt-container">
-        <section class="flex gap-2">
+        <form class="flex gap-2" @submit="sendMessage">
             <InputText type="text" placeholder="Type your message here..." class="w-full p-2 rounded"
-                v-model="message" />
-            <Button @click="sendMessage" icon="pi pi-send"></Button>
+            v-model="message" />
+            <Button @click="sendMessage" icon="pi pi-send" type="submit"></Button>
             <Button icon="pi pi-info" v-if="agent?.id && conv?.id" @click="emit('moreInfo')"></Button>
-        </section>
+        </form>
         <section class="flex gap-4 items-center mt-2">
             <AgentSelects @agentSelected="(ag) => agent = ag" />
             <ConversationSelect v-if="agent?.id" :agentId="agent?.id" @selectConv="(n) => conv = n" :conv="conv" />
