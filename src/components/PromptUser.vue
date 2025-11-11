@@ -1,6 +1,6 @@
 <template>
     <div class="p-4 flex flex-col prompt-container">
-        <form class="flex gap-2" @submit="sendMessage">
+        <form class="flex gap-2" @submit="sendMessage" @submit.prevent>
             <InputText type="text" placeholder="Type your message here..." class="w-full p-2 rounded"
             v-model="message" />
             <Button @click="sendMessage" icon="pi pi-send" type="submit"></Button>
@@ -91,6 +91,7 @@ watch(conv, () => {
 })
 
 async function sendMessage(event: Event) {
+    event.preventDefault();
 
     if (!agent.value || !message.value)
         return;
@@ -109,7 +110,6 @@ async function sendMessage(event: Event) {
 
     const url = `${import.meta.env.VITE_IP_BACKEND}/api/v1/chat/${agent.value.id}/${conv.value.id}`;
 
-    event.preventDefault();
 
     const formData = new FormData();
     chatter.addUserChat(message.value)
