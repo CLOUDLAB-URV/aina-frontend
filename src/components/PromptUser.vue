@@ -1,7 +1,8 @@
 <template>
     <div class="p-4 flex flex-col prompt-container">
         <section class="flex gap-2">
-            <input type="text" placeholder="Type your message here..." class="w-full p-2 rounded" v-model="message" />
+            <InputText type="text" placeholder="Type your message here..." class="w-full p-2 rounded"
+                v-model="message" />
             <Button @click="sendMessage" icon="pi pi-send"></Button>
             <Button icon="pi pi-info" v-if="agent?.id && conv?.id" @click="emit('moreInfo')"></Button>
         </section>
@@ -50,6 +51,7 @@ import { ConvApi } from '@/apis/api';
 import { useConvStore } from '@/stores/conv';
 import { ChatRequestToJSON, SelectMode, type AgentResponse, type ChatRequest, type FileInfo } from '@/models';
 import { IndApi } from '@/apis/api';
+import { InputText } from 'primevue';
 
 const emit = defineEmits<{
     moreInfo: [];
@@ -130,7 +132,7 @@ async function sendMessage(event: Event) {
         signal: controller.signal,
         onmessage(ev: any) {
             console.log(ev)
-            try{
+            try {
                 let data = JSON.parse(ev.data)
                 if (data.channel == 'chat' && data.content != "") {
                     let contingut = data.content
@@ -140,10 +142,10 @@ async function sendMessage(event: Event) {
                         .replace(/\s+/g, ' ');
                     chatter.addAiChat(contingut);
                 }
-                if(data.channel == 'info' && data.content != ""){
+                if (data.channel == 'info' && data.content != "") {
                     chatter.addInfoChat(data.content)
                 }
-            }catch(err){
+            } catch (err) {
                 console.log("EROR JSON")
             }
         },
