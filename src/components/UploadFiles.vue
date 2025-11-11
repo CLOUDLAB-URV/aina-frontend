@@ -94,6 +94,7 @@ import { useToast } from 'primevue/usetoast';
 import type { IndexInfo } from '@/models';
 import { IndApi } from '@/apis/api';
 import { Checkbox, FileUpload, Button } from 'primevue';
+
 const props = defineProps<{
     agentId: string,
     index: IndexInfo
@@ -107,6 +108,9 @@ const isIndexing = ref(false);
 const controller = new AbortController();
 const fileStore = useFilesStore();
 const toast = useToast();
+
+const processedSuccessFiles = new Set<string>();
+const processedFailedFiles = new Set<string>();
 
 const acceptedFileTypes = computed(() => {
     if (props.index?.config?.supported_file_types) {
@@ -192,6 +196,9 @@ async function uploadFiles() {
     isIndexing.value = true;
     logMessages.value = { status: '', details: '' };
 
+    processedSuccessFiles.clear();
+    processedFailedFiles.clear();
+
     const formData = new FormData();
     for (const file of selectedFiles.value) {
         formData.append("files", file);
@@ -231,31 +238,59 @@ async function uploadFiles() {
                 logMessages.value.status = status;
                 logMessages.value.details = details;
 
-                if (status && status.includes('❌')) {
-                    console.log('Upload failed');
+                const normalizedStatus = status.replace(/\\n/g, '\n');
+
+                const successRegex = /✅\s*\|\s*([^\n\r]+)/g;
+                const failRegex = /❌\s*\|\s*([^\n\r]+)/g;
+
+                const newlySucceeded: string[] = [];
+                const newlyFailed: string[] = [];
+
+                let m: RegExpExecArray | null;
+                while ((m = successRegex.exec(normalizedStatus)) !== null) {
+                    const raw = m[1];
+                    const fname = raw ? raw.trim() : '';
+                    if (fname && !processedSuccessFiles.has(fname)) {
+                        processedSuccessFiles.add(fname);
+                        newlySucceeded.push(fname);
+                    }
+                }
+                while ((m = failRegex.exec(normalizedStatus)) !== null) {
+                    const raw = m[1];
+                    const fname = raw ? raw.trim() : '';
+                    if (fname && !processedFailedFiles.has(fname)) {
+                        processedFailedFiles.add(fname);
+                        newlyFailed.push(fname);
+                    }
+                }
+
+                if (newlyFailed.length > 0) {
+                    console.log('Upload failed for:', newlyFailed);
                     toast.add({
                         severity: 'error',
                         summary: 'Upload Failed',
-                        detail: 'Something went wrong, consult the log',
-                        life: 5000
+                        detail: `Failed: ${newlyFailed.join(', ')}`,
+                        life: 7000
                     });
-                } else if (status && status.includes('✅')) {
-                    console.log('Upload successful');
+                }
+
+                if (newlySucceeded.length > 0) {
+                    console.log('Upload successful for:', newlySucceeded);
                     toast.add({
                         severity: 'success',
                         summary: 'Upload Successful',
-                        detail: 'Files uploaded successfully',
+                        detail: newlySucceeded.length === 1 ? `${newlySucceeded[0]} uploaded` : `${newlySucceeded.length} files uploaded`,
                         life: 3000
                     });
 
                     IndApi.listFilesApiV1IndexIndexIdFilesGet({
                         indexId: props.index.id
                     }).then((res) => {
-                        console.log(res)
+                        console.log(res);
                         fileStore.files = Object.values(res);
-                    });
+                    }).catch((err) => console.error('Error listing files:', err));
 
-                    selectedFiles.value = [];
+                    selectedFiles.value = selectedFiles.value.filter(f => !newlySucceeded.includes(f.name));
                 }
 
                 fileStore.addFiles(ev.data);
