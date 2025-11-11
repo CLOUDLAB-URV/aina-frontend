@@ -17,10 +17,11 @@ export async function getCurrentUser() {
   let data = await AuthApi.readUsersMeApiV1AuthMeGet();
   if (data?.username) {
     authStore.username = data.username;
+    authStore.role = data.role;
     authStore.signedIn = true;
   } else {
     throw new Error("Something went wrong, please check the input.");
   }
   console.log(data);
-  return true;
+  return data;
 }
