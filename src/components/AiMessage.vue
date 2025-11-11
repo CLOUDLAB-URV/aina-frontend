@@ -3,7 +3,7 @@
         <i class="pi pi-database"></i>
         <div class="flex flex-col gap-3 w-[70%]">
             <div class="p-4 bg-blue-100 rounded-lg">
-                <p class="text-gray-800">{{ message }}</p>
+                <p v-html="markdown.render(message)" class="text-black"></p>
             </div>
             <div class="flex gap-3 w-fit rounded-lg bg-blue-100">
                 <button @click="sendLike(true)">
@@ -22,15 +22,19 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ChApi } from '@/apis/api';
-import { useChatStore } from '@/stores/chat';
 import type { LikeMessageApiV1ChatAgentIdConversationIdLikePostRequest } from '@/apis/ChatApi.ts'
 import type { ApiSchemasConversationsConversationInfo } from '@/models';
+import { useChatStore } from '@/stores/chat';
+import MarkdownIt from "markdown-it";
+import { ChApi } from '@/apis/api';
+
 const props = defineProps<{
-    message: String;
-    data_msg: [String, number];
-    conv?: ApiSchemasConversationsConversationInfo;
+    message: string;
+    data_msg: [String,Number];
+    conv?: ApiSchemasConversationsConversationInfo
 }>();
+
+const markdown = new MarkdownIt();
 const chatStore = useChatStore();
 
 async function sendLike(val: boolean | undefined) {

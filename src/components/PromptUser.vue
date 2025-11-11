@@ -135,12 +135,7 @@ async function sendMessage(event: Event) {
             try {
                 let data = JSON.parse(ev.data)
                 if (data.channel == 'chat' && data.content != "") {
-                    let contingut = data.content
-                        .replace(/\n+/g, ' ')
-                        .replace(/\*\*/g, ' ')
-                        .replace(/\\/g, '')
-                        .replace(/\s+/g, ' ');
-                    chatter.addAiChat(contingut);
+                    chatter.addAiChat(data.content);
                 }
                 if (data.channel == 'info' && data.content != "") {
                     chatter.addInfoChat(data.content)

@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 // 1. Definir la interfaz para cada elemento del chat
 export interface ChatItem {
   user: string;
-  ai: String;
+  ai: string;
   info:String;
   liked:String;
 }
