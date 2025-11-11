@@ -2,7 +2,7 @@
     <div class="flex gap-3">
         <Select v-model="conv" :options="convStore.data" optionLabel="name" placeholder="Select conversation" />
         <div class="flex justify-between items-center gap-4">
-            <ModalConv create="create" :agentId="props.agentId" />
+            <ModalConv create="create" :agentId="props.agentId" @convCreated="(c) => conv = c" />
             <ModalConv create="edit" v-if="conv" :conv="conv" :agentId="props.agentId" />
             <ModalConv create="trash" v-if="conv" :conv="conv" :agentId="props.agentId" @deleted="conv = undefined" />
         </div>

@@ -59,6 +59,10 @@ const props = defineProps<{
     data?: AgentResponse
 }>();
 
+const emit = defineEmits<{
+    agentCreated: [agent: AgentResponse]
+}>();
+
 const visible = ref(false);
 
 let agent = ref({
@@ -100,6 +104,7 @@ async function createAgent() {
     });
     visible.value = false;
     store.data.push(updatedAgent)
+    emit('agentCreated', updatedAgent);
     toast.add({
         severity: 'success',
         summary: 'Agent has been created successfully',

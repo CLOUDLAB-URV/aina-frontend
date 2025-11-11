@@ -3,7 +3,7 @@
         <Select v-model="agent" :options="store.data" optionLabel="name" placeholder="Please select an agent" />
         <div v-if="auth.signedIn && auth.role && (auth.role === Role.AgentCreator || auth.role === Role.Admin)"
             class="flex justify-between items-center gap-4">
-            <ModalCreateAgent create="create" />
+            <ModalCreateAgent create="create" @agentCreated="(a) => agent = a" />
             <ModalCreateAgent v-if="agent" create="edit" :data="agent" />
             <ModalCreateAgent v-if="agent" create="trash" :data="agent" />
         </div>

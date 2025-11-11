@@ -47,12 +47,16 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 
-const emit = defineEmits(['deleted']);
 const toast = useToast();
 const props = defineProps<{
     create: string;
     agentId: string;
     conv?: ApiSchemasConversationsConversationInfo;
+}>();
+
+const emit = defineEmits<{
+    deleted: [],
+    convCreated: [conv: ApiSchemasConversationsConversationInfo]
 }>();
 
 const convStore = useConvStore();
@@ -94,15 +98,14 @@ async function createconv() {
         agentId: conv.value.agentId,
     }
     let info: AddConversationApiV1ConversationsPostRequest = { conversationCreate: convCreate };
-    await ConvApi.addConversationApiV1ConversationsPost(info).then((res) => {
-        console.log(res);
-        convStore.addConv(res);
-        toast.add({ severity: 'success', summary: 'Conversation has been create successfully', detail: `Create conversation with name ${name}`, life: 300000 })
-        conv.value.name = "";
-        conv.value.isPublic = false;
-        visible.value = false;
-    }
-    );
+    let newConv = await ConvApi.addConversationApiV1ConversationsPost(info);
+    emit('convCreated', newConv);
+    console.log(newConv);
+    convStore.addConv(newConv);
+    toast.add({ severity: 'success', summary: 'Conversation has been create successfully', detail: `Create conversation with name ${newConv.name}`, life: 300000 });
+    conv.value.name = "";
+    conv.value.isPublic = false;
+    visible.value = false;
 }
 
 async function updateconv() {
