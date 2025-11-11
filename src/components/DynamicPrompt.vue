@@ -3,6 +3,29 @@
         <div v-if="loading" class="text-sm opacity-70">Loading settings...</div>
         <div v-else-if="error" class="text-red-500">{{ error }}</div>
         <div v-else>
+            <section class="mb-6">
+                <h2 class="font-semibold text-lg mb-3">General Settings</h2>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div v-for="(setting, key) in reasonAppSettings" :key="`general-${key}`">
+                        <label class="font-medium mb-1 block">{{ setting.name }}</label>
+                        <template v-if="setting.component === 'radio'">
+                            <div class="flex flex-wrap gap-4">
+                                <div v-for="(choice, idx) in setting.choices" :key="`${key}-radio-${idx}`"
+                                    class="flex items-center gap-2">
+                                    <RadioButton :inputId="`${key}-radio-${idx}`" :name="key"
+                                        :value="choice[1] || choice" v-model="formValues[`reasoning.${key}`]" />
+                                    <label :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <component :is="resolveComponent(setting)" :label="setting.name"
+                                v-model="formValues[`reasoning.${key}`]" v-bind="getComponentProps(setting)" />
+                        </template>
+                    </div>
+                </div>
+            </section>
+
             <section v-if="reasonSettings">
                 <h2 class="font-semibold text-lg mb-3">Reasoning Settings</h2>
                 <div class="mb-4">
@@ -85,8 +108,11 @@ const saving = ref(false);
 const error = ref<string>();
 const currentReasoning = ref<string>();
 const currentIndex = ref<number>();
-const indexSettings = ref<Record<string, any>>();
+
+const reasonAppSettings = ref<Record<string, any>>();
 const reasonSettings = ref<Record<string, any>>();
+const indexSettings = ref<Record<string, any>>();
+
 const formValues = ref<Record<string, any>>({});
 const reasoningOptions = ref<string[]>([]);
 
@@ -109,15 +135,14 @@ async function loadSettings(agent: AgentResponse) {
             throw new Error('Agent index not set');
         }
 
-        // 2. Extract reasoning and index info
         const reasoningName: string = currentValues['reasoning.use'];
         const indexId = agent.indexId;
 
         currentReasoning.value = reasoningName;
         currentIndex.value = indexId;
 
-        // 3. Fetch schemas
-        const [reasonConfig, indexConfig] = await Promise.all([
+        const [reasonAppConfig, reasonConfig, indexConfig] = await Promise.all([
+            ReasonApi.getReasoningAppSettingsApiV1ReasoningsSettingsGet(),
             ReasonApi.getReasoningConfigApiV1ReasoningsReasoningNameConfigGet({
                 reasoningName: reasoningName,
             }),
@@ -126,23 +151,30 @@ async function loadSettings(agent: AgentResponse) {
             }),
         ]);
 
+        // delete 'use' key
+        delete reasonAppConfig['use'];
+
+        reasonAppSettings.value = reasonAppConfig;
         reasonSettings.value = reasonConfig;
         indexSettings.value = indexConfig;
 
-        // 4. Merge values
         const merged: Record<string, any> = {};
 
-        // index
-        for (const key in indexConfig) {
-            const fullKey = `index.options.${indexId}.${key}`;
-            merged[fullKey] = currentValues[fullKey] ?? indexConfig[key].value;
+        for (const key in reasonAppConfig) {
+            const fullKey = `reasoning.${key}`;
+            merged[fullKey] =
+                currentValues[fullKey] ?? reasonAppConfig[key].value;
         }
 
-        // reasoning
         for (const key in reasonConfig) {
             const fullKey = `reasoning.options.${reasoningName}.${key}`;
             merged[fullKey] =
                 currentValues[fullKey] ?? reasonConfig[key].value;
+        }
+
+        for (const key in indexConfig) {
+            const fullKey = `index.options.${indexId}.${key}`;
+            merged[fullKey] = currentValues[fullKey] ?? indexConfig[key].value;
         }
 
         formValues.value = merged;
