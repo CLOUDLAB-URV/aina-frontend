@@ -139,20 +139,21 @@ function validate(){
 async function sendCreate() {
   if(!validate()) return
   let response = await createElement(props.type, model.value)
-  if(response == 200){
-    toast.add({severity:'success',detail:`New ${props.type} has been created with the name ${model.value.name.value}`})
+  if(response.worked){
+    toast.add({severity:'success',detail:`${response.message}`})
     change_model()
-    toast.add({severity:'error',detail:`${response}`})
+  }else{
+    toast.add({severity:'error',detail:`${response.message}`})
   }
 }
 
 async function delete_element() {
-  let response: String = await deleteElement(props.type, model.value);
-  if (response == 'deselect') {
-    toast.add({severity:'success',detail:`The ${props.type} ${model.value.name.value} has been deleted`})
+  let response = await deleteElement(props.type, model.value);
+  if (response.worked) {
+    toast.add({severity:'success',detail:`${response.message}`})
     emits('deselect')
   }else{
-    toast.add({severity:'error',detail:`ERROR : ${response}`})
+    toast.add({severity:'error',detail:`${response.message}`})
   }
 }
 
@@ -160,10 +161,10 @@ async function update() {
   if(!validate()) return
   let response = await updateElement(props.type, model.value);
   console.log(response)
-  if(response == 204){
-    toast.add({severity:'success',detail:`The ${props.type}  ${model.value.name.value} has been updated `})
+  if(response.worked){
+    toast.add({severity:'success',detail:`${response.message}`})
   }else{
-    toast.add({severity:'error',detail:`ERROR : ${response}`})
+    toast.add({severity:'error',detail:`${response.message}`})
   }
 }
 

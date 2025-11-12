@@ -70,7 +70,7 @@ export async function mountVendors(type: String) {
 }
 
 export async function createElement(type: String, model: any) {
-  try{
+  try {
     if (type == "llm") {
       const llmStore = useLlmStore();
       let create: LlmCreate = {
@@ -82,9 +82,10 @@ export async function createElement(type: String, model: any) {
       let createParam: AddLlmApiV1LlmsLlmPostRequest = {
         llmCreate: create,
       };
-      await LlmApi.addLlmApiV1LlmsLlmPost(createParam)
+      let response = await LlmApi.addLlmApiV1LlmsLlmPost(createParam);
       llmStore.addLlm(getData(model));
-      return 200
+      response['worked'] = true
+      return response
     } else if (type == "emb") {
       const embStore = useEmbStore();
       let create: EmbeddingCreate = {
@@ -96,9 +97,10 @@ export async function createElement(type: String, model: any) {
       let createParam: AddEmbeddingApiV1EmbeddingsEmbeddingPostRequest = {
         embeddingCreate: create,
       };
-      await EmbApi.addEmbeddingApiV1EmbeddingsEmbeddingPost(createParam)
+      let response = await EmbApi.addEmbeddingApiV1EmbeddingsEmbeddingPost(createParam)
       embStore.addEmb(getData(model));
-      return 200
+      response['worked'] = true
+      return response
     } else if (type == "rank") {
       const rankStore = useRankStore();
       let create: RerankingCreate = {
@@ -110,56 +112,60 @@ export async function createElement(type: String, model: any) {
       let createParam: AddRerankingApiV1RerankingsRerankingPostRequest = {
         rerankingCreate: create,
       };
-      await RankApi.addRerankingApiV1RerankingsRerankingPost(createParam)
+      let response = await RankApi.addRerankingApiV1RerankingsRerankingPost(createParam)
       rankStore.addRank(getData(model));
-      return 200
+      response['worked'] = true
+      return response
     }
-  }catch(err){
+  } catch (err) {
     return await parser_error(err)
   }
 }
 
 export async function deleteElement(type: String, model: any) {
-  try{
+  try {
     if (type == "llm") {
       let llmStore = useLlmStore();
       let name_llm: DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest = {
         llmName: model.name.value,
       };
-      await LlmApi.deleteLlmApiV1LlmsLlmLlmNameDelete(name_llm)
+      let response = await LlmApi.deleteLlmApiV1LlmsLlmLlmNameDelete(name_llm)
       llmStore.removeLlm(model.name.value)
-      return "deselect";
+      response['worked'] = true
+      return response
     } else if (type == "emb") {
       const embStore = useEmbStore();
       let name_llm: DeleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDeleteRequest =
       {
         embeddingName: model.name.value,
       };
-      await EmbApi.deleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDelete(
+      let response = await EmbApi.deleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDelete(
         name_llm
       );
       embStore.removeEmb(model.name.value);
-      return "deselect";
+      response['worked'] = true
+      return response
     } else if (type == "rank") {
       const rankStore = useRankStore();
       let name_llm: DeleteRerankingApiV1RerankingsRerankingRerankingNameDeleteRequest =
       {
         rerankingName: model.name.value,
       };
-      await RankApi.deleteRerankingApiV1RerankingsRerankingRerankingNameDelete(
+      let response = await RankApi.deleteRerankingApiV1RerankingsRerankingRerankingNameDelete(
         name_llm
       );
       rankStore.removeRank(model.name.value);
-      return "deselect";
+      response['worked'] = true
+      return response
     }
-  }catch(err){
+  } catch (err) {
     return await parser_error(err);
   }
   return "Wrong Type FrontEnd";
 }
 
 export async function updateElement(type: String, model: any) {
-  try{
+  try {
     if (type == "llm") {
       let llmStore = useLlmStore();
       let name_llm: UpdateLlmApiV1LlmsLlmLlmNamePatchRequest = {
@@ -167,37 +173,40 @@ export async function updateElement(type: String, model: any) {
         _default: model._default,
         requestBody: yaml.load(model.spec.value) as Object,
       };
-      await LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm)
+      let response = await LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm)
       llmStore.updateLlm(getData(model));
-      return 204
+      response['worked'] = true
+      return response
     } else if (type == "emb") {
       const embStore = useEmbStore();
       let name_llm: UpdateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatchRequest =
-        {
-          embeddingName: model.name.value,
-          _default: model._default,
-          requestBody: yaml.load(model.spec.value) as Object,
-        };
-      await EmbApi.updateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatch(
+      {
+        embeddingName: model.name.value,
+        _default: model._default,
+        requestBody: yaml.load(model.spec.value) as Object,
+      };
+      let response = await EmbApi.updateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatch(
         name_llm
       )
       embStore.updateEmb(getData(model));
-      return 204
+      response['worked'] = true
+      return response
     } else if (type == "rank") {
       const rankStore = useRankStore();
       let name_llm: UpdateRerankingApiV1RerankingsRerankingRerankingNamePatchRequest =
-        {
-          rerankingName: model.name.value,
-          _default: model._default,
-          requestBody: yaml.load(model.spec.value) as any,
-        };
-      await RankApi.updateRerankingApiV1RerankingsRerankingRerankingNamePatch(
+      {
+        rerankingName: model.name.value,
+        _default: model._default,
+        requestBody: yaml.load(model.spec.value) as any,
+      };
+      let response = await RankApi.updateRerankingApiV1RerankingsRerankingRerankingNamePatch(
         name_llm
       )
       rankStore.updateRank(getData(model));
-      return 204
+      response['worked'] = true
+      return response
     }
-  }catch(err){
+  } catch (err) {
     return await parser_error(err);
   }
   return "Wrong Type FrontEnd";
@@ -216,9 +225,9 @@ export async function getInformation(type: String, value: string) {
   } else if (type == "emb") {
     console.log(value);
     let name: GetEmbeddingVendorDescApiV1EmbeddingsVendorVendorNameGetRequest =
-      {
-        vendorName: value,
-      };
+    {
+      vendorName: value,
+    };
     return transformParams(
       Object.values(
         await EmbApi.getEmbeddingVendorDescApiV1EmbeddingsVendorVendorNameGet(
@@ -228,9 +237,9 @@ export async function getInformation(type: String, value: string) {
     );
   } else if (type == "rank") {
     let name: GetRerankingVendorDescApiV1RerankingsVendorVendorNameGetRequest =
-      {
-        vendorName: value,
-      };
+    {
+      vendorName: value,
+    };
     return transformParams(
       Object.values(
         await RankApi.getRerankingVendorDescApiV1RerankingsVendorVendorNameGet(
@@ -241,22 +250,28 @@ export async function getInformation(type: String, value: string) {
   }
 }
 
-async function parser_error(err:any){
+async function parser_error(err: any) {
   if (err instanceof runtime.ResponseError) {
     const errorDetails = await err.response.json();
-    return errorDetails.detail; 
+    return {
+      message: errorDetails.detail,
+      worked: false
+    };
   } else if (err instanceof runtime.RequiredError) {
-    return err.message;
+    return {
+      message: err.message,
+      worked: false
+    };
   } else {
     return err;
   }
 }
 
-function getData(element:any){
+function getData(element: any) {
   return {
-    name : element.name.value,
+    name: element.name.value,
     _default: element._default,
     spec: element.spec.value,
-    vendorName:element.vendorName.value
+    vendorName: element.vendorName.value
   }
 }
