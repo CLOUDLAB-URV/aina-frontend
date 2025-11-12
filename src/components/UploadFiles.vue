@@ -6,16 +6,16 @@
                 <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
                     <div class="flex gap-2">
                         <Button @click="chooseCallback()" icon="pi pi-plus" rounded variant="outlined"
-                            severity="secondary" label="Choose Files" />
+                            severity="secondary" :label="t('filegroup.file.choice')" />
                         <Button @click="uploadFiles" icon="pi pi-cloud-upload" rounded severity="success"
                             :disabled="!files || files.length === 0 || isIndexing" :loading="isIndexing"
-                            label="Upload Files" />
+                            :label="t('filegroup.file.upload.label')" />
                     </div>
                 </div>
             </template>
             <template #content="{ files, removeFileCallback }">
                 <div v-if="files.length > 0" class="flex flex-col gap-4 pt-4">
-                    <h5 class="m-0">Selected Files</h5>
+                    <h5 class="m-0"><i18n-t keypath="filegroup.file.selected"/></h5>
                     <div class="flex flex-col gap-2">
                         <div v-for="(file, index) of files" :key="file.name + file.type + file.size"
                             class="flex items-center justify-between p-3 border border-surface rounded-lg">
@@ -35,13 +35,13 @@
             <template #empty>
                 <div class="flex items-center justify-center flex-col p-8">
                     <i class="pi pi-cloud-upload text-4xl text-muted-color mb-4"></i>
-                    <p class="text-muted-color mb-2">Drag and drop files here or click Choose Files</p>
+                    <p class="text-muted-color mb-2"><i18n-t keypath="drag_drop"/></p>
                     <div v-if="props.index?.config" class="text-xs text-muted-color text-center">
                         <p v-if="props.index.config.supported_file_types" class="mb-1">
-                            Supported: {{ props.index.config.supported_file_types }}
+                            <i18n-t keypath="supported"/> : {{ props.index.config.supported_file_types }}
                         </p>
                         <p v-if="props.index.config.max_file_size" class="mb-0">
-                            Max size: {{ props.index.config.max_file_size }} MB
+                            <i18n-t keypath="max_size"/> : {{ props.index.config.max_file_size }} MB
                         </p>
                     </div>
                 </div>
@@ -50,15 +50,15 @@
 
         <div class="flex items-center gap-2">
             <Checkbox binary id="reindex" v-model="reindex" />
-            <label for="reindex">ReIndex</label>
+            <label for="reindex"><i18n-t keypath="reindex"/></label>
         </div>
 
         <div v-if="isIndexing || logMessages.status || logMessages.details" class="mt-4">
-            <h5>Upload Progress</h5>
+            <h5><i18n-t keypath="filegroup.file.upload.uploading" /></h5>
 
             <!-- Status/Result section -->
             <div v-if="logMessages.status" class="mb-3">
-                <h6 class="text-sm font-semibold mb-2">Status:</h6>
+                <h6 class="text-sm font-semibold mb-2"><i18n-t keypath="state" /> :</h6>
                 <div class="bg-surface border rounded-lg p-3">
                     <div class="text-sm flex items-center gap-2">
                         <pre class="whitespace-pre-wrap m-0">{{ logMessages.status.replace(/\\n/g, '\n') }}</pre>
@@ -68,7 +68,7 @@
 
             <!-- Detailed progress section -->
             <div v-if="logMessages.details" class="mb-3">
-                <h6 class="text-sm font-semibold mb-2">Details:</h6>
+                <h6 class="text-sm font-semibold mb-2"><i18n-t keypath="details"/></h6>
                 <div class="bg-surface border rounded-lg p-3 max-h-40 overflow-y-auto">
                     <pre class="text-sm whitespace-pre-wrap">{{ logMessages.details.replace(/\\n/g, '\n') }}</pre>
                 </div>
@@ -79,7 +79,7 @@
                 class="bg-surface border rounded-lg p-3">
                 <div class="flex items-center gap-2">
                     <i class="pi pi-spin pi-spinner"></i>
-                    <span class="text-sm">Starting upload process...</span>
+                    <span class="text-sm"><i18n-t keypath="filegroup.gile.upload.process"/></span>
                 </div>
             </div>
         </div>
@@ -89,12 +89,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
+import { Checkbox, FileUpload, Button } from 'primevue';
 import { useFilesStore } from '@/stores/file';
 import { useToast } from 'primevue/usetoast';
 import type { IndexInfo } from '@/models';
 import { IndApi } from '@/apis/api';
-import { Checkbox, FileUpload, Button } from 'primevue';
+import { useI18n } from 'vue-i18n';
 
+const {t} = useI18n()
 const props = defineProps<{
     agentId: string,
     index: IndexInfo

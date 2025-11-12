@@ -1,8 +1,8 @@
 <template>
     <Tabs value="files">
         <TabList>
-            <Tab value="files">File / Groups</Tab>
-            <Tab value="stadistics">Stadistics</Tab>
+            <Tab value="files"><i18n-t keypath="filegroup.label"/></Tab>
+            <Tab value="stadistics"><i18n-t keypath="stadistics.label"/></Tab>
         </TabList>
         <TabPanels>
             <TabPanel value="files">

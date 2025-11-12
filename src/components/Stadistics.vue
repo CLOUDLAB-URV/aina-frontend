@@ -1,11 +1,11 @@
 <template>
-    <h3 class="mb-3 text-2xl">Stadistics About ALL the Agents you Created</h3>
+    <h3 class="mb-3 text-2xl">{{ t('stadistics.exp')}}</h3>
     <DataTable :value="info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows tableStyle="min-width: 50rem">
-        <Column field="name" header="Name" style="width: 20%"></Column>
-        <Column field="like" header="Like" style="width: 20%"></Column>
-        <Column field="unlike" header="Unlike" style="width: 20%"></Column>
-        <Column field="nothing" header="Nothing" style="width: 25%"></Column>
-        <Column field="total" header="Total" style="width: 25%"></Column>
+        <Column field="name" :header="t('input.name.label')" style="width: 20%"></Column>
+        <Column field="like" :header="t('like')" style="width: 20%"></Column>
+        <Column field="unlike" :header="t('unlike')" style="width: 20%"></Column>
+        <Column field="nothing" :header="t('nothing')" style="width: 25%"></Column>
+        <Column field="total" :header="t('total')" style="width: 25%"></Column>
     </DataTable>
 </template>
 
@@ -14,7 +14,9 @@ import { ref, onMounted } from 'vue';
 import { ChApi, ConvApi,AgApi } from '@/apis/api';
 import type { SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest } from '@/apis/ChatApi'
 import type { ListConversationsApiV1ConversationsAgentIdGetRequest } from '@/apis/ConversationsApi'
+import { useI18n } from 'vue-i18n';
 
+const {t} = useI18n()
 let info = ref()
 
 onMounted(
