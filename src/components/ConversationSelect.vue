@@ -1,6 +1,6 @@
 <template>
     <div class="flex gap-3">
-        <Select v-model="conv" :options="convStore.data" optionLabel="name" :placeholder="t('input.select.conv.placeholder')" />
+        <Select v-model="conv" :options="convStore.data" optionLabel="name" :placeholder="t('input.select.conv.placeholder')" :emptyMessage="t('nooptions')" />
         <div class="flex justify-between items-center gap-4">
             <ModalConv create="create" :agentId="props.agentId" @convCreated="(c) => conv = c" />
             <ModalConv create="edit" v-if="conv" :conv="conv" :agentId="props.agentId" />

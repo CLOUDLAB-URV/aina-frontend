@@ -12,7 +12,7 @@
             class="bg-blue-400 hover:bg-blue-400 p-2 flex flex-col justify-center rounded-lg" id="btn-edit">
             <i class="pi pi-pencil"></i>
         </button>
-        <Dialog v-model:visible="visible" modal :style="{ width: '40rem' }" :header="t('agent.input.details')">
+        <Dialog v-model:visible="visible" modal :style="{ width: '40rem' }" :header="t('input.select.agent.details')">
             <div class="flex items-center gap-4 mb-4">
                 <label for="name" class="font-semibold w-24"><i18n-t keypath="input.name.label"/></label>
                 <InputText v-model="agent.name" id="name" class="flex-auto" autocomplete="off" />
@@ -28,7 +28,7 @@
                 <InputNumber v-model="agent.indexId" id="indexId" class="flex-auto" autocomplete="off" />
             </div> -->
             <template #footer>
-                <Button label="Cancel" text severity="secondary" @click="visible = false" autofocus />
+                <Button :label="t('cancel')" text severity="secondary" @click="visible = false" autofocus />
                 <Button v-if="create == 'create'" :label="t('create')" variant="outlined" severity="secondary"
                     @click="createAgent" autofocus />
                 <Button v-if="create == 'trash'" :label="t('input.delete.label')" variant="outlined" severity="secondary"

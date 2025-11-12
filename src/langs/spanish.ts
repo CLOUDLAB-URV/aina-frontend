@@ -145,7 +145,8 @@ const spanish = {
             header: "Extracto de Información",
             label: "Este extracto de información es sobre el mensaje : "
         },
-        public: "Público"
+        public: "Público",
+        nooptions : "No hay opciones"
     },
 }
 

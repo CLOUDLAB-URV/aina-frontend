@@ -145,7 +145,8 @@ const english = {
             header: "Information Extract",
             label: "This information extract is about the message : "
         },
-        public: "Public"
+        public: "Public",
+        nooptions : "Without any option"
     },
 }
 export default english

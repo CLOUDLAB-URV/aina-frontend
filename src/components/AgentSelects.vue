@@ -1,6 +1,6 @@
 <template>
     <div class="flex gap-3">
-        <Select v-model="agent" :options="store.data" optionLabel="name" :placeholder="t('input.select.agent.placeholder')" />
+        <Select v-model="agent" :options="store.data" optionLabel="name" :placeholder="t('input.select.agent.placeholder')" :emptyMessage="t('nooptions')"/>
         <div v-if="auth.signedIn && auth.role && (auth.role === Role.AgentCreator || auth.role === Role.Admin)"
             class="flex justify-between items-center gap-4">
             <ModalCreateAgent create="create" @agentCreated="(a) => agent = a" />

@@ -145,7 +145,8 @@ const catalan = {
             header: "Extracte d'Informació",
             label: "Aquest extracte d'informació és sobre el missatge : "
         },
-        public: "Públic"
+        public: "Públic",
+        nooptions : "Sense opcions"
     },
 }
 
