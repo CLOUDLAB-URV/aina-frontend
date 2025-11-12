@@ -1,27 +1,28 @@
 <template>
     <div class="flex gap-2">
-            <section class="file-list-container flex flex-col w-1/4 gap-3">
-                <h3 class="text-2xl"><i18n-t keypath="filegroup.file.upload.label"/></h3>
-                <AgentSelects @agent-selected="(ag) => agent = ag" />
-                <UploadFiles v-if="agent?.id && agent?.indexId && index" :agent-id="agent.id" class="p-1"
-                    :index="index" />
-            </section>
-            <div class="w-full">
+        <section class="file-list-container flex flex-col w-1/4 gap-3">
+            <h3 class="text-2xl"><i18n-t keypath="filegroup.file.upload.label" /></h3>
+            <AgentSelects @agent-selected="(ag) => agent = ag" />
+            <UploadFiles v-if="agent?.id && agent?.indexId && index" :agent-id="agent.id" class="p-1" :index="index" />
+        </section>
+        <div class="w-full">
             <Tabs value="files">
                 <TabList>
-                    <Tab value="files"><i18n-t keypath="filegroup.file.label"/></Tab>
-                    <Tab value="groups"><i18n-t keypath="filegroup.groups.label"/></Tab>
+                    <Tab value="files"><i18n-t keypath="filegroup.file.label" /></Tab>
+                    <Tab value="groups"><i18n-t keypath="filegroup.groups.label" /></Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel value="files">
-                        <h3 class="mb-3 text-2xl"><i18n-t keypath="list"/> <i18n-t keypath="filegroup.file.label"/></h3>
+                        <h3 class="mb-3 text-2xl"><i18n-t keypath="list" /> <i18n-t keypath="filegroup.file.label" />
+                        </h3>
                         <div>
                             <header>
-                                <h4 class="mb-2 text-xl"><i18n-t keypath="filter.byname.label"/></h4>
-                                <p class="mb-2 text-sm"><i18n-t keypath="filter.byname.details"/></p>
+                                <h4 class="mb-2 text-xl"><i18n-t keypath="filter.byname.label" /></h4>
+                                <p class="mb-2 text-sm"><i18n-t keypath="filter.byname.details" /></p>
                                 <div class="flex gap-2">
                                     <!-- <textarea name="" id="" class="w-full" v-model="filter"></textarea> -->
-                                    <InputText v-model="filter" class="grow" :placeholder="t('filter.byname.placeholder')"/>
+                                    <InputText v-model="filter" class="grow"
+                                        :placeholder="t('filter.byname.placeholder')" />
                                     <Button icon="pi pi-search" @click="search"></Button>
                                 </div>
                             </header>
@@ -44,7 +45,7 @@
                         </section>
                     </TabPanel>
                     <TabPanel value="groups">
-                        <h3 class="mb-3 text-2xl"><i18n-t keypath="filegroup.groups.label"/></h3>
+                        <h3 class="mb-3 text-2xl"><i18n-t keypath="filegroup.groups.label" /></h3>
                         <DataTable :value="groups" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
                             @row-click="groupClick" tableStyle="min-width: 50rem">
                             <Column field="name" :header="t('input.name.label')" style="width: 15%"></Column>
@@ -58,7 +59,8 @@
                         </section>
                         <Dialog v-if="showNewGroupDialog" modal header="Create New Group" :style="{ width: '30rem' }">
                             <div class="flex flex-col gap-4 mb-4">
-                                <label for="group-name"><i18n-t keypath="filegroup.groups.group_name" :count="2" /></label>
+                                <label for="group-name"><i18n-t keypath="filegroup.groups.group_name"
+                                        :count="2" /></label>
                                 <InputText id="group-name" v-model="newGroup.name" class="grow" />
                                 <label for="group-files"><i18n-t keypath="filegroup.file.att_files" /></label>
                                 <MultiSelect id="group-files" v-model="newGroup.files" :options="fileStore.files"
@@ -74,7 +76,7 @@
                         <section v-if="group_selected" class="flex flex-col gap-2 mt-3">
                             <Button severity="danger" icon="pi pi-trash" label="Delete Group" class="grow"
                                 @click=delete_group></Button>
-                            <label for="group-name"><i18n-t keypath="filegroup.groups.group_name"/></label>
+                            <label for="group-name"><i18n-t keypath="filegroup.groups.group_name" /></label>
                             <InputText id="group-name" v-model="group_selected.name" class="grow" />
                             <label for="group-files"><i18n-t keypath="filegroup.file.att_files" /></label>
                             <MultiSelect id="group-files" v-model="group_selected.files" :options="fileStore.files"
@@ -100,7 +102,7 @@ import { IndApi } from '@/apis/api';
 import { useI18n } from 'vue-i18n';
 import { ref, watch } from 'vue';
 
-const {t} = useI18n()
+const { t } = useI18n()
 let file_selected = ref<FileInfo>();
 let group_selected = ref<GroupInfo>();
 let showNewGroupDialog = ref(false);

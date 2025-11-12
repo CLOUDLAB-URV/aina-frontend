@@ -21,7 +21,7 @@ import Select from 'primevue/select';
 import { useI18n } from 'vue-i18n';
 
 const {t} = useI18n()
-const emit = defineEmits<{ 'agentSelected': [agent?: AgentResponse] }>();
+const emit = defineEmits<{ agentSelected: [agent?: AgentResponse] }>();
 
 const store = useAgentStore();
 const chatStore = useChatStore();
@@ -30,7 +30,21 @@ const auth = useAuthStore();
 let agent = ref<AgentResponse>();
 
 onMounted(async () => {
-    store.data = await AgApi.listAgentsCreatedApiV1AgentsCreatedGet();
+    let agents: AgentResponse[];
+    switch (auth.role) {
+        case Role.ChatUser:
+            agents = await AgApi.listAgentsAccessibleApiV1AgentsAccessibleGet();
+            break;
+        case Role.AgentCreator:
+            agents = await AgApi.listAgentsCreatedApiV1AgentsCreatedGet();
+            break;
+        case Role.Admin:
+            agents = await AgApi.listAgentsCreatedApiV1AgentsCreatedGet();
+            break;
+        default:
+            agents = await AgApi.listAgentsAccessibleApiV1AgentsAccessibleGet();
+    }
+    store.data = agents;
     agent.value = undefined;
     chatStore.data = [];
 })
