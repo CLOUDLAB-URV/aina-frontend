@@ -64,6 +64,17 @@ const MyPreset = definePreset(Aura, {
           900: "{cyan.900}",
           950: "{cyan.950}",
         },
+        datable:{
+          row:{
+            selected:{
+              background:"{gray.600}"
+            }
+          }
+        },
+        highlight:{
+          background:"{gray.900}",
+          color:"{gray.50}",
+        },
       },
       dark: {
         overlay: {
@@ -92,6 +103,10 @@ const MyPreset = definePreset(Aura, {
           // 800: "{cyan.800}",
           // 900: "{cyan.900}",
           950: "{gray.700}",
+        },
+        highlight:{
+          background:"{gray.50}",
+          color:"{gray.950}"
         },
         datable: {
           row: {
