@@ -25,9 +25,25 @@ import AccordionPanel from 'primevue/accordionpanel';
 import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import Textarea from 'primevue/textarea';
+import { createI18n } from "vue-i18n";
+import english from "@/langs/english";
+import spanish from "@/langs/spanish";
+import catalan from "@/langs/catalan";
 
 const app = createApp(App);
 const pinia = createPinia();
+const i18n = createI18n({
+  legacy:false, 
+  locale:'cat',
+  fallbackLocale:'es',
+  messages:{
+    'en': english.messages,
+    'es':spanish.messages,
+    'cat': catalan.messages
+  }
+});
+
+app.use(i18n)
 app.use(router);
 app.use(ToastService);
 
