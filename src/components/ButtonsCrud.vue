@@ -1,13 +1,15 @@
 <template>
-    <Button v-if="create" label="Submit" icon="pi pi-send" type="submit" @click.prevent="createElement"></Button>
+    <Button v-if="create" :label="t('input.submit.label')" icon="pi pi-send" type="submit" @click.prevent="createElement"></Button>
     <div v-if="!create" class="flex gap-2 w-full">
-        <Button label="Save" class="grow" icon="pi pi-save" @click.prevent="updateElement"></Button>
-        <Button label="Delete" severity="danger" class="grow" icon="pi pi-trash"
+        <Button :label="t('input.save.label')" class="grow" icon="pi pi-save" @click.prevent="updateElement"></Button>
+        <Button :label="t('input.delete.label')" severity="danger" class="grow" icon="pi pi-trash"
             @click.prevent="deleteElement"></Button>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+const {t} = useI18n()
 
 defineProps<{
     create: boolean;

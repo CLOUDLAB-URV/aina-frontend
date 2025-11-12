@@ -2,27 +2,27 @@
   <form class="flex flex-col gap-4">
 
     <div class="flex flex-col gap-2">
-      <label for="name">Name</label>
-      <InputText id="name" placeholder="Name" v-model="model.name.value" :invalid="model.name.invalid" />
+      <label for="name">{{ t('input.name.label') }}</label>
+      <InputText id="name" :placeholder="t('input.name.placeholder')" v-model="model.name.value" :invalid="model.name.invalid" />
     </div>
 
     <div class="flex gap-2">
-      <label for="default">Default</label>
+      <label for="default">{{t('input._default')}}</label>
       <Checkbox id="default" binary v-model="model._default" />
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="spec">Specifications</label>
-      <Textarea id="spec" v-model="model.spec.value" placeholder="Specifications" rows="5" :invalid="model.spec.invalid"/>
+      <label for="spec">{{ t('input.spec.label') }}</label>
+      <Textarea id="spec" v-model="model.spec.value" :placeholder="t('input.spec.placeholder')" rows="5" :invalid="model.spec.invalid"/>
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="vendorName">VendorName</label>
+      <label for="vendorName">{{ t('input.vendor.label') }}</label>
       <Select 
         v-model="model.vendorName.value" 
         :options="vendors" 
         optionLabel="value" 
-        placeholder="Select Vendor" 
+        :placeholder="t('input.vendor.placeholder')" 
         optionValue="value"
         :invalid="model.vendorName.invalid"
       />
@@ -32,12 +32,12 @@
   </form>
 
   <section class="mt-8" v-if="vendor_info">
-    <h3 class="text-xl mb-4 text-[var(--text-color)]">Spec Params definitions</h3>
+    <h3 class="text-xl mb-4 text-[var(--text-color)]">{{ t('input.spec.info') }}</h3>
     <DataTable :value="vendor_info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
       tableStyle="min-width: 50rem">
-      <Column field="name" header="Name" style="width: 10%"/>
-      <Column field="help" header="Help" style="width: 65%"/>
-      <Column field="type" header="Type" style="width: 10%"/>
+      <Column field="name" :header="t('input.name.label')" style="width: 10%"/>
+      <Column field="help" :header="t('help')" style="width: 60%"/>
+      <Column field="type" :header="t('type')" style="width: 15%"/>
     </DataTable>
   </section>
   
@@ -51,7 +51,9 @@ import { onMounted, ref, watch } from "vue";
 import Textarea from 'primevue/textarea';
 import Select from 'primevue/select';
 import yaml from 'js-yaml';
+import { useI18n } from 'vue-i18n';
 
+const {t} = useI18n()
 const emits = defineEmits(['deselect']);
 const toast = useToast()
 const props = defineProps({

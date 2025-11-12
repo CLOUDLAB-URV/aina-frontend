@@ -2,8 +2,8 @@
     <div class="card">
         <Tabs value="list">
             <TabList>
-                <Tab value="list">{{ ` List ${title}` }}</Tab>
-                <Tab value="create">{{ ` Create ${title}` }}</Tab>
+                <Tab value="list">{{ ` ${t('list')} ${title}` }}</Tab>
+                <Tab value="create">{{ ` ${t('create')} ${title}` }}</Tab>
             </TabList>
             <TabPanels>
                 <TabPanel value="list">
@@ -18,6 +18,9 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const {t} = useI18n()
 defineProps({
     title: String,
     type: { type: String, required: true },

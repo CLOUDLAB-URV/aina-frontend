@@ -1,25 +1,25 @@
 <template>
   <form class="flex flex-col gap-4">
     <div class="flex flex-col gap-2">
-      <label for="id">Index Name</label>
-      <InputText id="Id" placeholder="Id" v-model="model.name.value" :invalid="model.name.invalid"/>
+      <label for="id">{{t('input.name.label')}}</label>
+      <InputText id="Id" :placeholder="t('input.name.placeholder')" v-model="model.name.value" :invalid="model.name.invalid"/>
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="vendorName">Index Type</label>
+      <label for="vendorName">{{ t('input.index.label') }}</label>
       <Select 
-            v-model="model.indexType.value" 
-            :options="vendors" 
-            optionLabel="value" 
-            placeholder="Select conversation" 
-            :invalid="model.indexType.invalid"
-            optionValue="value"
+        v-model="model.indexType.value" 
+        :options="vendors" 
+        optionLabel="value" 
+        :placeholder="t('input.index.placeholder')" 
+        :invalid="model.indexType.invalid"
+        optionValue="value"
       />
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="spec">Configuration</label>
-      <Textarea id="spec" v-model="model.config.value" placeholder="Configuration of the Index" rows="10"/>
+      <label for="spec">{{ t('input.spec.label') }}</label>
+      <Textarea id="spec" v-model="model.config.value" :placeholder="t('input.spec.placeholder')" rows="10"/>
     </div>
 
     <ButtonsCrud :create="create" @createElement="sendCreate" @updateElement="update" @deleteElement="delete_element" />
@@ -36,8 +36,10 @@ import { useIndStore } from "@/stores/ind";
 import Textarea from 'primevue/textarea';
 import { IndApi } from "@/apis/api.ts";
 import Select from 'primevue/select';
+import { useI18n } from 'vue-i18n';
 import yaml from 'js-yaml';
 
+const {t} = useI18n()
 const toast = useToast()
 let indStore = useIndStore();
 
