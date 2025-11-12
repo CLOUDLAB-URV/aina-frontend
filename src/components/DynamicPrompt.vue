@@ -1,10 +1,10 @@
 <template>
     <div class="w-full rounded-lg p-4 space-y-6">
-        <div v-if="loading" class="text-sm opacity-70">Loading settings...</div>
+        <div v-if="loading" class="text-sm opacity-70"><i18n-t keypath="settings.loading"/></div>
         <div v-else-if="error" class="text-red-500">{{ error }}</div>
         <div v-else>
             <section class="mb-6">
-                <h2 class="font-semibold text-lg mb-3">General Settings</h2>
+                <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="settings.label"/></h2>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div v-for="(setting, key) in reasonAppSettings" :key="`general-${key}`">
                         <label class="font-medium mb-1 block">{{ setting.name }}</label>
@@ -27,9 +27,9 @@
             </section>
 
             <section v-if="reasonSettings">
-                <h2 class="font-semibold text-lg mb-3">Reasoning Settings</h2>
+                <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="reasoning.settings"/></h2>
                 <div class="mb-4">
-                    <label class="font-medium mb-1 block">Reasoning Type</label>
+                    <label class="font-medium mb-1 block"><i18n-t keypath="reasoning.type"/></label>
                     <Select v-model="currentReasoning" :options="reasoningOptions" />
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
@@ -56,9 +56,9 @@
             </section>
 
             <section v-if="indexSettings" class="mt-6">
-                <h2 class="font-semibold text-lg mb-3">Index Settings</h2>
+                <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="settings.norm"/> <i18n-t keypath="index"/></h2>
                 <div class="mb-4">
-                    <label class="font-medium mb-1 block">Index ID</label>
+                    <label class="font-medium mb-1 block"><i18n-t keypath="index"/> ID</label>
                     <InputNumber label="Index ID" v-model="currentIndex" />
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">

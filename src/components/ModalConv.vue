@@ -12,22 +12,22 @@
             class="bg-blue-400 hover:bg-blue-400 p-2 flex flex-col justify-center rounded-lg" id="btn-edit">
             <i class="pi pi-pencil"></i>
         </button>
-        <Dialog v-model:visible="visible" modal header="Create an conv" :style="{ width: '40rem' }">
+        <Dialog v-model:visible="visible" modal :header="t('conv.input.details')" :style="{ width: '40rem' }">
             <div class="flex items-center gap-4 mb-4">
-                <label for="name" class="font-semibold w-24">Name</label>
+                <label for="name" class="font-semibold w-24"><i18n-t keypath="input.name.label"/></label>
                 <InputText v-model="conv.name" id="name" class="flex-auto" autocomplete="off" />
             </div>
             <div class="flex gap-2">
-                <label for="public">Public</label>
+                <label for="public"><i18n-t keypath="public"/></label>
                 <Checkbox id="public" binary v-model="conv.isPublic" />
             </div>
             <template #footer>
                 <Button label="Cancel" text severity="secondary" @click="visible = false" autofocus />
-                <Button v-if="create == 'create'" label="Create" variant="outlined" severity="secondary"
+                <Button v-if="create == 'create'" :label="t('create')" variant="outlined" severity="secondary"
                     @click="createconv" autofocus />
-                <Button v-if="create == 'trash'" label="Delete" variant="outlined" severity="secondary"
+                <Button v-if="create == 'trash'" :label="t('input.delete.label')" variant="outlined" severity="secondary"
                     @click="deleteconv" autofocus />
-                <Button v-if="create == 'edit'" label="Edit" variant="outlined" severity="secondary" @click="updateconv"
+                <Button v-if="create == 'edit'" :label="t('input.save.label')" variant="outlined" severity="secondary" @click="updateconv"
                     autofocus />
             </template>
         </Dialog>
@@ -46,6 +46,9 @@ import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
+import { useI18n } from 'vue-i18n';
+
+const {t} = useI18n()
 
 const toast = useToast();
 const props = defineProps<{

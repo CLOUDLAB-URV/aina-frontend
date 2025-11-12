@@ -5,7 +5,7 @@
                 <UserMessage :message="chat.user" :info="chat.info" />
                 <AiMessage :message="chat.ai" :data_msg="[chat.liked, index]" :conv="conv" />
             </template>
-            <Dialog v-model:visible="visible" header="Information Extract" :style="{ width: '40rem' }" position="right"
+            <Dialog v-model:visible="visible" :header="t('extract.header')" :style="{ width: '40rem' }" position="right"
                 :modal="true" :draggable="false">
                 <template v-for="chat in chat.data">
                     <div v-html="chat.info"></div>
@@ -23,8 +23,9 @@ import UserMessage from '@/components/UserMessage.vue';
 import AiMessage from '@/components/AiMessage.vue';
 import { ref, watch } from 'vue';
 import type { AgentResponse, ApiSchemasConversationsConversationInfo } from '@/models';
+import { useI18n } from 'vue-i18n';
 
-
+const {t} = useI18n()
 let chat = useChatStore();
 let visible = ref(false);
 let conv = ref<ApiSchemasConversationsConversationInfo>();

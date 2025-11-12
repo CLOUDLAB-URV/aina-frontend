@@ -1,6 +1,6 @@
 <template>
     <div class="flex gap-3">
-        <Select v-model="agent" :options="store.data" optionLabel="name" placeholder="Please select an agent" />
+        <Select v-model="agent" :options="store.data" optionLabel="name" :placeholder="t('input.select.agent.placeholder')" />
         <div v-if="auth.signedIn && auth.role && (auth.role === Role.AgentCreator || auth.role === Role.Admin)"
             class="flex justify-between items-center gap-4">
             <ModalCreateAgent create="create" @agentCreated="(a) => agent = a" />
@@ -18,7 +18,9 @@ import { useChatStore } from '@/stores/chat';
 import { useAuthStore } from '@/stores/auth';
 import { Role, type AgentResponse } from '@/models';
 import Select from 'primevue/select';
+import { useI18n } from 'vue-i18n';
 
+const {t} = useI18n()
 const emit = defineEmits<{ 'agentSelected': [agent?: AgentResponse] }>();
 
 const store = useAgentStore();

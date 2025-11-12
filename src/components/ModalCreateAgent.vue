@@ -12,13 +12,13 @@
             class="bg-blue-400 hover:bg-blue-400 p-2 flex flex-col justify-center rounded-lg" id="btn-edit">
             <i class="pi pi-pencil"></i>
         </button>
-        <Dialog v-model:visible="visible" modal :style="{ width: '40rem' }" header="Agent Details">
+        <Dialog v-model:visible="visible" modal :style="{ width: '40rem' }" :header="t('agent.input.details')">
             <div class="flex items-center gap-4 mb-4">
-                <label for="name" class="font-semibold w-24">Name</label>
+                <label for="name" class="font-semibold w-24"><i18n-t keypath="input.name.label"/></label>
                 <InputText v-model="agent.name" id="name" class="flex-auto" autocomplete="off" />
             </div>
             <div class="flex items-center gap-4 mb-2">
-                <label for="desc" class="font-semibold w-24">Description</label>
+                <label for="desc" class="font-semibold w-24"><i18n-t keypath="input.descr.label"/></label>
                 <Textarea v-model="agent.description" id="desc" class="flex-auto border border-gray-200 p-2"
                     autocomplete="off" />
             </div>
@@ -29,11 +29,11 @@
             </div> -->
             <template #footer>
                 <Button label="Cancel" text severity="secondary" @click="visible = false" autofocus />
-                <Button v-if="create == 'create'" label="Create" variant="outlined" severity="secondary"
+                <Button v-if="create == 'create'" :label="t('create')" variant="outlined" severity="secondary"
                     @click="createAgent" autofocus />
-                <Button v-if="create == 'trash'" label="Delete" variant="outlined" severity="secondary"
+                <Button v-if="create == 'trash'" :label="t('input.delete.label')" variant="outlined" severity="secondary"
                     @click="deleteAgent" autofocus />
-                <Button v-if="create == 'edit'" label="Edit" variant="outlined" severity="secondary"
+                <Button v-if="create == 'edit'" :label="t('input.save.label')" variant="outlined" severity="secondary"
                     @click="updateAgent" autofocus />
             </template>
         </Dialog>
@@ -51,7 +51,9 @@ import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import { Textarea } from 'primevue';
+import { useI18n } from 'vue-i18n';
 
+const {t} = useI18n()
 const toast = useToast();
 const store = useAgentStore();
 const props = defineProps<{

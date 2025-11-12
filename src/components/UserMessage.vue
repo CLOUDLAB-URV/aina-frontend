@@ -5,14 +5,17 @@
         </div>  
         <i class="pi pi-user"></i>
     </div>
-    <Dialog v-model:visible="show_info" header="Information Extract" :style="{ width: '35rem' }" position="right" :modal="true" :draggable="false">        
-        <h3 class="text-lg mb-2">This information extract is for the message :</h3>
+    <Dialog v-model:visible="show_info" :header="t('extract.header')" :style="{ width: '35rem' }" position="right" :modal="true" :draggable="false">        
+        <h3 class="text-lg mb-2"><i18n-t keypath="extract.label"/></h3>
         <p class="text-md font-bold mb-2">{{ message }}</p>
         <div v-html="info"></div>
     </Dialog>
 </template>
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import { ref } from 'vue';
+
+const {t} = useI18n()
 
 defineProps<{
     message: string;

@@ -1,6 +1,6 @@
 <template>
     <div class="flex gap-3">
-        <Select v-model="conv" :options="convStore.data" optionLabel="name" placeholder="Select conversation" />
+        <Select v-model="conv" :options="convStore.data" optionLabel="name" :placeholder="t('input.select.conv.placeholder')" />
         <div class="flex justify-between items-center gap-4">
             <ModalConv create="create" :agentId="props.agentId" @convCreated="(c) => conv = c" />
             <ModalConv create="edit" v-if="conv" :conv="conv" :agentId="props.agentId" />
@@ -10,17 +10,19 @@
 </template>
 
 <script setup lang="ts">
-import { ConvApi } from '@/apis/api';
-import { ChApi } from '@/apis/api';
-import type { ChatItem } from '@/stores/chat';
-import type { ApiSchemasConversationsConversationInfo } from '@/models';
-import { watch, ref } from 'vue';
 import type { ListConversationsApiV1ConversationsAgentIdGetRequest } from '@/apis/ConversationsApi';
+import type { ApiSchemasConversationsConversationInfo } from '@/models';
 import ModalConv from '@/components/ModalConv.vue';
+import type { ChatItem } from '@/stores/chat';
 import { useConvStore } from '@/stores/conv';
 import { useChatStore } from '@/stores/chat';
 import Select from 'primevue/select';
+import { ConvApi } from '@/apis/api';
+import { useI18n } from 'vue-i18n';
+import { ChApi } from '@/apis/api';
+import { watch, ref } from 'vue';
 
+const {t} = useI18n();
 const convStore = useConvStore();
 const chatStore = useChatStore();
 let conv = ref<ApiSchemasConversationsConversationInfo>();
