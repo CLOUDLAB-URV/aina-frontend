@@ -91,7 +91,9 @@ const spanish = {
             },
             groups: {
                 label: "Grupos",
-                group_name: "Nombre del Grupo | Nombres de los Grupos"
+                group_name: "Nombre del Grupo | Nombres de los Grupos",
+                create:"Creación de nuevos grupos",
+                delete:"Eliminar grupos"
             }
         },
         filter: {

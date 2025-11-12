@@ -91,7 +91,9 @@ const english = {
             },
             groups: {
                 label: "Groups",
-                group_name: "Group Name | Group Names"
+                group_name: "Group Name | Group Names",
+                create:"Create new groups",
+                delete:"Delete groups"
             }
         },
         filter: {

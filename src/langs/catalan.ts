@@ -91,7 +91,9 @@ const catalan = {
             },
             groups: {
                 label: "Grups",
-                group_name: "Nom del Grup | Noms dels Grups"
+                group_name: "Nom del Grup | Noms dels Grups",
+                create:"Creació de nous grups",
+                delete:"Eliminar grups"
             }
         },
         filter: {

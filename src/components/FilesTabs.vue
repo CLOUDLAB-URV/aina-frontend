@@ -27,8 +27,12 @@
                                 </div>
                             </header>
                         </div>
-                        <DataTable :value="fileStore.files" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
-                            stripedRows @row-click="fileClick" tableStyle="min-width: 50rem">
+                        <DataTable
+                            v-model:selection="file_selected" 
+                            :value="fileStore.files" paginator :rows="5" 
+                            :rowsPerPageOptions="[5, 10, 20, 50]" 
+                            selectionMode="single" stripedRows 
+                            tableStyle="min-width: 50rem">
                             <Column field="name" :header="t('input.name.label')" style="width:55%"></Column>
                             <Column field="size" :header="t('size')" style="width: 5%"></Column>
                             <Column field="tokens" :header="t('tokens')" style="width: 5%"></Column>
@@ -36,8 +40,8 @@
                             <Column field="dateCreated" :header="t('date_created')" style="width: 20%"></Column>
                         </DataTable>
                         <section v-if="file_selected" class="flex flex-col gap-2 mt-3">
-                            <span>Selected file: {{ file_selected.name }}</span>
-                            <Button severity="danger" icon="pi pi-trash" label="Delete" class="grow"
+                            <!-- <span>Selected file: {{ file_selected.name }}</span> -->
+                            <Button severity="danger" icon="pi pi-trash" :label="t('delete')" class="grow"
                                 @click=delete_file></Button>
                             <Button severity="secondary" label="Close" icon="pi pi-times" class="p-button-text"
                                 @click="file_selected = undefined"></Button>
@@ -45,9 +49,14 @@
                         </section>
                     </TabPanel>
                     <TabPanel value="groups">
-                        <h3 class="mb-3 text-2xl"><i18n-t keypath="filegroup.groups.label" /></h3>
-                        <DataTable :value="groups" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
-                            @row-click="groupClick" tableStyle="min-width: 50rem">
+                        <h3 class="mb-3 text-2xl"><i18n-t keypath="filegroup.groups.label"/></h3>
+                        <DataTable 
+                            v-model:selection="group_selected" 
+                            :value="groups" 
+                            paginator :rows="5" 
+                            :rowsPerPageOptions="[5, 10, 20, 50]" 
+                            stripedRows 
+                            tableStyle="min-width: 50rem">
                             <Column field="name" :header="t('input.name.label')" style="width: 15%"></Column>
                             <Column field="fileNames" :header="t('filegroup.file.label')" style="width: 60%"></Column>
                             <Column field="dateCreated" :header="t('date_created')" style="width: 25%"></Column>
@@ -57,7 +66,7 @@
                             <Button :label="t('add')" icon="pi pi-plus" severity="success"
                                 @click="showNewGroupDialog = true"></Button>
                         </section>
-                        <Dialog v-if="showNewGroupDialog" modal header="Create New Group" :style="{ width: '30rem' }">
+                        <Dialog v-model:visible="showNewGroupDialog" modal :header="t('filegroup.groups.create')" :style="{ width: '30rem' }">
                             <div class="flex flex-col gap-4 mb-4">
                                 <label for="group-name"><i18n-t keypath="filegroup.groups.group_name"
                                         :count="2" /></label>
@@ -74,7 +83,7 @@
                             </template>
                         </Dialog>
                         <section v-if="group_selected" class="flex flex-col gap-2 mt-3">
-                            <Button severity="danger" icon="pi pi-trash" label="Delete Group" class="grow"
+                            <Button severity="danger" icon="pi pi-trash" :label="t('filegroup.groups.delete')" class="grow"
                                 @click=delete_group></Button>
                             <label for="group-name"><i18n-t keypath="filegroup.groups.group_name" /></label>
                             <InputText id="group-name" v-model="group_selected.name" class="grow" />
@@ -82,7 +91,7 @@
                             <MultiSelect id="group-files" v-model="group_selected.files" :options="fileStore.files"
                                 optionLabel="name" optionValue="id" />
                             <Button label="Save" icon="pi pi-check" @click="save_group"></Button>
-                            <Button severity="secondary" label="Close" icon="pi pi-times" class="p-button-text"
+                            <Button severity="secondary" :label="t('close')" icon="pi pi-times" class="p-button-text"
                                 @click="group_selected = undefined"></Button>
                         </section>
                     </TabPanel>
@@ -99,6 +108,7 @@ import UploadFiles from '@/components/UploadFiles.vue';
 import MultiSelect from 'primevue/multiselect';
 import { useFilesStore } from '@/stores/file';
 import { IndApi } from '@/apis/api';
+import Dialog from 'primevue/dialog';
 import { useI18n } from 'vue-i18n';
 import { ref, watch } from 'vue';
 
@@ -215,23 +225,5 @@ async function save_group() {
     });
     await loadFilesAndGroups();
     group_selected.value = undefined;
-}
-
-// async function deleteAllFiles(){
-//     let data : DeleteAllFilesApiV1IndexIndexIdFilesDeleteRequest ={
-//         indexId:agent.value.indexId
-//     }
-//     await IndApi.deleteAllFilesApiV1IndexIndexIdFilesDelete(data).then(()=>{
-//         fileStore.files = [];
-//     })
-// }
-
-async function fileClick(value: any) {
-    file_selected.value = value.data;
-    console.log(file_selected.value)
-}
-async function groupClick(value: any) {
-    group_selected.value = value.data;
-    console.log(group_selected.value)
 }
 </script>

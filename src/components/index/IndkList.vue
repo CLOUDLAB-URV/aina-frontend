@@ -1,6 +1,6 @@
 <template>
-    <DataTable :value="IndStore.ind" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
-        tableStyle="min-width: 50rem" @row-click="madeClick">
+    <DataTable v-model:selection="data_selected" :value="IndStore.ind" selectionMode="single" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
+        tableStyle="min-width: 50rem">
         <Column field="id" header="Id" style="width: 10%"></Column>
         <Column field="name" :header="t('input.name.label')" style="width: 10%"></Column>
         <Column field="indexType" :header="t('input.index.label')" style="width: 10%"></Column>
@@ -43,9 +43,4 @@ function parse_data(data: IndexInfo[]) {
         return aux;
     });
 }
-
-function madeClick(value: any) {
-    data_selected.value = value.data;
-}
-
 </script>
