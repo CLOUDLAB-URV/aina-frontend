@@ -1,24 +1,26 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { Role } from '@/models';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n()
 
 import AppMenuItem from './AppMenuItem.vue';
 
 // Raw menu model with optional role/auth requirements
-const model = ref([
+let model = computed(()=>[
     {
-        label: 'Intelligent Apps',
+        label: `${t('sidebar.apps.header')}`,
         items: [
-            { label: 'Chat', icon: 'pi pi-comments', to: '/', authRequired: true },
-            { label: 'Agent', icon: 'pi pi-microchip-ai', to: '/agent', authRequired: true, roles: [Role.AgentCreator, Role.Admin] },
-            { label: 'Files', icon: 'pi pi-folder-open', to: '/files', authRequired: true, roles: [Role.AgentCreator, Role.Admin] },
+            { label: `${t('sidebar.apps.chat')}`, icon: 'pi pi-comments', to: '/', authRequired: true },
+            { label: `${t('sidebar.apps.agent')}`, icon: 'pi pi-microchip-ai', to: '/agent', authRequired: true, roles: [Role.AgentCreator, Role.Admin] },
+            { label: `${t('sidebar.apps.files')}`, icon: 'pi pi-folder-open', to: '/files', authRequired: true, roles: [Role.AgentCreator, Role.Admin] },
         ]
     },
     {
-        label: 'Settings',
+        label: `${t('sidebar.settings.header')}`,
         items: [
-            { label: 'General', icon: 'pi pi-fw pi-cog', to: '/general', authRequired: true, roles: [Role.Admin] },
+            { label: `${t('sidebar.settings.general')}`, icon: 'pi pi-fw pi-cog', to: '/general', authRequired: true, roles: [Role.Admin] },
         ]
     },
 ]);
@@ -59,7 +61,7 @@ const filteredModel = computed(() => {
         </template>
         <template v-else>
             <li class="menu-placeholder">
-                <router-link to="/login" class="menu-link">Please log in to see more options</router-link>
+                <router-link to="/login" class="menu-link">{{ t('logging.moreopt') }}</router-link>
             </li>
         </template>
     </ul>

@@ -4,7 +4,7 @@
             <div class="text-center mb-8">
                 <img :src="logo" alt="PyRun Logo" class="mx-auto h-16 w-auto mb-4" />
                 <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-0">
-                    Log in to your account
+                    <i18n-t keypath="logging.loginto"/>
                 </h2>
                 <!-- <p class="mt-2 text-surface-600 dark:text-surface-300">
                     Don't have an account?
@@ -16,14 +16,16 @@
 
             <div class="bg-surface-0 dark:bg-surface-900 p-8 shadow rounded-lg" v-if="showLoginForm">
                 <div>
-                    <label for="username" class="text-surface-900 dark:text-surface-0 font-medium mb-2 block">Username
-                        or
-                        email</label>
+                    <label for="username" class="text-surface-900 dark:text-surface-0 font-medium mb-2 block">
+                        <i18n-t keypath="logging.username"/>
+                    </label>
                     <InputText v-model="username" id="username" type="text" class="w-full mb-4"
                         @keydown.enter="login" />
 
                     <label for="password"
-                        class="text-surface-900 dark:text-surface-0 font-medium mb-2 block">Password</label>
+                        class="text-surface-900 dark:text-surface-0 font-medium mb-2 block">
+                        <i18n-t keypath="logging.password"/>
+                    </label>
                     <InputText v-model="password" id="password" type="password" class="w-full mb-4"
                         @keydown.enter="login" />
 
@@ -31,7 +33,7 @@
                         <Button label="Forgot password?" text :disabled="loading" @click="forgotPassword"></Button>
                     </div> -->
 
-                    <Button label="Log in" class="w-full" :disabled="!username || !password || loading"
+                    <Button :label="t('logging.login')" class="w-full" :disabled="!username || !password || loading"
                         @click="login" />
                 </div>
             </div>
@@ -88,7 +90,9 @@ import { useToast } from 'primevue/usetoast';
 import logo from '@/assets/vue.svg';
 import { AuthenticationApi } from '@/apis';
 import type { LoginForAccessTokenApiV1AuthTokenPostRequest } from '@/apis/AuthenticationApi.ts';
+import { useI18n } from 'vue-i18n';
 
+const { t }  = useI18n()
 const router = useRouter();
 const toast = useToast();
 
