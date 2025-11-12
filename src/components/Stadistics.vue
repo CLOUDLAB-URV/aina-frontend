@@ -1,5 +1,5 @@
 <template>
-    <h3 class="mb-3 text-2xl">Stadistics About Agents</h3>
+    <h3 class="mb-3 text-2xl">Stadistics About ALL the Agents you Created</h3>
     <DataTable :value="info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows tableStyle="min-width: 50rem">
         <Column field="name" header="Name" style="width: 20%"></Column>
         <Column field="like" header="Like" style="width: 20%"></Column>
