@@ -450,7 +450,7 @@ a {
     .layout-wrapper {
         .layout-main-container {
             margin-left: 0;
-            padding-left: 2rem;
+            /* padding-left: 2rem; */
         }
 
         .layout-sidebar {
@@ -493,7 +493,8 @@ a {
     flex-direction: column; */
     height: 100%;
     /* justify-content: space-between; */
-    padding: 6rem 2rem 0 2rem;
+    /* padding: 6rem 2rem 0 2rem; */
+    padding: 6rem 1rem 0rem 1rem;
     /* transition: margin-left var(--layout-section-transition-duration); */
 }
 

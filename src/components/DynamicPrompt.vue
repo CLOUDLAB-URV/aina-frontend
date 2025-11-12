@@ -7,7 +7,11 @@
                 <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="settings.label"/></h2>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div v-for="(setting, key) in reasonAppSettings" :key="`general-${key}`">
-                        <label class="font-medium mb-1 block">{{ setting.name }}</label>
+                        <label class="font-medium block"
+                            :class="setting.component == 'checkbox' ? 'mb-0' : 'mb-2'"
+                            >
+                            {{ setting.name }}
+                        </label>
                         <template v-if="setting.component === 'radio'">
                             <div class="flex flex-wrap gap-4">
                                 <div v-for="(choice, idx) in setting.choices" :key="`${key}-radio-${idx}`"
@@ -20,7 +24,9 @@
                         </template>
                         <template v-else>
                             <component :is="resolveComponent(setting)" :label="setting.name"
-                                v-model="formValues[`reasoning.${key}`]" v-bind="getComponentProps(setting)" />
+                                v-model="formValues[`reasoning.${key}`]" v-bind="getComponentProps(setting)"
+                                class="w-full"
+                                />
                         </template>
                     </div>
                 </div>
@@ -29,12 +35,19 @@
             <section v-if="reasonSettings">
                 <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="reasoning.settings"/></h2>
                 <div class="mb-4">
-                    <label class="font-medium mb-1 block"><i18n-t keypath="reasoning.type"/></label>
-                    <Select v-model="currentReasoning" :options="reasoningOptions" />
+                    <label class="font-medium mb-2 block"><i18n-t keypath="reasoning.type"/></label>
+                    <Select v-model="currentReasoning" :options="reasoningOptions" class="w-full" />
                 </div>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <div v-for="(setting, key) in reasonSettings" :key="`reason-${key}`">
-                        <label class="font-medium mb-1 block">{{ setting.name }}</label>
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div v-for="(setting, key) in reasonSettings" :key="`reason-${key}`"
+                        :class="{ 'flex gap-2 items-center' : setting.component == 'checkbox'}"
+                        >
+                       <label 
+                            class="font-medium block"
+                            :class="setting.component == 'checkbox' ? 'mb-0' : 'mb-2'"
+                            >
+                            {{ setting.name }}
+                        </label>
                         <template v-if="setting.component === 'radio'">
                             <div class="flex flex-wrap gap-4">
                                 <div v-for="(choice, idx) in setting.choices" :key="`${key}-radio-${idx}`"
@@ -49,7 +62,9 @@
                         <template v-else>
                             <component :is="resolveComponent(setting)" :label="setting.name"
                                 v-model="formValues[`reasoning.options.${currentReasoning}.${key}`]"
-                                v-bind="getComponentProps(setting)" />
+                                v-bind="getComponentProps(setting)" 
+                                class="w-full"
+                                />
                         </template>
                     </div>
                 </div>
@@ -59,33 +74,37 @@
                 <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="settings.norm"/> <i18n-t keypath="index"/></h2>
                 <div class="mb-4">
                     <label class="font-medium mb-1 block"><i18n-t keypath="index"/> ID</label>
-                    <InputNumber label="Index ID" v-model="currentIndex" />
+                    <InputNumber class="w-full" label="Index ID" v-model="currentIndex" />
                 </div>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <div v-for="(setting, key) in indexSettings" :key="`index-${key}`">
-                        <label class="font-medium mb-1 block">{{ setting.name }}</label>
+                <div class="grid gap-4 sm:grid-cols-1 lg:grid-cols-4">
+                    <div v-for="(setting, key) in indexSettings" :key="`index-${key}`"
+                        :class="{ 'flex gap-2 items-center' : setting.component == 'checkbox'}"
+                    >
+                        <label class="font-medium block">{{ setting.name }}</label>
                         <template v-if="setting.component === 'radio'">
                             <div class="flex flex-wrap gap-4">
                                 <div v-for="(choice, idx) in setting.choices" :key="`${key}-radio-${idx}`"
-                                    class="flex items-center gap-2">
+                                    class="flex items-center gap-2 w-full ">
                                     <RadioButton :inputId="`${key}-radio-${idx}`" :name="key"
                                         :value="choice[1] || choice"
                                         v-model="formValues[`index.options.${currentIndex}.${key}`]" />
-                                    <label :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
+                                    <label class="text-center" :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
                                 </div>
                             </div>
                         </template>
                         <template v-else>
                             <component :is="resolveComponent(setting)" :label="setting.name"
                                 v-model="formValues[`index.options.${currentIndex}.${key}`]"
-                                v-bind="getComponentProps(setting)" />
+                                v-bind="getComponentProps(setting)" 
+                                class="w-full"
+                                />
                         </template>
                     </div>
                 </div>
             </section>
 
             <div v-if="indexSettings || reasonSettings" class="flex justify-end mt-6">
-                <button class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700" @click="saveSettings"
+                <button class="w-full px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700" @click="saveSettings"
                     :disabled="saving">
                     {{ saving ? 'Saving...' : 'Save Settings' }}
                 </button>
@@ -274,5 +293,10 @@ async function saveSettings() {
 <style scoped>
 div {
     background-color: var(--surface-overlay);
+}
+@media (max-width: 991px) {
+    textarea {
+        width: 100%;
+    }
 }
 </style>
