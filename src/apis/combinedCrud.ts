@@ -26,6 +26,7 @@ import type {
   RerankingCreate,
   EmbeddingCreate,
 } from "@/models/index.ts";
+import * as runtime from '@/runtime';
 import yaml from "js-yaml";
 
 export async function mount(type: String) {
@@ -69,134 +70,137 @@ export async function mountVendors(type: String) {
 }
 
 export async function createElement(type: String, model: any) {
-  if (type == "llm") {
-    const llmStore = useLlmStore();
-    let create: LlmCreate = {
-      name: model.name,
-      _default: model._default,
-      vendorName: model.vendorName,
-      spec: yaml.load(model.spec) as object,
-    };
-    let createParam: AddLlmApiV1LlmsLlmPostRequest = {
-      llmCreate: create,
-    };
-    await LlmApi.addLlmApiV1LlmsLlmPost(createParam).then(() => {
-      llmStore.addLlm({...model});
-      console.log(llmStore.data);
-    });
-  } else if (type == "emb") {
-    const embStore = useEmbStore();
-    let create: EmbeddingCreate = {
-      name: model.name,
-      _default: model._default,
-      vendorName: model.vendorName,
-      spec: yaml.load(model.spec) as object,
-    };
-    let createParam: AddEmbeddingApiV1EmbeddingsEmbeddingPostRequest = {
-      embeddingCreate: create,
-    };
-    await EmbApi.addEmbeddingApiV1EmbeddingsEmbeddingPost(createParam).then(
-      () => {
-        embStore.addEmb({...model});
-      }
-    );
-  } else if (type == "rank") {
-    const rankStore = useRankStore();
-    let create: RerankingCreate = {
-      name: model.name,
-      _default: model._default,
-      vendorName: model.vendorName,
-      spec: yaml.load(model.spec) as any,
-    };
-    let createParam: AddRerankingApiV1RerankingsRerankingPostRequest = {
-      rerankingCreate: create,
-    };
-    await RankApi.addRerankingApiV1RerankingsRerankingPost(createParam).then(
-      () => {
-        rankStore.addRank({...model});
-      }
-    );
+  try{
+    if (type == "llm") {
+      const llmStore = useLlmStore();
+      let create: LlmCreate = {
+        name: model.name.value,
+        _default: model._default,
+        vendorName: model.vendorName.value,
+        spec: yaml.load(model.spec.value) as object,
+      };
+      let createParam: AddLlmApiV1LlmsLlmPostRequest = {
+        llmCreate: create,
+      };
+      await LlmApi.addLlmApiV1LlmsLlmPost(createParam)
+      llmStore.addLlm(getData(model));
+      return 200
+    } else if (type == "emb") {
+      const embStore = useEmbStore();
+      let create: EmbeddingCreate = {
+        name: model.name.value,
+        _default: model._default,
+        vendorName: model.vendorName.value,
+        spec: yaml.load(model.spec.value) as object,
+      };
+      let createParam: AddEmbeddingApiV1EmbeddingsEmbeddingPostRequest = {
+        embeddingCreate: create,
+      };
+      await EmbApi.addEmbeddingApiV1EmbeddingsEmbeddingPost(createParam)
+      embStore.addEmb(getData(model));
+      return 200
+    } else if (type == "rank") {
+      const rankStore = useRankStore();
+      let create: RerankingCreate = {
+        name: model.name.value,
+        _default: model._default,
+        vendorName: model.vendorName.value,
+        spec: yaml.load(model.spec.value) as any,
+      };
+      let createParam: AddRerankingApiV1RerankingsRerankingPostRequest = {
+        rerankingCreate: create,
+      };
+      await RankApi.addRerankingApiV1RerankingsRerankingPost(createParam)
+      rankStore.addRank(getData(model));
+      return 200
+    }
+  }catch(err){
+    return await parser_error(err)
   }
 }
 
 export async function deleteElement(type: String, model: any) {
-  if (type == "llm") {
-    console.log("delete");
-    let llmStore = useLlmStore();
-    let name_llm: DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest = {
-      llmName: model.name,
-    };
-    await LlmApi.deleteLlmApiV1LlmsLlmLlmNameDelete(name_llm);
-    llmStore.removeLlm(model);
-    return "deselect";
-  } else if (type == "emb") {
-    const embStore = useEmbStore();
-    let name_llm: DeleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDeleteRequest =
-      {
-        embeddingName: model.name,
+  try{
+    if (type == "llm") {
+      let llmStore = useLlmStore();
+      let name_llm: DeleteLlmApiV1LlmsLlmLlmNameDeleteRequest = {
+        llmName: model.name.value,
       };
-    await EmbApi.deleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDelete(
-      name_llm
-    );
-    console.log("deleted " + model.name);
-    embStore.removeEmb(model);
-    return "deselect";
-  } else if (type == "rank") {
-    const rankStore = useRankStore();
-    let name_llm: DeleteRerankingApiV1RerankingsRerankingRerankingNameDeleteRequest =
+      await LlmApi.deleteLlmApiV1LlmsLlmLlmNameDelete(name_llm)
+      llmStore.removeLlm(model.name.value)
+      return "deselect";
+    } else if (type == "emb") {
+      const embStore = useEmbStore();
+      let name_llm: DeleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDeleteRequest =
       {
-        rerankingName: model.name,
+        embeddingName: model.name.value,
       };
-    await RankApi.deleteRerankingApiV1RerankingsRerankingRerankingNameDelete(
-      name_llm
-    );
-    console.log("deleted " + model.name);
-    rankStore.removeRank(model);
-    return "deselect";
+      await EmbApi.deleteEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNameDelete(
+        name_llm
+      );
+      embStore.removeEmb(model.name.value);
+      return "deselect";
+    } else if (type == "rank") {
+      const rankStore = useRankStore();
+      let name_llm: DeleteRerankingApiV1RerankingsRerankingRerankingNameDeleteRequest =
+      {
+        rerankingName: model.name.value,
+      };
+      await RankApi.deleteRerankingApiV1RerankingsRerankingRerankingNameDelete(
+        name_llm
+      );
+      rankStore.removeRank(model.name.value);
+      return "deselect";
+    }
+  }catch(err){
+    return await parser_error(err);
   }
-  return "wrong";
+  return "Wrong Type FrontEnd";
 }
 
-export function updateElement(type: String, model: any) {
-  if (type == "llm") {
-    let llmStore = useLlmStore();
-    let name_llm: UpdateLlmApiV1LlmsLlmLlmNamePatchRequest = {
-      llmName: model.name,
-      _default: model._default,
-      requestBody: yaml.load(model.spec) as Object,
-    };
-    LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm).then(() => {
-      llmStore.updateLlm({...model});
-    });
-  } else if (type == "emb") {
-    const embStore = useEmbStore();
-    let name_llm: UpdateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatchRequest =
-      {
-        embeddingName: model.name,
+export async function updateElement(type: String, model: any) {
+  try{
+    if (type == "llm") {
+      let llmStore = useLlmStore();
+      let name_llm: UpdateLlmApiV1LlmsLlmLlmNamePatchRequest = {
+        llmName: model.name.value,
         _default: model._default,
-        requestBody: yaml.load(model.spec) as Object,
+        requestBody: yaml.load(model.spec.value) as Object,
       };
-    EmbApi.updateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatch(
-      name_llm
-    ).then(() => {
-      console.log("updated " + model.name);
-      embStore.updateEmb({...model});
-    });
-  } else if (type == "rank") {
-    const rankStore = useRankStore();
-    let name_llm: UpdateRerankingApiV1RerankingsRerankingRerankingNamePatchRequest =
-      {
-        rerankingName: model.name,
-        _default: model._default,
-        requestBody: yaml.load(model.spec) as any,
-      };
-    RankApi.updateRerankingApiV1RerankingsRerankingRerankingNamePatch(
-      name_llm
-    ).then(() => {
-      console.log("updated " + model.name);
-      rankStore.updateRank({...model});
-    });
+      await LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm)
+      llmStore.updateLlm(getData(model));
+      return 204
+    } else if (type == "emb") {
+      const embStore = useEmbStore();
+      let name_llm: UpdateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatchRequest =
+        {
+          embeddingName: model.name.value,
+          _default: model._default,
+          requestBody: yaml.load(model.spec.value) as Object,
+        };
+      await EmbApi.updateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatch(
+        name_llm
+      )
+      embStore.updateEmb(getData(model));
+      return 204
+    } else if (type == "rank") {
+      const rankStore = useRankStore();
+      let name_llm: UpdateRerankingApiV1RerankingsRerankingRerankingNamePatchRequest =
+        {
+          rerankingName: model.name.value,
+          _default: model._default,
+          requestBody: yaml.load(model.spec.value) as any,
+        };
+      await RankApi.updateRerankingApiV1RerankingsRerankingRerankingNamePatch(
+        name_llm
+      )
+      rankStore.updateRank(getData(model));
+      return 204
+    }
+  }catch(err){
+    return await parser_error(err);
   }
+  return "Wrong Type FrontEnd";
 }
 
 export async function getInformation(type: String, value: string) {
@@ -234,5 +238,25 @@ export async function getInformation(type: String, value: string) {
         )
       )[1]
     );
+  }
+}
+
+async function parser_error(err:any){
+  if (err instanceof runtime.ResponseError) {
+    const errorDetails = await err.response.json();
+    return errorDetails.detail; 
+  } else if (err instanceof runtime.RequiredError) {
+    return err.message;
+  } else {
+    return err;
+  }
+}
+
+function getData(element:any){
+  return {
+    name : element.name.value,
+    _default: element._default,
+    spec: element.spec.value,
+    vendorName:element.vendorName.value
   }
 }

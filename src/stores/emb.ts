@@ -22,9 +22,9 @@ export const useEmbStore = defineStore("emb", () => {
     data.value.push(emb);
   };
 
-  const removeEmb = (emb: any) => {
+  const removeEmb = (emb: string) => {
     let filtered = data.value.filter(
-      (element: any) => element.name !== emb.name
+      (element: any) => element.name !== emb
     );
     data.value = filtered;
   };

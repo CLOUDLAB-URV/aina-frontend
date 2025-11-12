@@ -20,9 +20,9 @@ export const useRankStore = defineStore("rank", () => {
     data.value.push(rank);
   };
 
-  const removeRank = (rank: any) => {
+  const removeRank = (name: string) => {
     let filtered = data.value.filter(
-      (element: any) => element.name !== rank.name
+      (element: any) => element.name !== name
     );
     data.value = filtered;
   };

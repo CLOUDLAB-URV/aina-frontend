@@ -20,10 +20,11 @@ export const useLlmStore = defineStore("llm", () => {
     data.value.push(llm);
   };
 
-  const removeLlm = (llm: any) => {
+  const removeLlm = (name: string) => {
     let filtered = data.value.filter(
-      (element: any) => element.name !== llm.name
+      (element: any) => element.name != name
     );
+    console.log(filtered)
     data.value = filtered;
   };
 

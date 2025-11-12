@@ -1,8 +1,9 @@
 <template>
   <form class="flex flex-col gap-4">
+
     <div class="flex flex-col gap-2">
       <label for="name">Name</label>
-      <InputText id="name" placeholder="Name" v-model="model.name" />
+      <InputText id="name" placeholder="Name" v-model="model.name.value" :invalid="model.name.invalid" />
     </div>
 
     <div class="flex gap-2">
@@ -12,88 +13,158 @@
 
     <div class="flex flex-col gap-2">
       <label for="spec">Specifications</label>
-      <textarea v-model="model.spec" id="spec" placeholder="Specifications" class="border p-2" rows="5" />
+      <Textarea id="spec" v-model="model.spec.value" placeholder="Specifications" rows="5" :invalid="model.spec.invalid"/>
     </div>
 
     <div class="flex flex-col gap-2">
       <label for="vendorName">VendorName</label>
-      <select v-model="model.vendorName" @click.prevent="getInfo(model.vendorName)"
-        class="border p-2 rounded-xl border-[var(--surface-border)]">
-        <option disabled value="">Please select one</option>
-        <option v-for="vendor in vendors" :value="vendor">{{ vendor }}</option>
-      </select>
+      <Select 
+        v-model="model.vendorName.value" 
+        :options="vendors" 
+        optionLabel="value" 
+        placeholder="Select Vendor" 
+        optionValue="value"
+        :invalid="model.vendorName.invalid"
+      />
     </div>
+
     <ButtonsCrud :create="create" @createElement="sendCreate" @updateElement="update" @deleteElement="delete_element" />
   </form>
+
   <section class="mt-8" v-if="vendor_info">
     <h3 class="text-xl mb-4 text-[var(--text-color)]">Spec Params definitions</h3>
     <DataTable :value="vendor_info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
       tableStyle="min-width: 50rem">
-      <Column field="name" header="Name" style="width: 10%"></Column>
-      <Column field="help" header="Help" style="width: 65%"></Column>
-      <Column field="type" header="Type" style="width: 10%"></Column>
+      <Column field="name" header="Name" style="width: 10%"/>
+      <Column field="help" header="Help" style="width: 65%"/>
+      <Column field="type" header="Type" style="width: 10%"/>
     </DataTable>
   </section>
+  
 </template>
 
 <script setup lang="ts">
 import { mountVendors, createElement, updateElement, deleteElement, getInformation } from '@/apis/combinedCrud';
-import { onMounted, ref, watch } from "vue";
 import ButtonsCrud from "@/components/ButtonsCrud.vue";
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref, watch } from "vue";
+import Textarea from 'primevue/textarea';
+import Select from 'primevue/select';
+import yaml from 'js-yaml';
 
-let vendor_info = ref();
-
+const emits = defineEmits(['deselect']);
+const toast = useToast()
 const props = defineProps({
   create: { type: Boolean, required: true },
   data: Object,
   type: { type: String, required: true }
 });
 
+let vendor_info = ref();
 
-const emits = defineEmits(['deselect']);
 
 let vendors = ref<any[]>([]);
 let model = ref({
-  name: "",
+  name: {
+    value:"",
+    invalid:false,
+  },
   _default: false,
-  spec: "",
-  vendorName: "",
+  spec:  {
+    value:"",
+    invalid:false
+  },
+  vendorName: {
+    value : "",
+    invalid:false
+  },
 })
 
 onMounted(async () => {
-  vendors.value = await mountVendors(props.type);
+  let aux = await mountVendors(props.type);
+  vendors.value = aux.map((info:string)=>{
+    return { 'value' : info }
+  })
   getInfo(props.data?.vendorName)
   change_model();
 });
 
 watch(() => props.data, async () => {
-  vendors.value = await mountVendors(props.type);
+  let aux = await mountVendors(props.type);
+  vendors.value = aux.map((info:string)=>{
+    return { 'value' : info }
+  })
   change_model();
-  getInfo(model.value.vendorName)
+  getInfo(model.value.vendorName.value)
 });
 
+watch(
+  ()=> model.value.vendorName.value,
+  ()=> {
+    getInfo(model.value.vendorName.value)
+  }
+)
 
 function change_model() {
-  model.value.name = props.data?.name ?? "";
+  model.value.name.value = props.data?.name ?? "";
   model.value._default = props.data?._default ?? false;
-  model.value.spec = props.data?.spec ?? "";
-  model.value.vendorName = props.data?.vendorName ?? "";
+  model.value.spec.value = props.data?.spec ?? "";
+  model.value.vendorName.value = props.data?.vendorName ?? "";
   return model;
 }
 
-function sendCreate() {
-  createElement(props.type, model.value);
+function validate(){
+  let made=true
+  if(!model.value.name.value || model.value.name.value == ' ' || (props.data?.name != model.value.name.value && !props.create) ){
+    toast.add({severity:'error',detail:'There is something wrong in Name'})
+    model.value.name.invalid = true
+    made=false
+  }
+  if(!model.value.vendorName.value || model.value.vendorName.value == ' '){
+    toast.add({severity:'error',detail:'You have to select an VendorName for validating the request'})
+    model.value.vendorName.invalid = true
+    made=false
+  }
+  try{
+    if(model.value.spec.value == '') throw new Error
+    yaml.load(model.value.spec.value)
+  }catch(err){
+    toast.add({severity:'error',detail:'There is a mistake in the Specification Text Area'})
+    model.value.spec.invalid = true
+    made=false
+  }
+  return made
+}
+
+async function sendCreate() {
+  if(!validate()) return
+  let response = await createElement(props.type, model.value)
+  if(response == 200){
+    toast.add({severity:'success',detail:`New ${props.type} has been created with the name ${model.value.name.value}`})
+    change_model()
+    toast.add({severity:'error',detail:`${response}`})
+  }
 }
 
 async function delete_element() {
-  let value: String = await deleteElement(props.type, model.value);
-  if (value == 'deselect') {
+  let response: String = await deleteElement(props.type, model.value);
+  if (response == 'deselect') {
+    toast.add({severity:'success',detail:`The ${props.type} ${model.value.name.value} has been deleted`})
     emits('deselect')
+  }else{
+    toast.add({severity:'error',detail:`ERROR : ${response}`})
   }
 }
 
 async function update() {
-  await updateElement(props.type, model.value);
+  if(!validate()) return
+  let response = await updateElement(props.type, model.value);
+  console.log(response)
+  if(response == 204){
+    toast.add({severity:'success',detail:`The ${props.type}  ${model.value.name.value} has been updated `})
+  }else{
+    toast.add({severity:'error',detail:`ERROR : ${response}`})
+  }
 }
 
 async function getInfo(value: string) {
