@@ -310,10 +310,12 @@ a {
 
 @media (max-width: 991px) {
     .layout-topbar-actions {
-        flex-direction: column;
+        /* flex-direction: column;
         gap: 0.25rem;
         align-items: flex-start;
-        margin-left: 0;
+        margin-left: 0; */
+        display: flex;
+        gap:0.25rem;
     }
 
     .layout-topbar-menu-button {

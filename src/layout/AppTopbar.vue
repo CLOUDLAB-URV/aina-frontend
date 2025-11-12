@@ -47,13 +47,20 @@ function toggleDarkMode() {
         <div class="layout-topbar-actions"> 
             <div class="layout-topbar-menu">
                 <div v-if="authStore.signedIn" class="flex items-center gap-2">
-                    <Avatar :label="authStore.username?.charAt(0).toUpperCase()" shape="circle" class="hidden lg:flex" />
+                    <!-- <Avatar :label="authStore.username?.charAt(0).toUpperCase()" shape="circle" class="hidden lg:flex" /> -->
                     <span class="mr-2 hidden lg:inline">
                         {{ t('logging.loggedas',{username: authStore.username}) }}
                     </span>
-                    <Button @click="logOut" :label="t('logging.logout')" icon="pi pi-sign-out" text></Button>
+                    <!-- <Button @click="logOut" :label="t('logging.logout')" icon="pi pi-sign-out" text></Button> -->
+                    <button @click="logOut">
+                        <i class="pi pi-sign-out mr-2"></i>
+                        <span class="hidden lg:inline"><i18n-t keypath="logging.logout"/></span>
+                    </button>
                 </div>
-                <Button v-if="!authStore.signedIn" @click="logIn" :label="t('logging.login')" icon="pi pi-sign-in" text></Button>
+                <button v-if="!authStore.signedIn" @click="logIn">
+                    <i class="pi pi-sign-in mr-2"></i>
+                    <span class="hidden lg:inline"><i18n-t keypath="logging.login"/></span>
+                </button>
             </div>
             <!-- <Button label="Toggle Dark Mode" @click="toggleDarkMode()" /> -->
             <button @click="toggleDarkMode()" class="mr-2">

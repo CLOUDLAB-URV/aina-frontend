@@ -1,7 +1,7 @@
 <template>
     <div class="flex gap-2">
-        <i class="pi pi-database"></i>
-        <div class="flex flex-col gap-3 w-[70%]">
+        <i class="icon pi pi-database"></i>
+        <div class="flex flex-col gap-3 md:w-[70%]">
             <div class="p-4 bg-blue-100 rounded-lg">
                 <p v-html="markdown.render(message)" class="text-black"></p>
             </div>
@@ -54,3 +54,10 @@ async function sendLike(val: boolean | undefined) {
     )
 }
 </script>
+<style scoped>
+@media (max-width: 991px) {
+    .icon {
+        display: none;
+    }
+}
+</style>

@@ -24,3 +24,10 @@ defineProps<{
 
 let show_info = ref(false)
 </script>
+<style scoped>
+@media (max-width: 991px) {
+    i {
+        display: none;
+    }
+}
+</style>

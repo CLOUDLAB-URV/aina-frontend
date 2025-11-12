@@ -23,9 +23,9 @@
             </div>
             <template #footer>
                 <Button :label="t('cancel')" text severity="secondary" @click="visible = false" autofocus />
-                <Button v-if="create == 'create'" :label="t('create')" variant="outlined" severity="secondary"
+                <Button v-if="create == 'create'" :label="t('create')" variant="outlined" severity="success"
                     @click="createconv" autofocus />
-                <Button v-if="create == 'trash'" :label="t('input.delete.label')" variant="outlined" severity="secondary"
+                <Button v-if="create == 'trash'" :label="t('input.delete.label')" variant="outlined" severity="danger"
                     @click="deleteconv" autofocus />
                 <Button v-if="create == 'edit'" :label="t('input.save.label')" variant="outlined" severity="secondary" @click="updateconv"
                     autofocus />
