@@ -27,10 +27,10 @@ export interface AgentUpdate {
     description?: string | null;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof AgentUpdate
      */
-    indexId?: number | null;
+    indexId?: string | null;
     /**
      * 
      * @type {string}

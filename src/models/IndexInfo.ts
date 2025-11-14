@@ -39,10 +39,10 @@ export interface IndexInfo {
     config: { [key: string]: any; };
     /**
      * The unique identifier of the index
-     * @type {number}
+     * @type {string}
      * @memberof IndexInfo
      */
-    id: number;
+    id: string;
 }
 
 /**

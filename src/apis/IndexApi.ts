@@ -38,7 +38,7 @@ import {
 } from '../models/index';
 
 export interface CreateGroupApiV1IndexIndexIdGroupsPostRequest {
-    indexId: number;
+    indexId: string;
     groupName: string;
     requestBody: Array<string | null>;
 }
@@ -50,21 +50,21 @@ export interface CreateIndexApiV1IndexPostRequest {
 }
 
 export interface DeleteAllFilesApiV1IndexIndexIdFilesDeleteRequest {
-    indexId: number;
+    indexId: string;
 }
 
 export interface DeleteFileApiV1IndexIndexIdFilesFileIdDeleteRequest {
-    indexId: number;
+    indexId: string;
     fileId: string;
 }
 
 export interface DeleteGroupApiV1IndexIndexIdGroupsGroupIdDeleteRequest {
-    indexId: number;
+    indexId: string;
     groupId: string;
 }
 
 export interface DeleteIndexApiV1IndexIndexIdDeleteRequest {
-    indexId: number;
+    indexId: string;
 }
 
 export interface GetAdminSettingsApiV1IndexAdminSettingsGetRequest {
@@ -72,11 +72,11 @@ export interface GetAdminSettingsApiV1IndexAdminSettingsGetRequest {
 }
 
 export interface GetIndexApiV1IndexIndexIdGetRequest {
-    indexId: number;
+    indexId: string;
 }
 
 export interface GetIndexSettingsApiV1IndexIndexIdSettingsGetRequest {
-    indexId: number;
+    indexId: string;
 }
 
 export interface IndexFilesApiV1IndexIndexPostRequest {
@@ -86,23 +86,23 @@ export interface IndexFilesApiV1IndexIndexPostRequest {
 }
 
 export interface ListFilesApiV1IndexIndexIdFilesGetRequest {
-    indexId: number;
+    indexId: string;
     namePattern?: string;
 }
 
 export interface ListGroupsApiV1IndexIndexIdGroupsGetRequest {
-    indexId: number;
+    indexId: string;
 }
 
 export interface UpdateGroupApiV1IndexIndexIdGroupsGroupIdPatchRequest {
-    indexId: number;
+    indexId: string;
     groupId: string;
     groupName?: string | null;
     bodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatch?: BodyUpdateGroupApiV1IndexIndexIdGroupsGroupIdPatch;
 }
 
 export interface UpdateIndexApiV1IndexIndexIdPatchRequest {
-    indexId: number;
+    indexId: string;
     name?: string | null;
     requestBody?: { [key: string]: any; } | null;
 }
@@ -732,7 +732,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * List Index Types
      */
-    async listIndexTypesApiV1IndexTypesGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async listIndexTypesApiV1IndexTypesGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<string | null>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -752,17 +752,13 @@ export class IndexApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        if (this.isJsonMime(response.headers.get('content-type'))) {
-            return new runtime.JSONApiResponse<any>(response);
-        } else {
-            return new runtime.TextApiResponse(response) as any;
-        }
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
      * List Index Types
      */
-    async listIndexTypesApiV1IndexTypesGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+    async listIndexTypesApiV1IndexTypesGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<string | null>> {
         const response = await this.listIndexTypesApiV1IndexTypesGetRaw(initOverrides);
         return await response.value();
     }

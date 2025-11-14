@@ -27,10 +27,10 @@ export interface AgentResponse {
     description?: string | null;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof AgentResponse
      */
-    indexId?: number | null;
+    indexId?: string | null;
     /**
      * 
      * @type {string}

@@ -1,15 +1,13 @@
 <template>
     <div class="w-full rounded-lg p-4 space-y-6">
-        <div v-if="loading" class="text-sm opacity-70"><i18n-t keypath="settings.loading"/></div>
+        <div v-if="loading" class="text-sm opacity-70"><i18n-t keypath="settings.loading" /></div>
         <div v-else-if="error" class="text-red-500">{{ error }}</div>
         <div v-else>
             <section class="mb-6">
-                <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="settings.label"/></h2>
+                <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="settings.label" /></h2>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div v-for="(setting, key) in reasonAppSettings" :key="`general-${key}`">
-                        <label class="font-medium block"
-                            :class="setting.component == 'checkbox' ? 'mb-0' : 'mb-2'"
-                            >
+                        <label class="font-medium block" :class="setting.component == 'checkbox' ? 'mb-0' : 'mb-2'">
                             {{ setting.name }}
                         </label>
                         <template v-if="setting.component === 'radio'">
@@ -25,27 +23,22 @@
                         <template v-else>
                             <component :is="resolveComponent(setting)" :label="setting.name"
                                 v-model="formValues[`reasoning.${key}`]" v-bind="getComponentProps(setting)"
-                                class="w-full"
-                                />
+                                class="w-full" />
                         </template>
                     </div>
                 </div>
             </section>
 
             <section v-if="reasonSettings">
-                <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="reasoning.settings"/></h2>
+                <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="reasoning.settings" /></h2>
                 <div class="mb-4">
-                    <label class="font-medium mb-2 block"><i18n-t keypath="reasoning.type"/></label>
+                    <label class="font-medium mb-2 block"><i18n-t keypath="reasoning.type" /></label>
                     <Select v-model="currentReasoning" :options="reasoningOptions" class="w-full" />
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div v-for="(setting, key) in reasonSettings" :key="`reason-${key}`"
-                        :class="{ 'flex gap-2 items-center' : setting.component == 'checkbox'}"
-                        >
-                       <label 
-                            class="font-medium block"
-                            :class="setting.component == 'checkbox' ? 'mb-0' : 'mb-2'"
-                            >
+                        :class="{ 'flex gap-2 items-center': setting.component == 'checkbox' }">
+                        <label class="font-medium block" :class="setting.component == 'checkbox' ? 'mb-0' : 'mb-2'">
                             {{ setting.name }}
                         </label>
                         <template v-if="setting.component === 'radio'">
@@ -62,24 +55,23 @@
                         <template v-else>
                             <component :is="resolveComponent(setting)" :label="setting.name"
                                 v-model="formValues[`reasoning.options.${currentReasoning}.${key}`]"
-                                v-bind="getComponentProps(setting)" 
-                                class="w-full"
-                                />
+                                v-bind="getComponentProps(setting)" class="w-full" />
                         </template>
                     </div>
                 </div>
             </section>
 
             <section v-if="indexSettings" class="mt-6">
-                <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="settings.norm"/> <i18n-t keypath="index"/></h2>
+                <h2 class="font-semibold text-lg mb-3"><i18n-t keypath="settings.norm" /> <i18n-t keypath="index" />
+                </h2>
                 <div class="mb-4">
-                    <label class="font-medium mb-1 block"><i18n-t keypath="index"/> ID</label>
-                    <InputNumber class="w-full" label="Index ID" v-model="currentIndex" />
+                    <label class="font-medium mb-1 block"><i18n-t keypath="index" /> ID</label>
+                    <Select class="w-full" label="Index ID" v-model="currentIndex" :options="indices" optionLabel="name"
+                        optionValue="id" />
                 </div>
                 <div class="grid gap-4 sm:grid-cols-1 lg:grid-cols-4">
                     <div v-for="(setting, key) in indexSettings" :key="`index-${key}`"
-                        :class="{ 'flex gap-2 items-center' : setting.component == 'checkbox'}"
-                    >
+                        :class="{ 'flex gap-2 items-center': setting.component == 'checkbox' }">
                         <label class="font-medium block">{{ setting.name }}</label>
                         <template v-if="setting.component === 'radio'">
                             <div class="flex flex-wrap gap-4">
@@ -88,24 +80,23 @@
                                     <RadioButton :inputId="`${key}-radio-${idx}`" :name="key"
                                         :value="choice[1] || choice"
                                         v-model="formValues[`index.options.${currentIndex}.${key}`]" />
-                                    <label class="text-center" :for="`${key}-radio-${idx}`">{{ choice[0] || choice }}</label>
+                                    <label class="text-center" :for="`${key}-radio-${idx}`">{{ choice[0] || choice
+                                        }}</label>
                                 </div>
                             </div>
                         </template>
                         <template v-else>
                             <component :is="resolveComponent(setting)" :label="setting.name"
                                 v-model="formValues[`index.options.${currentIndex}.${key}`]"
-                                v-bind="getComponentProps(setting)" 
-                                class="w-full"
-                                />
+                                v-bind="getComponentProps(setting)" class="w-full" />
                         </template>
                     </div>
                 </div>
             </section>
 
             <div v-if="indexSettings || reasonSettings" class="flex justify-end mt-6">
-                <button class="w-full px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700" @click="saveSettings"
-                    :disabled="saving">
+                <button class="w-full px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+                    @click="saveSettings" :disabled="saving">
                     {{ saving ? 'Saving...' : 'Save Settings' }}
                 </button>
             </div>
@@ -115,7 +106,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import type { AgentResponse } from '@/models';
+import { type IndexInfo, type AgentResponse } from '@/models';
 import { AgApi, IndApi, ReasonApi } from '@/apis/api';
 import { Checkbox, InputNumber, InputText, RadioButton, Select, Textarea } from 'primevue';
 
@@ -126,7 +117,9 @@ const loading = ref(false);
 const saving = ref(false);
 const error = ref<string>();
 const currentReasoning = ref<string>();
-const currentIndex = ref<number>();
+const currentIndex = ref<string>();
+
+const indices = ref<IndexInfo[]>([]);
 
 const reasonAppSettings = ref<Record<string, any>>();
 const reasonSettings = ref<Record<string, any>>();
@@ -160,7 +153,7 @@ async function loadSettings(agent: AgentResponse) {
         currentReasoning.value = reasoningName;
         currentIndex.value = indexId;
 
-        const [reasonAppConfig, reasonConfig, indexConfig] = await Promise.all([
+        const [reasonAppConfig, reasonConfig, indexConfig, indicesList] = await Promise.all([
             ReasonApi.getReasoningAppSettingsApiV1ReasoningsSettingsGet(),
             ReasonApi.getReasoningConfigApiV1ReasoningsReasoningNameConfigGet({
                 reasoningName: reasoningName,
@@ -168,7 +161,10 @@ async function loadSettings(agent: AgentResponse) {
             IndApi.getIndexSettingsApiV1IndexIndexIdSettingsGet({
                 indexId: indexId,
             }),
+            IndApi.listIndicesApiV1IndexGet(),
         ]);
+
+        indices.value = indicesList;
 
         // delete 'use' key
         delete reasonAppConfig['use'];
@@ -294,6 +290,7 @@ async function saveSettings() {
 div {
     background-color: var(--surface-overlay);
 }
+
 @media (max-width: 991px) {
     textarea {
         width: 100%;
