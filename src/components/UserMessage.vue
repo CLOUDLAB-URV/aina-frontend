@@ -18,7 +18,7 @@ import { ref } from 'vue';
 const {t} = useI18n()
 
 defineProps<{
-    message: string;
+    message:string;
     info:String;
 }>();
 

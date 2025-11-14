@@ -1,12 +1,46 @@
 <template>
     <h3 class="mb-3 text-2xl">{{ t('stadistics.exp')}}</h3>
-    <DataTable :value="info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows tableStyle="min-width: 50rem">
+    
+    <DataTable v-model:selection="selected" selectionMode="single" :value="info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows tableStyle="min-width: 50rem">
         <Column field="name" :header="t('input.name.label')" style="width: 20%"></Column>
         <Column field="like" :header="t('like')" style="width: 20%"></Column>
         <Column field="unlike" :header="t('unlike')" style="width: 20%"></Column>
         <Column field="nothing" :header="t('nothing')" style="width: 25%"></Column>
         <Column field="total" :header="t('total')" style="width: 25%"></Column>
     </DataTable>
+
+    <section v-if="selected">
+        <Tabs value="like">
+            <TabList>
+                <Tab value="like" class="flex items-center">
+                    <i class="pi pi-thumbs-up-fill mr-2 text-green-500"></i>
+                    <span>Like</span>
+                </Tab>
+                <Tab value="unlike" class="flex items-center">
+                    <i class="pi pi-thumbs-down-fill mr-2 text-red-500"></i>
+                    <span>UnLike</span>
+                </Tab>
+            </TabList>
+            <TabPanels>
+                <TabPanel value="like">
+                    <div class="grow h-[70vh] overflow-y-auto rounded-lg p-4 flex flex-col gap-4 chat">
+                        <template v-for="message in selected.messages_like" >
+                            <UserMessage :message="message[0][0]" :info="message[1]"/>
+                            <AiMessage :message="message[0][1]" :data_msg="data2"/>
+                        </template>
+                    </div>
+                </TabPanel>
+                <TabPanel value="unlike">
+                    <div class="grow h-[70vh] overflow-y-auto rounded-lg p-4 flex flex-col gap-4 chat">
+                        <template v-for="message in selected.messages_unlike" >
+                            <UserMessage :message="message[0][0]" :info="message[1]"/>
+                            <AiMessage :message="message[0][1]" :data_msg="data"/>
+                        </template>
+                    </div>
+                </TabPanel>
+            </TabPanels>
+        </Tabs>
+    </section>
 </template>
 
 <script setup lang="ts">
@@ -15,9 +49,14 @@ import { ChApi, ConvApi,AgApi } from '@/apis/api';
 import type { SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest } from '@/apis/ChatApi'
 import type { ListConversationsApiV1ConversationsAgentIdGetRequest } from '@/apis/ConversationsApi'
 import { useI18n } from 'vue-i18n';
+import UserMessage from '@/components/UserMessage.vue';
+import AiMessage from '@/components/AiMessage.vue';
 
 const {t} = useI18n()
 let info = ref()
+let selected = ref()
+let data:[String,Number] = ["false",-1]
+let data2:[String,Number] = ["true",-1]
 
 onMounted(
     async ()=> {
@@ -48,6 +87,8 @@ onMounted(
                                     }
                                     await ChApi.selectConversationApiV1ChatAgentIdConversationIdSelectPost(data).then((response2)=>{
                                         let likes = response2.likes;
+                                        let messages = response2.messages;
+                                        let evidence = response2.retrievalMessages;
                                         for(let like in likes){
 
                                             let value_like = likes[like];
@@ -56,7 +97,7 @@ onMounted(
                                             if(!(conversationId in agents[definiteAgentId]['conversation'])){
                                                 agents[definiteAgentId]['conversation'][conversationId] = {}
                                             }
-                                            agents[definiteAgentId]['conversation'][conversationId][index] = value_like[2];
+                                            agents[definiteAgentId]['conversation'][conversationId][index] = {vote:value_like[2],message:messages[index],evidence:evidence[index]};
                                         }
                                     })
                                 }
@@ -76,28 +117,27 @@ onMounted(
                     'like':0,
                     'unlike':0,
                     'nothing':0,
-                    'total':0
+                    'total':0,
+                    'messages_unlike': [],
+                    'messages_like': []
                 }
             }
             for(let conv in convs){
-                console.log(conv)
                 let messages = convs[conv]
                 for(let mesg in messages){
-                    console.log(mesg)
-                    let message = messages[mesg];
-                    console.log(typeof(message))
+                    let message = messages[mesg].vote;
                     if(typeof(message) == 'boolean'){
                         agents_likes[agent]['nothing'] += 1
                         agents_likes[agent]['total'] += 1
                     }
                     else if(message == 'true'){
-                        console.log("HEREONETWO")
                         agents_likes[agent]['like'] += 1
+                        agents_likes[agent]['messages_like'].push([messages[mesg].message,messages[mesg].evidence])
                         agents_likes[agent]['total'] += 1
                     }
                     else if(message == 'false'){
-                        console.log("HERETWO")
                         agents_likes[agent]['unlike'] += 1
+                        agents_likes[agent]['messages_unlike'].push([messages[mesg].message,messages[mesg].evidence])
                         agents_likes[agent]['total'] += 1
                     }
                 }

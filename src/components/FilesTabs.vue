@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col md:flex-row w-full md:w-fit gap-2">
+    <div class="flex flex-col md:flex-row w-full gap-2">
         <section class="file-list-container flex flex-col w-full md:w-1/4 gap-3">
             <h3 class="text-2xl"><i18n-t keypath="filegroup.file.upload.label" /></h3>
             <AgentSelects @agent-selected="(ag) => agent = ag" />

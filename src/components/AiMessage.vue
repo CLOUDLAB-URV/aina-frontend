@@ -8,14 +8,17 @@
             <div class="flex gap-3 w-fit rounded-lg bg-blue-100">
                 <button @click="sendLike(true)">
                     <i class="pi pi-thumbs-up-fill p-3 rounded-lg hover:text-green-500"
-                        :class="{ 'text-green-500': props.data_msg[0] == 'true' }" />
+                        :class="props.data_msg[0] == 'true' ? 'text-green-500' : 'text-black'" />
                 </button>
                 <button @click="sendLike(false)">
                     <i class="pi pi-thumbs-down-fill p-3 rounded-lg hover:text-red-500"
-                        :class="{ 'text-red-500': props.data_msg[0] == 'false' }" />
+                        :class="props.data_msg[0] == 'false' ? 'text-red-500' : 'text-black'"
+                        />
                 </button>
                 <button @click="sendLike(undefined)">
-                    <i class="pi pi-plus p-3 rounded-lg hover:text-blue-500" />
+                    <i class="pi pi-plus p-3 rounded-lg hover:text-blue-500 text-black" 
+                        :class="typeof(props.data_msg[0] ) == 'boolean' ? 'text-blue-500' : 'text-black'"
+                    />
                 </button>
             </div>
         </div>
@@ -30,7 +33,7 @@ import { ChApi } from '@/apis/api';
 
 const props = defineProps<{
     message: string;
-    data_msg: [String,Number];
+    data_msg: [any,Number];
     conv?: ApiSchemasConversationsConversationInfo
 }>();
 
@@ -49,6 +52,7 @@ async function sendLike(val: boolean | undefined) {
 
     await ChApi.likeMessageApiV1ChatAgentIdConversationIdLikePost(data_like).then(
         () => {
+            console.log(val)
             chatStore.like(props.data_msg[1] as number, val)
         }
     )

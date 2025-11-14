@@ -6,7 +6,7 @@ export interface ChatItem {
   user: string;
   ai: string;
   info:String;
-  liked:String;
+  liked:any;
 }
 
 export const useChatStore = defineStore("Chat", () => {
@@ -57,7 +57,8 @@ export const useChatStore = defineStore("Chat", () => {
 
   const like = (index:number,val : boolean | undefined)=>{
     if (data.value[index] !== undefined) {
-      data.value[index].liked = val === undefined ? "" : `${val}`;
+      data.value[index].liked = val === undefined ? true : `${val}`;
+      console.log(data.value[index].liked)
     }
   }
 
