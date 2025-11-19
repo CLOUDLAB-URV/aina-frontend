@@ -79,7 +79,7 @@
                 class="bg-surface border rounded-lg p-3">
                 <div class="flex items-center gap-2">
                     <i class="pi pi-spin pi-spinner"></i>
-                    <span class="text-sm"><i18n-t keypath="filegroup.gile.upload.process"/></span>
+                    <span class="text-sm"><i18n-t keypath="filegroup.file.upload.process"/></span>
                 </div>
             </div>
         </div>
