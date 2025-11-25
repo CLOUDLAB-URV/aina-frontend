@@ -148,7 +148,8 @@ const catalan = {
             label: "Aquest extracte d'informació és sobre el missatge : "
         },
         public: "Públic",
-        nooptions : "Sense opcions"
+        nooptions : "Sense opcions",
+        percentage_correct:"Percentatje d'encert"
     },
 }
 

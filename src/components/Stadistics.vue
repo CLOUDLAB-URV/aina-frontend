@@ -2,11 +2,16 @@
     <h3 class="mb-3 text-2xl">{{ t('stadistics.exp')}}</h3>
     
     <DataTable v-model:selection="selected" selectionMode="single" :value="info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows tableStyle="min-width: 50rem">
-        <Column field="name" :header="t('input.name.label')" style="width: 20%"></Column>
-        <Column field="like" :header="t('like')" style="width: 20%"></Column>
-        <Column field="unlike" :header="t('unlike')" style="width: 20%"></Column>
-        <Column field="nothing" :header="t('nothing')" style="width: 25%"></Column>
-        <Column field="total" :header="t('total')" style="width: 25%"></Column>
+        <Column field="name" :header="t('input.name.label')" style="width: 16%"></Column>
+        <Column field="like" :header="t('like')" style="width: 16%"></Column>
+        <Column field="unlike" :header="t('unlike')" style="width: 16%"></Column>
+        <Column field="nothing" :header="t('nothing')" style="width: 16%"></Column>
+        <Column field="total" :header="t('total')" style="width: 16%"></Column>
+        <Column :header="t('percentage_correct')" style="width: 16%">
+            <template #body="{ data }">
+                {{ data.total > 0 ? ((data.like / data.total) * 100).toFixed(1) : 0 }} %
+            </template>
+        </Column>
     </DataTable>
 
     <section v-if="selected">
