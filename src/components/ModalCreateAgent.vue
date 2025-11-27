@@ -70,7 +70,7 @@ const visible = ref(false);
 let agent = ref({
     name: "",
     description: "",
-    indexId: 0,
+    indexId: "",
     id: ""
 })
 

@@ -148,7 +148,8 @@ const english = {
             label: "This information extract is about the message : "
         },
         public: "Public",
-        nooptions : "Without any option"
+        nooptions : "Without any option",
+        percentage_correct:"Success Rate"
     },
 }
 export default english

@@ -148,7 +148,8 @@ const spanish = {
             label: "Este extracto de información es sobre el mensaje : "
         },
         public: "Público",
-        nooptions : "No hay opciones"
+        nooptions : "No hay opciones",
+        percentage_correct:"Porcentaje de Acierto"
     },
 }
 
