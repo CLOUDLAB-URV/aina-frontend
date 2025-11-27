@@ -4,7 +4,7 @@ const catalan = {
             loginto: "Iniciar sessió al teu compte",
             login: "Iniciar la sessió",
             logout: "Tancar la sessió",
-            loggedas: "Sessió iniciada como {username}",
+            loggedas: "Sessió iniciada com {username}",
             username: "Nom d'usuari",
             password: "Contrasenya",
             moreopt: "Si us plau, inicia sessió per a més opcions"
