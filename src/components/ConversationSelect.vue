@@ -65,12 +65,13 @@ watch(
             let aux = []
             for (let i = 0; i < res.messages.length; i++) {
                 const message = res.messages[i]
-                console.log(message?.[0])
+                console.log(message);
                 aux.push({
                     user: message?.[0] ?? "",
                     ai: message?.[1] ?? "",
                     info: res.retrievalMessages[i] ?? "",
-                    liked: ""
+                    liked: "",
+                    timestamp: res.timestamps?.[i] ?? "",
                 } as ChatItem)
             }
 

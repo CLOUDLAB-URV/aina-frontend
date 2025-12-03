@@ -3,7 +3,7 @@
         <div class="grow h-[70vh] overflow-y-auto rounded-lg p-4 flex flex-col gap-4 chat">
             <template v-for="(chat, index) in chat.data">
                 <UserMessage :message="chat.user" :info="chat.info" />
-                <AiMessage :message="chat.ai" :data_msg="[chat.liked, index]" :conv="conv" />
+                <AiMessage :message="chat.ai" :data_msg="[chat.liked, index]" :conv="conv" :timestamp="chat.timestamp" />
             </template>
             <Dialog v-model:visible="visible" :header="t('extract.header')" :style="{ width: '40rem' }" position="right"
                 :modal="true" :draggable="false">

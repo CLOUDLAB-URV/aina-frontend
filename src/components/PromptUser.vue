@@ -142,6 +142,9 @@ async function sendMessage(event: Event) {
                 if (data.channel == 'info' && data.content != "") {
                     chatter.addInfoChat(data.content)
                 }
+                if (data.channel == 'timestamp' && data.content != "") {
+                    chatter.editTimestamp(data.content as number)
+                }
             } catch (err) {
                 console.log("EROR JSON")
             }

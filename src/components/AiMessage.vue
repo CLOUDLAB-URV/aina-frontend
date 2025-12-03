@@ -5,21 +5,27 @@
             <div class="p-4 bg-blue-100 rounded-lg">
                 <p v-html="markdown.render(message)" class="text-black"></p>
             </div>
-            <div class="flex gap-3 w-fit rounded-lg bg-blue-100">
-                <button @click="sendLike(true)">
-                    <i class="pi pi-thumbs-up-fill p-3 rounded-lg hover:text-green-500"
-                        :class="props.data_msg[0] == 'true' ? 'text-green-500' : 'text-black'" />
-                </button>
-                <button @click="sendLike(false)">
-                    <i class="pi pi-thumbs-down-fill p-3 rounded-lg hover:text-red-500"
-                        :class="props.data_msg[0] == 'false' ? 'text-red-500' : 'text-black'"
+            <div class="flex gap-2">
+                <div class="flex gap-3 w-fit rounded-lg bg-blue-100">
+                    <button @click="sendLike(true)">
+                        <i class="pi pi-thumbs-up-fill p-3 rounded-lg hover:text-green-500"
+                            :class="props.data_msg[0] == 'true' ? 'text-green-500' : 'text-black'" />
+                    </button>
+                    <button @click="sendLike(false)">
+                        <i class="pi pi-thumbs-down-fill p-3 rounded-lg hover:text-red-500"
+                            :class="props.data_msg[0] == 'false' ? 'text-red-500' : 'text-black'"
+                            />
+                    </button>
+                    <button @click="sendLike(undefined)">
+                        <i class="pi pi-plus p-3 rounded-lg hover:text-blue-500 text-black" 
+                            :class="typeof(props.data_msg[0] ) == 'boolean' ? 'text-blue-500' : 'text-black'"
                         />
-                </button>
-                <button @click="sendLike(undefined)">
-                    <i class="pi pi-plus p-3 rounded-lg hover:text-blue-500 text-black" 
-                        :class="typeof(props.data_msg[0] ) == 'boolean' ? 'text-blue-500' : 'text-black'"
-                    />
-                </button>
+                    </button>
+                </div>
+                <div class="flex items-center rounded-lg bg-blue-100 p-3 gap-2">
+                    <i class="pi pi-clock"></i>
+                    <span class="font-bold text-black">{{ formatDuration(props.timestamp) }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -34,11 +40,34 @@ import { ChApi } from '@/apis/api';
 const props = defineProps<{
     message: string;
     data_msg: [any,Number];
-    conv?: ApiSchemasConversationsConversationInfo
+    conv?: ApiSchemasConversationsConversationInfo,
+    timestamp: number
 }>();
 
 const markdown = new MarkdownIt();
 const chatStore = useChatStore();
+
+function formatDuration(seconds: number): string {
+    if (!seconds || seconds <= -1) return 'Calculating...';
+    
+    // Round to nearest second
+    const s = Math.round(seconds);
+    
+    if (s < 60) {
+        return `${s}s`;
+    }
+
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const leftOverS = s % 60;
+
+    const parts = [];
+    if (h > 0) parts.push(`${h}h`);
+    if (m > 0) parts.push(`${m}m`);
+    if (leftOverS > 0) parts.push(`${leftOverS}s`);
+
+    return parts.join(' ');
+}
 
 async function sendLike(val: boolean | undefined) {
     if (!props.conv || !props.conv.agentId) return;
