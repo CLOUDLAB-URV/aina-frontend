@@ -5,8 +5,9 @@ import { defineStore } from "pinia";
 export interface ChatItem {
   user: string;
   ai: string;
-  info:String;
-  liked:any;
+  info: String;
+  liked: any;
+  timestamp: number;
 }
 
 export const useChatStore = defineStore("Chat", () => {
@@ -18,6 +19,7 @@ export const useChatStore = defineStore("Chat", () => {
       ai: "Thinking ... ",
       info:"" ,
       liked:"",
+      timestamp:-1,
     });
   };
 
@@ -35,6 +37,17 @@ export const useChatStore = defineStore("Chat", () => {
       console.warn("Se intentó añadir una respuesta de IA, pero no hay ningún chat de usuario al que responder.");
     }
   };
+
+  const editTimestamp = (timestamp: number) => {
+    if (data.value.length > 0) {
+      const lastItem = data.value[data.value.length - 1];
+      if (lastItem != undefined){
+        lastItem.timestamp = timestamp;
+      }
+    } else {
+      console.warn("Se intentó añadir una respuesta de IA, pero no hay ningún chat de usuario al que responder.");
+    }
+  }
 
   const addInfoChat = (info: string) => {
     if (data.value.length > 0) {
@@ -62,5 +75,5 @@ export const useChatStore = defineStore("Chat", () => {
     }
   }
 
-  return { data, addUserChat, addAiChat,lastThinking,addInfoChat,like};
+  return { data, addUserChat, addAiChat,lastThinking,addInfoChat,like,editTimestamp };
 });

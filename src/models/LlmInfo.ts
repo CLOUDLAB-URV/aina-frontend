@@ -27,10 +27,10 @@ export interface LlmInfo {
     name: string;
     /**
      * The specification of the LLM
-     * @type {{ [key: string]: any; }}
+     * @type {object}
      * @memberof LlmInfo
      */
-    spec: { [key: string]: any; };
+    spec: object;
     /**
      * Whether this LLM is the default one
      * @type {boolean}

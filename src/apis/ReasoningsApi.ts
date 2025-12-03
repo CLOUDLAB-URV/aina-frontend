@@ -37,7 +37,7 @@ export class ReasoningsApi extends runtime.BaseAPI {
     /**
      * Get Reasoning App Settings
      */
-    async getReasoningAppSettingsApiV1ReasoningsSettingsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
+    async getReasoningAppSettingsApiV1ReasoningsSettingsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -63,7 +63,7 @@ export class ReasoningsApi extends runtime.BaseAPI {
     /**
      * Get Reasoning App Settings
      */
-    async getReasoningAppSettingsApiV1ReasoningsSettingsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
+    async getReasoningAppSettingsApiV1ReasoningsSettingsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.getReasoningAppSettingsApiV1ReasoningsSettingsGetRaw(initOverrides);
         return await response.value();
     }
@@ -71,7 +71,7 @@ export class ReasoningsApi extends runtime.BaseAPI {
     /**
      * Get Reasoning Config
      */
-    async getReasoningConfigApiV1ReasoningsReasoningNameConfigGetRaw(requestParameters: GetReasoningConfigApiV1ReasoningsReasoningNameConfigGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
+    async getReasoningConfigApiV1ReasoningsReasoningNameConfigGetRaw(requestParameters: GetReasoningConfigApiV1ReasoningsReasoningNameConfigGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         if (requestParameters['reasoningName'] == null) {
             throw new runtime.RequiredError(
                 'reasoningName',
@@ -105,7 +105,7 @@ export class ReasoningsApi extends runtime.BaseAPI {
     /**
      * Get Reasoning Config
      */
-    async getReasoningConfigApiV1ReasoningsReasoningNameConfigGet(requestParameters: GetReasoningConfigApiV1ReasoningsReasoningNameConfigGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
+    async getReasoningConfigApiV1ReasoningsReasoningNameConfigGet(requestParameters: GetReasoningConfigApiV1ReasoningsReasoningNameConfigGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.getReasoningConfigApiV1ReasoningsReasoningNameConfigGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
