@@ -94,10 +94,14 @@ async function createAgent() {
             description: agent.value.description,
         }
     });
-    let index = await IndApi.createIndexApiV1IndexPost({
-        name: `${newAgent.name}_index`,
-        indexType: 'FileIndex',
-    });
+    let indexos = await IndApi.listIndicesApiV1IndexGet();
+    let index = indexos.find((ind) => ind.name === `${newAgent.name}_index`);
+    if (!index) {
+        index = await IndApi.createIndexApiV1IndexPost({
+            name: `${newAgent.name}_index`,
+            indexType: 'FileIndex',
+        });
+    }
     let updatedAgent = await AgApi.updateAgentApiV1AgentsAgentIdPatch({
         agentId: newAgent.id,
         agentUpdate: {
