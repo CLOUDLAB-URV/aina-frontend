@@ -151,6 +151,7 @@ const spanish = {
         nooptions : "No hay opciones",
         percentage_correct:"Porcentaje de Acierto",
         conv_created:"Conversación creada",
+        conv_deleted:"Conversación eliminada",
         conv_updated:"Conversación actualizada",
         conv_created_name:"Conversación creada con nombre {name}",
         conv_updated_name:"Conversación actualizada con nombre {name}",

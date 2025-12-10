@@ -151,6 +151,7 @@ const catalan = {
         nooptions : "Sense opcions",
         percentage_correct:"Percentatge d'encert",
         conv_created:"Conversa creada",
+        conv_deleted:"Conversa eliminada",
         conv_created_name:"Conversa creada amb nom {name}",
         conv_updated:"Conversa actualitzada",
         conv_updated_name:"Conversa actualitzada amb nom {name}",

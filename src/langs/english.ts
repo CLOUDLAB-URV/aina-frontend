@@ -151,6 +151,7 @@ const english = {
         nooptions : "Without any option",
         percentage_correct:"Success Rate",
         conv_created:"Conversation created",
+        conv_deleted:"Conversation deleted",
         conv_updated:"Conversation updated",
         conv_created_name:"Conversation created with name {name}",
         conv_updated_name:"Conversation updated with name {name}",
