@@ -149,7 +149,18 @@ const english = {
         },
         public: "Public",
         nooptions : "Without any option",
-        percentage_correct:"Success Rate"
+        percentage_correct:"Success Rate",
+        conv_created:"Conversation created",
+        conv_updated:"Conversation updated",
+        conv_created_name:"Conversation created with name {name}",
+        conv_updated_name:"Conversation updated with name {name}",
+        conv_deleted_name:"Conversation deleted with name {name}",
+        agent_created:"Agent created",
+        agent_updated:"Agent updated",
+        agent_deleted:"Agent deleted",
+        agent_created_detail :"A new agent named {name} has been created",
+        agent_updated_detail :"The agent named {name} has been updated",
+        agent_deleted_detail :"The agent named {name} has been deleted"
     },
 }
 export default english

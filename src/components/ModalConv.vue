@@ -105,7 +105,7 @@ async function createconv() {
     emit('convCreated', newConv);
     console.log(newConv);
     convStore.addConv(newConv);
-    toast.add({ severity: 'success', summary: 'Conversation has been create successfully', detail: `Create conversation with name ${newConv.name}`, life: 300000 });
+    toast.add({ severity: 'success', summary: t('conv_created'), detail: t('conv_created_name', { name: newConv.name }), life: 300000 });
     conv.value.name = "";
     conv.value.isPublic = false;
     visible.value = false;
@@ -125,6 +125,12 @@ async function updateconv() {
         console.log(res)
         visible.value = false;
         convStore.updateConv(res)
+        toast.add({
+            severity: 'success',
+            summary: t('conv_updated'),
+            detail: t('conv_updated_name', { name: conv.value.name }),
+            life: 4000
+        });
     })
 }
 
@@ -135,7 +141,12 @@ async function deleteconv() {
     await ConvApi.deleteConversationApiV1ConversationsConversationIdDelete(deleteData).then(() => {
         visible.value = false;
         convStore.removeConv(conv.value.id);
-        console.log("EMIT")
+        toast.add({
+            severity: 'success',
+            summary: t('conv_deleted'),
+            detail: t('conv_deleted_name', { name: conv.value.name }),
+            life: 4000
+        });
         emit('deleted')
     })
 }

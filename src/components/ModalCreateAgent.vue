@@ -109,8 +109,8 @@ async function createAgent() {
     emit('agentCreated', updatedAgent);
     toast.add({
         severity: 'success',
-        summary: 'Agent has been created successfully',
-        detail: `Agent has been created ${newAgent.name}`,
+        summary: t('agent_created'),
+        detail: t('agent_created_detail', { name: newAgent.name }),
         life: 4000
     });
 }
@@ -124,6 +124,12 @@ async function updateAgent() {
         }
     }).then(() => {
         visible.value = false;
+        toast.add({
+            severity: 'success',
+            summary: t('agent_updated'),
+            detail: t('agent_updated_detail', { name: agent.value.name }),
+            life: 4000
+        })
     })
 }
 async function deleteAgent() {
@@ -132,6 +138,12 @@ async function deleteAgent() {
     }).then(() => {
         visible.value = false;
         store.removeAgent(agent.value.id);
+        toast.add({
+            severity: 'success',
+            summary: t('agent_deleted'),
+            detail: t('agent_deleted_detail', { name: agent.value.name }),
+            life: 4000
+        });
     })
 }
 
