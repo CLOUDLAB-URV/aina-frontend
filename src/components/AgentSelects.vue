@@ -5,7 +5,7 @@
             class="flex justify-between items-center gap-4">
             <ModalCreateAgent create="create" @agentCreated="(a) => agent = a" />
             <ModalCreateAgent v-if="agent" create="edit" :data="agent" />
-            <ModalCreateAgent v-if="agent" create="trash" :data="agent" />
+            <ModalCreateAgent v-if="agent" create="trash" :data="agent" @deleteAgent="emit('agentSelected', undefined); agent=undefined" />
         </div>
     </div>
 </template>

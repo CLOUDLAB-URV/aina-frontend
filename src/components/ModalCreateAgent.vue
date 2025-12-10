@@ -62,7 +62,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    agentCreated: [agent: AgentResponse]
+    agentCreated: [agent: AgentResponse],
+    'deleteAgent': []
 }>();
 
 const visible = ref(false);
@@ -109,8 +110,14 @@ async function createAgent() {
         }
     });
     visible.value = false;
-    store.data.push(updatedAgent)
+    store.data.push(updatedAgent);
     emit('agentCreated', updatedAgent);
+    agent.value = {
+        name: "",
+        description: "",
+        indexId: "",
+        id: ""
+    };
     toast.add({
         severity: 'success',
         summary: t('agent_created'),
@@ -142,12 +149,19 @@ async function deleteAgent() {
     }).then(() => {
         visible.value = false;
         store.removeAgent(agent.value.id);
+        agent.value = {
+            name: "",
+            description: "",
+            indexId: "",
+            id: ""
+        };
         toast.add({
             severity: 'success',
             summary: t('agent_deleted'),
             detail: t('agent_deleted_detail', { name: agent.value.name }),
             life: 4000
         });
+        emit('deleteAgent');
     })
 }
 
