@@ -95,12 +95,12 @@ watch(conv, () => {
 async function sendMessage(event: Event) {
     event.preventDefault();
 
-    if (!agent.value || !message.value)
+    if (!agent.value || !message.value || message.value.trim().length === 0)
         return;
 
     if (!conv.value) {
         let convCreate: ConversationCreate = {
-            name: `${message.value}_conversation`,
+            name: `${message.value.trim().substring(0, 15)}_conversation`,
             isPublic: false,
             agentId: agent.value.id,
         }
