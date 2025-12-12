@@ -45,10 +45,10 @@ export interface AgentUpdate {
     name?: string | null;
     /**
      * 
-     * @type {{ [key: string]: any; }}
+     * @type {object}
      * @memberof AgentUpdate
      */
-    settings?: { [key: string]: any; } | null;
+    settings?: object | null;
 }
 
 /**

@@ -75,7 +75,7 @@ export interface UpdateAgentApiV1AgentsAgentIdPatchRequest {
 
 export interface UpdateAgentSettingsApiV1AgentsSettingsAgentIdPatchRequest {
     agentId: string;
-    requestBody: { [key: string]: any; };
+    body: object;
 }
 
 export interface UpdateAgentUsersAndCreatorsApiV1AgentsAgentIdUsersPostRequest {
@@ -186,7 +186,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * Get settings for an agent by ID.
      * Get Agent Settings
      */
-    async getAgentSettingsApiV1AgentsSettingsAgentIdGetRaw(requestParameters: GetAgentSettingsApiV1AgentsSettingsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
+    async getAgentSettingsApiV1AgentsSettingsAgentIdGetRaw(requestParameters: GetAgentSettingsApiV1AgentsSettingsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
@@ -221,7 +221,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * Get settings for an agent by ID.
      * Get Agent Settings
      */
-    async getAgentSettingsApiV1AgentsSettingsAgentIdGet(requestParameters: GetAgentSettingsApiV1AgentsSettingsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
+    async getAgentSettingsApiV1AgentsSettingsAgentIdGet(requestParameters: GetAgentSettingsApiV1AgentsSettingsAgentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.getAgentSettingsApiV1AgentsSettingsAgentIdGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -274,7 +274,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * Get current settings for an agent by ID.
      * Get Current Agent Settings
      */
-    async getCurrentAgentSettingsApiV1AgentsSettingsAgentIdCurrentGetRaw(requestParameters: GetCurrentAgentSettingsApiV1AgentsSettingsAgentIdCurrentGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
+    async getCurrentAgentSettingsApiV1AgentsSettingsAgentIdCurrentGetRaw(requestParameters: GetCurrentAgentSettingsApiV1AgentsSettingsAgentIdCurrentGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
@@ -309,7 +309,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * Get current settings for an agent by ID.
      * Get Current Agent Settings
      */
-    async getCurrentAgentSettingsApiV1AgentsSettingsAgentIdCurrentGet(requestParameters: GetCurrentAgentSettingsApiV1AgentsSettingsAgentIdCurrentGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
+    async getCurrentAgentSettingsApiV1AgentsSettingsAgentIdCurrentGet(requestParameters: GetCurrentAgentSettingsApiV1AgentsSettingsAgentIdCurrentGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.getCurrentAgentSettingsApiV1AgentsSettingsAgentIdCurrentGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -318,7 +318,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * Get index settings for an agent by ID.
      * Get Index Settings
      */
-    async getIndexSettingsApiV1AgentsSettingsAgentIdIndexGetRaw(requestParameters: GetIndexSettingsApiV1AgentsSettingsAgentIdIndexGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
+    async getIndexSettingsApiV1AgentsSettingsAgentIdIndexGetRaw(requestParameters: GetIndexSettingsApiV1AgentsSettingsAgentIdIndexGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
@@ -353,7 +353,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * Get index settings for an agent by ID.
      * Get Index Settings
      */
-    async getIndexSettingsApiV1AgentsSettingsAgentIdIndexGet(requestParameters: GetIndexSettingsApiV1AgentsSettingsAgentIdIndexGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
+    async getIndexSettingsApiV1AgentsSettingsAgentIdIndexGet(requestParameters: GetIndexSettingsApiV1AgentsSettingsAgentIdIndexGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.getIndexSettingsApiV1AgentsSettingsAgentIdIndexGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -362,7 +362,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * Get reasoning settings for an agent by ID.
      * Get Reasoning Settings
      */
-    async getReasoningSettingsApiV1AgentsSettingsAgentIdReasoningGetRaw(requestParameters: GetReasoningSettingsApiV1AgentsSettingsAgentIdReasoningGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
+    async getReasoningSettingsApiV1AgentsSettingsAgentIdReasoningGetRaw(requestParameters: GetReasoningSettingsApiV1AgentsSettingsAgentIdReasoningGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
@@ -397,7 +397,7 @@ export class AgentsApi extends runtime.BaseAPI {
      * Get reasoning settings for an agent by ID.
      * Get Reasoning Settings
      */
-    async getReasoningSettingsApiV1AgentsSettingsAgentIdReasoningGet(requestParameters: GetReasoningSettingsApiV1AgentsSettingsAgentIdReasoningGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
+    async getReasoningSettingsApiV1AgentsSettingsAgentIdReasoningGet(requestParameters: GetReasoningSettingsApiV1AgentsSettingsAgentIdReasoningGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.getReasoningSettingsApiV1AgentsSettingsAgentIdReasoningGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -540,10 +540,10 @@ export class AgentsApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['requestBody'] == null) {
+        if (requestParameters['body'] == null) {
             throw new runtime.RequiredError(
-                'requestBody',
-                'Required parameter "requestBody" was null or undefined when calling updateAgentSettingsApiV1AgentsSettingsAgentIdPatch().'
+                'body',
+                'Required parameter "body" was null or undefined when calling updateAgentSettingsApiV1AgentsSettingsAgentIdPatch().'
             );
         }
 
@@ -567,7 +567,7 @@ export class AgentsApi extends runtime.BaseAPI {
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['requestBody'],
+            body: requestParameters['body'] as any,
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {

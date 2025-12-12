@@ -33,10 +33,10 @@ export interface IndexInfo {
     indexType: string;
     /**
      * The configuration of the index
-     * @type {{ [key: string]: any; }}
+     * @type {object}
      * @memberof IndexInfo
      */
-    config: { [key: string]: any; };
+    config: object;
     /**
      * The unique identifier of the index
      * @type {string}

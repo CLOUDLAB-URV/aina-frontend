@@ -95,12 +95,12 @@ watch(conv, () => {
 async function sendMessage(event: Event) {
     event.preventDefault();
 
-    if (!agent.value || !message.value)
+    if (!agent.value || !message.value || message.value.trim().length === 0)
         return;
 
     if (!conv.value) {
         let convCreate: ConversationCreate = {
-            name: `${message.value}_conversation`,
+            name: `${message.value.trim().substring(0, 15)}_conversation`,
             isPublic: false,
             agentId: agent.value.id,
         }
@@ -141,6 +141,9 @@ async function sendMessage(event: Event) {
                 }
                 if (data.channel == 'info' && data.content != "") {
                     chatter.addInfoChat(data.content)
+                }
+                if (data.channel == 'timestamp' && data.content != "") {
+                    chatter.editTimestamp(data.content as number)
                 }
             } catch (err) {
                 console.log("EROR JSON")

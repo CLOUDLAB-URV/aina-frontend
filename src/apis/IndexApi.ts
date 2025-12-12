@@ -46,7 +46,7 @@ export interface CreateGroupApiV1IndexIndexIdGroupsPostRequest {
 export interface CreateIndexApiV1IndexPostRequest {
     name: string;
     indexType: string;
-    requestBody?: { [key: string]: any; } | null;
+    body?: object | null;
 }
 
 export interface DeleteAllFilesApiV1IndexIndexIdFilesDeleteRequest {
@@ -104,7 +104,7 @@ export interface UpdateGroupApiV1IndexIndexIdGroupsGroupIdPatchRequest {
 export interface UpdateIndexApiV1IndexIndexIdPatchRequest {
     indexId: string;
     name?: string | null;
-    requestBody?: { [key: string]: any; } | null;
+    body?: object | null;
 }
 
 /**
@@ -224,7 +224,7 @@ export class IndexApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['requestBody'],
+            body: requestParameters['body'] as any,
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => IndexInfoFromJSON(jsonValue));
@@ -437,7 +437,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Admin Settings
      */
-    async getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
+    async getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         if (requestParameters['indexType'] == null) {
             throw new runtime.RequiredError(
                 'indexType',
@@ -474,7 +474,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Admin Settings
      */
-    async getAdminSettingsApiV1IndexAdminSettingsGet(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
+    async getAdminSettingsApiV1IndexAdminSettingsGet(requestParameters: GetAdminSettingsApiV1IndexAdminSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.getAdminSettingsApiV1IndexAdminSettingsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -524,7 +524,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Index Settings
      */
-    async getIndexSettingsApiV1IndexIndexIdSettingsGetRaw(requestParameters: GetIndexSettingsApiV1IndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: any; }>> {
+    async getIndexSettingsApiV1IndexIndexIdSettingsGetRaw(requestParameters: GetIndexSettingsApiV1IndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         if (requestParameters['indexId'] == null) {
             throw new runtime.RequiredError(
                 'indexId',
@@ -558,7 +558,7 @@ export class IndexApi extends runtime.BaseAPI {
     /**
      * Get Index Settings
      */
-    async getIndexSettingsApiV1IndexIndexIdSettingsGet(requestParameters: GetIndexSettingsApiV1IndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: any; }> {
+    async getIndexSettingsApiV1IndexIndexIdSettingsGet(requestParameters: GetIndexSettingsApiV1IndexIndexIdSettingsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.getIndexSettingsApiV1IndexIndexIdSettingsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -893,7 +893,7 @@ export class IndexApi extends runtime.BaseAPI {
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['requestBody'],
+            body: requestParameters['body'] as any,
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {

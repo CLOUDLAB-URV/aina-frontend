@@ -62,7 +62,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    agentCreated: [agent: AgentResponse]
+    agentCreated: [agent: AgentResponse],
+    'deleteAgent': []
 }>();
 
 const visible = ref(false);
@@ -94,10 +95,14 @@ async function createAgent() {
             description: agent.value.description,
         }
     });
-    let index = await IndApi.createIndexApiV1IndexPost({
-        name: `${newAgent.name}_index`,
-        indexType: 'FileIndex',
-    });
+    let indexos = await IndApi.listIndicesApiV1IndexGet();
+    let index = indexos.find((ind) => ind.name === `${newAgent.name}_index`);
+    if (!index) {
+        index = await IndApi.createIndexApiV1IndexPost({
+            name: `${newAgent.name}_index`,
+            indexType: 'FileIndex',
+        });
+    }
     let updatedAgent = await AgApi.updateAgentApiV1AgentsAgentIdPatch({
         agentId: newAgent.id,
         agentUpdate: {
@@ -105,12 +110,18 @@ async function createAgent() {
         }
     });
     visible.value = false;
-    store.data.push(updatedAgent)
+    store.data.push(updatedAgent);
     emit('agentCreated', updatedAgent);
+    agent.value = {
+        name: "",
+        description: "",
+        indexId: "",
+        id: ""
+    };
     toast.add({
         severity: 'success',
-        summary: 'Agent has been created successfully',
-        detail: `Agent has been created ${newAgent.name}`,
+        summary: t('agent_created'),
+        detail: t('agent_created_detail', { name: newAgent.name }),
         life: 4000
     });
 }
@@ -124,6 +135,12 @@ async function updateAgent() {
         }
     }).then(() => {
         visible.value = false;
+        toast.add({
+            severity: 'success',
+            summary: t('agent_updated'),
+            detail: t('agent_updated_detail', { name: agent.value.name }),
+            life: 4000
+        })
     })
 }
 async function deleteAgent() {
@@ -132,6 +149,19 @@ async function deleteAgent() {
     }).then(() => {
         visible.value = false;
         store.removeAgent(agent.value.id);
+        agent.value = {
+            name: "",
+            description: "",
+            indexId: "",
+            id: ""
+        };
+        toast.add({
+            severity: 'success',
+            summary: t('agent_deleted'),
+            detail: t('agent_deleted_detail', { name: agent.value.name }),
+            life: 4000
+        });
+        emit('deleteAgent');
     })
 }
 

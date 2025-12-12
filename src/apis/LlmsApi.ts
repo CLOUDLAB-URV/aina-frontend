@@ -49,7 +49,7 @@ export interface GetVendorDescApiV1LlmsVendorVendorNameGetRequest {
 
 export interface UpdateLlmApiV1LlmsLlmLlmNamePatchRequest {
     llmName: string;
-    requestBody: { [key: string]: any; };
+    body: object;
     _default?: boolean;
 }
 
@@ -323,10 +323,10 @@ export class LlmsApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['requestBody'] == null) {
+        if (requestParameters['body'] == null) {
             throw new runtime.RequiredError(
-                'requestBody',
-                'Required parameter "requestBody" was null or undefined when calling updateLlmApiV1LlmsLlmLlmNamePatch().'
+                'body',
+                'Required parameter "body" was null or undefined when calling updateLlmApiV1LlmsLlmLlmNamePatch().'
             );
         }
 
@@ -354,7 +354,7 @@ export class LlmsApi extends runtime.BaseAPI {
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['requestBody'],
+            body: requestParameters['body'] as any,
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {

@@ -149,7 +149,19 @@ const spanish = {
         },
         public: "Público",
         nooptions : "No hay opciones",
-        percentage_correct:"Porcentaje de Acierto"
+        percentage_correct:"Porcentaje de Acierto",
+        conv_created:"Conversación creada",
+        conv_deleted:"Conversación eliminada",
+        conv_updated:"Conversación actualizada",
+        conv_created_name:"Conversación creada con nombre {name}",
+        conv_updated_name:"Conversación actualizada con nombre {name}",
+        conv_deleted_name:"Conversación eliminada con nombre {name}",
+        agent_created:"Agente creado",
+        agent_updated:"Agente actualizado",
+        agent_deleted:"Agente eliminado",
+        agent_created_detail :"Se ha creado un nuevo agente llamado {name}",
+        agent_updated_detail :"Se ha actualizado el agente llamado {name}",
+        agent_deleted_detail :"Se ha eliminado el agente llamado {name}"
     },
 }
 

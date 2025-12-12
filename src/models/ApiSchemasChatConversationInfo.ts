@@ -45,22 +45,28 @@ export interface ApiSchemasChatConversationInfo {
     plotHistory: Array<any>;
     /**
      * List of files selected for the conversation
-     * @type {{ [key: string]: any; }}
+     * @type {object}
      * @memberof ApiSchemasChatConversationInfo
      */
-    selected: { [key: string]: any; };
+    selected: object;
     /**
      * State information for the conversation
-     * @type {{ [key: string]: any; }}
+     * @type {object}
      * @memberof ApiSchemasChatConversationInfo
      */
-    state: { [key: string]: any; };
+    state: object;
     /**
      * List of likes/dislikes for messages in the conversation
      * @type {Array<any>}
      * @memberof ApiSchemasChatConversationInfo
      */
     likes: Array<any>;
+    /**
+     * List of timestamps for messages in the conversation
+     * @type {Array<any>}
+     * @memberof ApiSchemasChatConversationInfo
+     */
+    timestamps: Array<any>;
 }
 
 /**
@@ -74,6 +80,7 @@ export function instanceOfApiSchemasChatConversationInfo(value: object): value i
     if (!('selected' in value) || value['selected'] === undefined) return false;
     if (!('state' in value) || value['state'] === undefined) return false;
     if (!('likes' in value) || value['likes'] === undefined) return false;
+    if (!('timestamps' in value) || value['timestamps'] === undefined) return false;
     return true;
 }
 
@@ -94,6 +101,7 @@ export function ApiSchemasChatConversationInfoFromJSONTyped(json: any, ignoreDis
         'selected': json['selected'],
         'state': json['state'],
         'likes': json['likes'],
+        'timestamps': json['timestamps'],
     };
 }
 
@@ -115,6 +123,7 @@ export function ApiSchemasChatConversationInfoToJSONTyped(value?: ApiSchemasChat
         'selected': value['selected'],
         'state': value['state'],
         'likes': value['likes'],
+        'timestamps': value['timestamps'],
     };
 }
 

@@ -171,7 +171,7 @@ export async function updateElement(type: String, model: any) {
       let name_llm: UpdateLlmApiV1LlmsLlmLlmNamePatchRequest = {
         llmName: model.name.value,
         _default: model._default,
-        requestBody: yaml.load(model.spec.value) as Object,
+        body: yaml.load(model.spec.value) as Object,
       };
       let response = await LlmApi.updateLlmApiV1LlmsLlmLlmNamePatch(name_llm)
       llmStore.updateLlm(getData(model));
@@ -183,7 +183,7 @@ export async function updateElement(type: String, model: any) {
       {
         embeddingName: model.name.value,
         _default: model._default,
-        requestBody: yaml.load(model.spec.value) as Object,
+        body: yaml.load(model.spec.value) as Object,
       };
       let response = await EmbApi.updateEmbeddingApiV1EmbeddingsEmbeddingEmbeddingNamePatch(
         name_llm
@@ -197,7 +197,7 @@ export async function updateElement(type: String, model: any) {
       {
         rerankingName: model.name.value,
         _default: model._default,
-        requestBody: yaml.load(model.spec.value) as any,
+        body: yaml.load(model.spec.value) as any,
       };
       let response = await RankApi.updateRerankingApiV1RerankingsRerankingRerankingNamePatch(
         name_llm

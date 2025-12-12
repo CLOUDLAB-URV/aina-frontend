@@ -27,10 +27,10 @@ export interface RerankingInfo {
     name: string;
     /**
      * The specification of the reranking model
-     * @type {{ [key: string]: any; }}
+     * @type {object}
      * @memberof RerankingInfo
      */
-    spec: { [key: string]: any; };
+    spec: object;
     /**
      * Whether this reranking model is the default one
      * @type {boolean}

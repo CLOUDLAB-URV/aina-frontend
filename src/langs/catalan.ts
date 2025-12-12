@@ -149,7 +149,19 @@ const catalan = {
         },
         public: "Públic",
         nooptions : "Sense opcions",
-        percentage_correct:"Percentatje d'encert"
+        percentage_correct:"Percentatge d'encert",
+        conv_created:"Conversa creada",
+        conv_deleted:"Conversa eliminada",
+        conv_created_name:"Conversa creada amb nom {name}",
+        conv_updated:"Conversa actualitzada",
+        conv_updated_name:"Conversa actualitzada amb nom {name}",
+        conv_deleted_name:"Conversa eliminada amb nom {name}",
+        agent_created:"Agent creat",
+        agent_updated:"Agent actualitzat",
+        agent_deleted:"Agent eliminat",
+        agent_created_detail :"S'ha creat un nou agent anomenat {name}",
+        agent_updated_detail :"S'ha actualitzat l'agent anomenat {name}",
+        agent_deleted_detail :"S'ha eliminat l'agent anomenat {name}"
     },
 }
 

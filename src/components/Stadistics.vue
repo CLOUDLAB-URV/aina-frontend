@@ -2,14 +2,19 @@
     <h3 class="mb-3 text-2xl">{{ t('stadistics.exp')}}</h3>
     
     <DataTable v-model:selection="selected" selectionMode="single" :value="info" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows tableStyle="min-width: 50rem">
-        <Column field="name" :header="t('input.name.label')" style="width: 16%"></Column>
-        <Column field="like" :header="t('like')" style="width: 16%"></Column>
-        <Column field="unlike" :header="t('unlike')" style="width: 16%"></Column>
-        <Column field="nothing" :header="t('nothing')" style="width: 16%"></Column>
-        <Column field="total" :header="t('total')" style="width: 16%"></Column>
-        <Column :header="t('percentage_correct')" style="width: 16%">
+        <Column field="name" :header="t('input.name.label')" style="width: 14%"></Column>
+        <Column field="like" :header="t('like')" style="width: 14%"></Column>
+        <Column field="unlike" :header="t('unlike')" style="width: 14%"></Column>
+        <Column field="nothing" :header="t('nothing')" style="width: 14%"></Column>
+        <Column field="total" :header="t('total')" style="width: 14%"></Column>
+        <Column :header="t('percentage_correct')" style="width: 14%">
             <template #body="{ data }">
                 {{ data.total > 0 ? ((data.like / data.total) * 100).toFixed(1) : 0 }} %
+            </template>
+        </Column>
+        <Column :header="t('Avg time response')" style="width: 14%">
+            <template #body="{ data }">
+                {{ formatDuration(data.avg_response / data.total) }} 
             </template>
         </Column>
     </DataTable>
@@ -31,7 +36,7 @@
                     <div class="grow h-[70vh] overflow-y-auto rounded-lg p-4 flex flex-col gap-4 chat">
                         <template v-for="message in selected.messages_like" >
                             <UserMessage :message="message[0][0]" :info="message[1]"/>
-                            <AiMessage :message="message[0][1]" :data_msg="data2"/>
+                            <AiMessage :message="message[0][1]" :data_msg="data2" :timestamp="message[2]"/>
                         </template>
                     </div>
                 </TabPanel>
@@ -39,7 +44,7 @@
                     <div class="grow h-[70vh] overflow-y-auto rounded-lg p-4 flex flex-col gap-4 chat">
                         <template v-for="message in selected.messages_unlike" >
                             <UserMessage :message="message[0][0]" :info="message[1]"/>
-                            <AiMessage :message="message[0][1]" :data_msg="data"/>
+                            <AiMessage :message="message[0][1]" :data_msg="data2" :timestamp="message[2]"/>
                         </template>
                     </div>
                 </TabPanel>
@@ -50,12 +55,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { ChApi, ConvApi,AgApi } from '@/apis/api';
 import type { SelectConversationApiV1ChatAgentIdConversationIdSelectPostRequest } from '@/apis/ChatApi'
 import type { ListConversationsApiV1ConversationsAgentIdGetRequest } from '@/apis/ConversationsApi'
-import { useI18n } from 'vue-i18n';
 import UserMessage from '@/components/UserMessage.vue';
 import AiMessage from '@/components/AiMessage.vue';
+import { ChApi, ConvApi,AgApi } from '@/apis/api';
+import { formatDuration } from '@/utils/time';
+import { useI18n } from 'vue-i18n';
 
 const {t} = useI18n()
 let info = ref()
@@ -94,6 +100,7 @@ onMounted(
                                         let likes = response2.likes;
                                         let messages = response2.messages;
                                         let evidence = response2.retrievalMessages;
+                                        let timestamps = response2.timestamps;
                                         for(let like in likes){
 
                                             let value_like = likes[like];
@@ -102,7 +109,7 @@ onMounted(
                                             if(!(conversationId in agents[definiteAgentId]['conversation'])){
                                                 agents[definiteAgentId]['conversation'][conversationId] = {}
                                             }
-                                            agents[definiteAgentId]['conversation'][conversationId][index] = {vote:value_like[2],message:messages[index],evidence:evidence[index]};
+                                            agents[definiteAgentId]['conversation'][conversationId][index] = {vote:value_like[2],message:messages[index],evidence:evidence[index],timestamp:timestamps[index]};
                                         }
                                     })
                                 }
@@ -124,7 +131,8 @@ onMounted(
                     'nothing':0,
                     'total':0,
                     'messages_unlike': [],
-                    'messages_like': []
+                    'messages_like': [],
+                    'avg_response':0,
                 }
             }
             for(let conv in convs){
@@ -137,13 +145,15 @@ onMounted(
                     }
                     else if(message == 'true'){
                         agents_likes[agent]['like'] += 1
-                        agents_likes[agent]['messages_like'].push([messages[mesg].message,messages[mesg].evidence])
+                        agents_likes[agent]['messages_like'].push([messages[mesg].message,messages[mesg].evidence,messages[mesg].timestamp])
                         agents_likes[agent]['total'] += 1
+                        agents_likes[agent]['avg_response'] += messages[mesg].timestamp
                     }
                     else if(message == 'false'){
                         agents_likes[agent]['unlike'] += 1
-                        agents_likes[agent]['messages_unlike'].push([messages[mesg].message,messages[mesg].evidence])
+                        agents_likes[agent]['messages_unlike'].push([messages[mesg].message,messages[mesg].evidence,messages[mesg].timestamp])
                         agents_likes[agent]['total'] += 1
+                        agents_likes[agent]['avg_response'] += messages[mesg].timestamp
                     }
                 }
             }
