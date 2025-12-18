@@ -218,7 +218,7 @@ watch(currentReasoning, async (newReasoning) => {
     if (props.agent && newReasoning) {
         await AgApi.updateAgentSettingsApiV1AgentsSettingsAgentIdPatch({
             agentId: props.agent.id,
-            requestBody: {
+            body: {
                 'reasoning.use': newReasoning
             }
         });
@@ -268,7 +268,7 @@ async function saveSettings() {
     if (!props.agent) return;
     saving.value = true;
     try {
-        await AgApi.updateAgentSettingsApiV1AgentsSettingsAgentIdPatch({ agentId: props.agent?.id, requestBody: formValues.value });
+        await AgApi.updateAgentSettingsApiV1AgentsSettingsAgentIdPatch({ agentId: props.agent?.id, body: formValues.value });
         if (currentIndex.value && currentIndex.value !== props.agent.indexId) {
             await AgApi.updateAgentApiV1AgentsAgentIdPatch({
                 agentId: props.agent.id,

@@ -112,7 +112,7 @@ function sendCreate() {
   let createParam: CreateIndexApiV1IndexPostRequest = {
     name: model.value.name.value,
     indexType: model.value.indexType.value,
-    requestBody: yaml.load(model.value.config.value) as Object,
+    body: yaml.load(model.value.config.value) as Object,
   };
   IndApi.createIndexApiV1IndexPost(createParam).then((res) => {
     indStore.addInd({
@@ -145,7 +145,7 @@ function update() {
   let index: UpdateIndexApiV1IndexIndexIdPatchRequest = {
     indexId: model.value.id,
     name: model.value.name.value,
-    requestBody: yaml.load(model.value.config.value) as Object,
+    body: yaml.load(model.value.config.value) as Object,
   };
   IndApi.updateIndexApiV1IndexIndexIdPatch(index).then(() => {
     indStore.updateInd({
